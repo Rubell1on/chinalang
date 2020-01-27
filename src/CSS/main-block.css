@@ -1,0 +1,42 @@
+.main-block {
+    height: 300px;
+    width: 100%;
+    background: #529AE4;
+}
+
+.main-block > div {
+    float: left;
+}
+
+.main-left-part {
+    padding-left: 10px;
+    box-sizing: border-box;
+    width: 65%;
+    /* height: 100%; */
+    margin-top: calc(150px - 124.5px);
+}
+
+.main-left-part > div {
+    color: white;
+}
+
+.main-text {
+    font-weight: bold;
+    font-size: 35px;
+    margin-bottom: 30px;
+}
+
+.main-info {
+    font-size: 20px;
+}
+
+.main-right-part {
+    width: 35%;
+    height: 100%;
+}
+
+.get-free-lesson {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: calc(150px - 50px);
+}
