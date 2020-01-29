@@ -26,6 +26,7 @@
     cursor: pointer;
     transition: background 200ms ease;
     font-size: 22px;
+    text-align: center;
 }
 
 .button-big:hover {
