@@ -1,5 +1,6 @@
 .main-block {
-    height: 300px;
+    overflow: hidden;
+    min-height: 300px;
     width: 100%;
     background: #529AE4;
 }
@@ -10,6 +11,7 @@
 
 .main-left-part {
     padding-left: 10px;
+    padding-right: 10px;
     box-sizing: border-box;
     width: 65%;
     /* height: 100%; */
@@ -39,4 +41,27 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: calc(150px - 50px);
+}
+
+@media (max-width: 700px) {
+    .main-block {
+        min-height: initial;
+    }
+
+    .main-block > div {
+        float: none;
+        width: 100%;
+    }
+
+    .get-free-lesson {
+        margin-top: 0;
+    }
+
+    .main-left-part {
+        margin-bottom: 10px;
+    }
+
+    .main-right-part {
+        margin-bottom: 10px;
+    }
 }
