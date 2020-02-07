@@ -1,0 +1,40 @@
+.notification {
+    position: fixed;
+    box-sizing: border-box;
+    background: rgb(155, 155, 155);
+    top: -100px;
+    left: 50%;
+    /* min-width: 300px; */
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 20px;
+    z-index: 4;
+}
+
+.notification.success {
+    background: rgb(0, 161, 0);
+    z-index: 6;
+}
+
+.notification.error {
+    background: red;
+    z-index: 3;
+}
+
+@media (max-width: 700px) {
+    .notification {
+        width: 70%;
+    }
+}
+
+@media (max-width: 450px) {
+    .notification {
+        width: 90%;
+    }
+}
