@@ -1,22 +1,12 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql2');
+const utils = require('./public/JS/BEUtils');
+const envVars = new utils.EnvVars();
 
+const dbSettings = envVars.getDBSettings();
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'chinalang',
-    password: 'Dimas1996'
-}).promise();
-
-// db.connect((err) => {
-//     if (err) {
-//         return console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`)
-//     } else {
-//         console.log('Подключение к серверу MySQL успешно установлено');
-//     }
-// })
+const db = mysql.createConnection(dbSettings).promise();
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
@@ -44,7 +34,7 @@ app.get('/login', async (req, res) => {
         if (users[0].password === q.password) {
             res.send(200);
         } else {
-            res.send(403);
+            res.send(403, 'Неверный логин или пароль!');
         }
     } else {
         res.send(404, 'Пользователь не найден!');
