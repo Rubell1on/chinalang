@@ -33,6 +33,12 @@
             "request": "launch",
             "name": "Gmail debug",
             "program": "${workspaceFolder}/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Enum debug",
+            "program": "${workspaceFolder}/public/JS/enum.js"
         }
     ]
 }

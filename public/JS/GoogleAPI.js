@@ -54,7 +54,7 @@ module.exports = {
                 `To: <${to}>`,
                 'Content-Type: text/html; charset=utf-8',
                 'MIME-Version: 1.0',
-                `Subject: ${subject}`,
+                `Subject: =?utf-8?B?${Base64.encodeURI(subject)}?=`,
                 '',
                 `${text}`
             ];

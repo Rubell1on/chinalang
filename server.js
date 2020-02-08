@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
+const Enum = require('./public/JS/enum');
 const envVars = new utils.EnvVars();
-const gAPI = require('./public/JS/GoogleAPI')
+const gAPI = require('./public/JS/GoogleAPI');
 
 const dbSettings = envVars.getDBSettings();
 const db = mysql.createConnection(dbSettings).promise();
@@ -11,6 +12,8 @@ const db = mysql.createConnection(dbSettings).promise();
 const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
 const gmailClient = new gAPI.GmailAPI(credentials, token);
+
+const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
@@ -29,12 +32,15 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     const q = req.query;
 
-    const rows = await db.query(`SELECT username, password FROM users WHERE username='${q.username}'`).catch(e => {
+    const rows = await db.query(`SELECT username, password, role FROM users WHERE username='${q.username}'`).catch(e => {
         console.error(e);
         res.send(400);
     });
 
     const users = rows[0];
+    const password = users[0].password;
+    const role = users[0].role;
+
     if (users.length) {
         if (users[0].password === q.password) {
             res.send(200);
@@ -57,8 +63,8 @@ app.get('/freeLesson', async (req, res) => {
 
     if (count === 0) {
         const password = utils.rndSequence();
-        const arr = [q.username, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, phone, email, skype, password, lessonsCount) VALUES(?, ?, ?, ?, ?, ?)', arr).catch(e => {
+        const arr = [q.username, roles.object.student, q.phone, q.email, q.skype, password, 1];
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, lessonsCount) VALUES(?, ?, ?, ?, ?, ?, ?)', arr).catch(e => {
             console.error(e);
             res.send(500, 'Ошибка сервера!');
         });
