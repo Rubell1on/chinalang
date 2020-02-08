@@ -9,5 +9,7 @@ module.exports = class Enum {
                 this.object[arguments[i]] = arguments[i];
             }
         }
+
+        return this.object;
     }
 }

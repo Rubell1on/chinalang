@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Server debug",
             "program": "${workspaceFolder}/server.js",
             "env": {
                 "host": "localhost",

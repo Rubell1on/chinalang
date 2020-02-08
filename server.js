@@ -42,7 +42,7 @@ app.get('/login', async (req, res) => {
     const role = users[0].role;
 
     if (users.length) {
-        if (users[0].password === q.password) {
+        if (password === q.password) {
             res.send(200);
         } else {
             res.send(403, 'Неверный логин или пароль!');
@@ -63,7 +63,7 @@ app.get('/freeLesson', async (req, res) => {
 
     if (count === 0) {
         const password = utils.rndSequence();
-        const arr = [q.username, roles.object.student, q.phone, q.email, q.skype, password, 1];
+        const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
         const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, lessonsCount) VALUES(?, ?, ?, ?, ?, ?, ?)', arr).catch(e => {
             console.error(e);
             res.send(500, 'Ошибка сервера!');
