@@ -13,8 +13,26 @@
                 "host": "localhost",
                 "user": "root",
                 "database": "chinalang",
-                "password": "Dimas1996"
+                "password": "Dimas1996",
+                "client_id": "412577247346-9tanor31f656ru20c7fjfillq6u2hfv3.apps.googleusercontent.com",
+                "project_id": "quickstart-1581138031700",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": "POAKO4DkDmYNZQwfWU1phXQk",
+                "redirect_uris": "urn:ietf:wg:oauth:2.0:oob",
+                "access_token": "ya29.Il-9B2X8Z7wt8VV5L9T95RoqqTn3HevaRsRpcyJaf9TVlFSWk29C-8bddeAo37HS-yklrsx_b9HhWcicXUWySNUkvLUsODQv31k4hfwpiraUWJHGgrEp-j6yGmuOGVa5qQ",
+                "refresh_token": "1//0chW7y3Bt3iQgCgYIARAAGAwSNwF-L9IrsKxmHxPBncsEWMoyUES7AYiBqHfl0nIltnkxFalZgBitXKLmgIoFfy3xkm_9zu8iIlI",
+                "scope": "https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly",
+                "token_type": "Bearer",
+                "expiry_date": "1581145197994"
             }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Gmail debug",
+            "program": "${workspaceFolder}/index.js"
         }
     ]
 }

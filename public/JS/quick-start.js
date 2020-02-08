@@ -17,7 +17,7 @@ class QuickStartWindow extends CustomWindow {
     html = 
         `<div class="${this.className}-background">` +
         `<div class="${this.className}">` +
-            ' <div class="info"></div>' +
+            '<div class="info"></div>' +
             '<div class="inputs">' +
                 '<div class="text-field">' +
                     '<label for="username">Имя</label>' +
