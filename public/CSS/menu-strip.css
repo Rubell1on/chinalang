@@ -1,0 +1,62 @@
+.strip-button, .strip-image {
+    box-sizing: border-box;
+    width: 100%;
+    height: 1px;
+    min-height: 40px;
+    overflow: hidden;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: background 200ms ease;
+}
+
+.strip-button:hover {
+    background: #24466B;
+}
+
+.strip-button:focus {
+    border-bottom: 2px solid white;
+}
+
+.strip-button > div {
+    float: left;
+}
+
+.strip-button > .icon {
+    box-sizing: border-box;
+    padding-left: 11px; 
+    padding-top: 11px;
+    padding-bottom: 11px;
+    height: 100%;
+    width: 40px;
+}
+
+.strip-button >.icon > img {
+    display: block;
+    height: 100%;
+}
+
+.strip-button > .text {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 18px;
+}
+
+.strip-image {
+    background: white;
+    padding: 5px;
+}
+
+.strip-image > img {
+    height: 100%;
+    position: relative;
+    left: 50%;
+    transform: translatex(-50%);
+}
+
+/* @media (max-width: 700px) {
+    .strip-button >.icon {
+        display: none;
+    }
+} */

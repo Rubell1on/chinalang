@@ -18,6 +18,7 @@ const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
+app.use('/public/IMG', express.static('IMG'));
 
 app.listen(3000, '192.168.1.133', async () => {
     const result = await db.connect().catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
@@ -43,7 +44,13 @@ app.get('/login', async (req, res) => {
 
     if (users.length) {
         if (password === q.password) {
-            res.send(200);
+            if (role === roles.student) {
+                //TO DO
+            } else {
+                res.render('dashboard');
+                // res.redirect('/dashboard',)
+                // res.send('<p>Some html</p>');
+            }
         } else {
             res.send(403, 'Неверный логин или пароль!');
         }
@@ -52,7 +59,7 @@ app.get('/login', async (req, res) => {
     }
 })
 
-app.get('/freeLesson', async (req, res) => {
+app.get('/free', async (req, res) => {
     const q = req.query;
     
     const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE username='${q.username}' OR email='${q.email}'`).catch(e => {
@@ -64,7 +71,7 @@ app.get('/freeLesson', async (req, res) => {
     if (count === 0) {
         const password = utils.rndSequence();
         const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, lessonsCount) VALUES(?, ?, ?, ?, ?, ?, ?)', arr).catch(e => {
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft) VALUES(?, ?, ?, ?, ?, ?, ?)', arr).catch(e => {
             console.error(e);
             res.send(500, 'Ошибка сервера!');
         });
@@ -83,6 +90,34 @@ app.get('/freeLesson', async (req, res) => {
     } else {
         res.send(400, 'Данный пользователь уже существует!');
     }
+})
+
+app.get('/dashboard/:section', (req, res) => {
+    console.log();
+    const section = req.params.section;
+
+    switch(section) {
+        case 'users':
+            res.render('dashboard/admin/users');
+            break;
+        default:
+            res.send(404);
+            break;
+    }
+})
+
+app.get('/api/db/users', async (req, res) => {
+    const q = req.query;
+    const value = q.searchingValue;
+
+    let rows = [];
+    if (value === '') {
+        rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users');
+    } else {
+        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username='${value}' OR role='${value}' OR phone='${value}' OR email='${value}' OR skype='${value}' OR classesLeft='${value}'`);
+    }
+
+    res.json(rows[0]);    
 })
 
 app.get('/test', async (req, res) => {

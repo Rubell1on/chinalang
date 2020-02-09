@@ -3,7 +3,7 @@ $('.get-free-lesson').click(() => {
     window.render('');
 });
 
-class QuickStartWindow extends CustomWindow {
+class QuickStartWindow extends SingleCustomWindow {
     constructor() {
         super('quick-start-window');
     }
@@ -65,7 +65,7 @@ class QuickStartWindow extends CustomWindow {
 
         register(data) {
             $.ajax({
-                url:'/freeLesson',
+                url:'/free',
                 data,
                 success: (data, status) => {
                     new NotificationSuccess('user-registered', data).render();
