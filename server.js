@@ -120,6 +120,21 @@ app.get('/api/db/users', async (req, res) => {
     res.json(rows[0]);    
 })
 
+app.get('/api/db/updateUsers', async (req, res) => {
+    const { diffs, sources } = req.query;
+    const template = Object.entries(diffs).reduce((acc, curr) => {
+        acc.push(`${curr[0]} = '${curr[1]}'`);
+        return acc;
+    }, [])
+    .join(', ');
+    const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При обновлении данных проихзошла ошибка!');
+        });
+    res.send(200, `Данные пользователя ${sources.username} успешно обновлены!`);
+});
+
 app.get('/test', async (req, res) => {
-    const rows = await db.query('SELECT * FROM users');
+    console.log();
 })

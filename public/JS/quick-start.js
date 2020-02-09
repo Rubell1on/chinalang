@@ -15,8 +15,8 @@ class QuickStartWindow extends SingleCustomWindow {
     ];
 
     html = 
-        `<div class="${this.className}-background">` +
-        `<div class="${this.className}">` +
+        `<div class="overlay-window-background ${this.className}-background">` +
+        `<div class="overlay-window ${this.className}">` +
             '<div class="info"></div>' +
             '<div class="inputs">' +
                 '<div class="text-field">' +
@@ -40,89 +40,89 @@ class QuickStartWindow extends SingleCustomWindow {
         '</div>' +
         '</div>';
 
-        render(parentName) {
-            super.render(parentName);
-            this.setRandomText();
+    render(parentName) {
+        super.render(parentName);
+        this.setRandomText();
 
-            $(`.${this.className}-background`)
-                .click(() => this.destroy())
-                .find(`.${this.className}`)
-                .click((e) => e.stopPropagation());
-            
-            $('.submit').click(() => this.submit());
-        }
+        $(`.${this.className}-background`)
+            .click(() => this.destroy())
+            .find(`.${this.className}`)
+            .click((e) => e.stopPropagation());
+        
+        $('.submit').click(() => this.submit());
+    }
 
-        setRandomText() {
-            const rndValue = randomInt(this.textTemplates.length);
+    setRandomText() {
+        const rndValue = randomInt(this.textTemplates.length);
 
-            const template = 
-                '<div class="text">' +
-                    this.textTemplates[rndValue] +
-                '</div>';
+        const template = 
+            '<div class="text">' +
+                this.textTemplates[rndValue] +
+            '</div>';
 
-            $(`.${this.className} .info`).append(template)
-        }
+        $(`.${this.className} .info`).append(template)
+    }
 
-        register(data) {
-            $.ajax({
-                url:'/free',
-                data,
-                success: (data, status) => {
-                    new NotificationSuccess('user-registered', data).render();
-                    console.log({data, status})
-                    this.destroy();
-                },
-                error: (error, status) => {
-                    new NotificationError('err-window', error.responseText).render();
-                    console.log({error, status})
-                }
-            })
-        }
-    
-        destroy() {
-            const object = $(`.${this.className}-background`);
-            if (!$.isEmptyObject(object)) {
-                $(`.${this.className}-background`).remove();
+    register(data) {
+        $.ajax({
+            url:'/free',
+            data,
+            success: (data, status) => {
+                new NotificationSuccess('user-registered', data).render();
+                console.log({data, status})
+                this.destroy();
+            },
+            error: (error, status) => {
+                new NotificationError('err-window', error.responseText).render();
+                console.log({error, status})
             }
+        })
+    }
+
+    destroy() {
+        const object = $(`.${this.className}-background`);
+        if (!$.isEmptyObject(object)) {
+            $(`.${this.className}-background`).remove();
         }
+    }
 
-        submit() {
-            const data = {
-                "username": undefined,
-                "phone": undefined,
-                "email": undefined,
-                "skype": undefined
-            };
+    submit() {
+        const data = {
+            "username": undefined,
+            "phone": undefined,
+            "email": undefined,
+            "skype": undefined
+        };
 
-            let flag = true;
+        let flag = true;
 
-            const keys = Object.keys(data);
+        const keys = Object.keys(data);
 
-            for (let i in keys) {
-                const value = keys[i];
-                const field = $(`#${value}`);
-                const temp = field.val();
+        for (let i in keys) {
+            const value = keys[i];
+            const field = $(`#${value}`);
+            const temp = field.val();
 
-                if (field.prop('required')) {
-                    if (!temp.isEmpty()) {
-                        data[value] = temp;
-                    } else {
-                        field.focus();
-                        flag = false;
-                        break;
-                    } 
+            if (field.prop('required')) {
+                if (!temp.isEmpty()) {
+                    data[value] = temp;
                 } else {
-                    data[value] = temp.isEmpty() ? '' : temp;
-                }
-            }
-
-            if (flag) {
-                console.log(JSON.stringify(data));
-                this.register(data);
-                new NotificationWindow('window', 'Данные отправлены! Ожидаю ответ.').render();
+                    field.focus();
+                    flag = false;
+                    break;
+                } 
             } else {
-                new NotificationError('err-window', "Некорректно заполнены поля").render();
-                console.error("Некорректно заполнены поля");
+                data[value] = temp.isEmpty() ? '' : temp;
             }
         }
+
+        if (flag) {
+            console.log(JSON.stringify(data));
+            this.register(data);
+            new NotificationWindow('window', 'Данные отправлены! Ожидаю ответ.').render();
+        } else {
+            new NotificationError('err-window', "Некорректно заполнены поля").render();
+            console.error("Некорректно заполнены поля");
+        }
+    }
 }

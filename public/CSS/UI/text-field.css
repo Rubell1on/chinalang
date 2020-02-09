@@ -1,0 +1,31 @@
+.text-field, .submit {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text-field:last-child {
+    margin-bottom: 10px;
+}
+
+.text-field {
+    margin-bottom: 5px;
+}
+
+.text-field > label, input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
+.text-field > input {
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid rgb(194, 194, 194);
+    font-size: 20px;
+    padding-left: 5px;
+}
+
+.text-field > input:focus {
+    border: 1px solid rgb(117, 117, 117);
+}

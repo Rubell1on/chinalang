@@ -5,7 +5,7 @@ class SingleCustomWindow {
 
     html = ''
 
-    render(parentName) {
+    render(parentName = '') {
         if (!this.isExisting()) {
             if (parentName.isEmpty()) {
                 this.object = $('body').prepend(this.html).find(`.${this.className}`); 
