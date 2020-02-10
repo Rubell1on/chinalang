@@ -3,12 +3,12 @@ class DataTable extends SingleCustomWindow {
     
     constructor(className, controls = [], children = []) {
         super(className);
-        this.wrapperClass = 'users-wrapper';
+        // this.wrapperClass = `${this.className}-data-wrapper`;
         this.controlsWrapper = `${this.className}-controls-wrapper`;
         this.html = 
             `<div class="data-window ${className}">` +
                 `<div class="${this.controlsWrapper}"></div>` +
-                `<div class="data-wrapper ${this.wrapperClass}"></div>` + 
+                `<div class="data-wrapper ${this.className}-data-wrapper"></div>` + 
             '</div>';
         this.children = children;
         this.controls = controls;
@@ -24,7 +24,7 @@ class DataTable extends SingleCustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(strip => {
-                strip.render(this.wrapperClass);
+                strip.render(this.wrapper);
                 callback(strip);
             });
         }
@@ -41,6 +41,7 @@ class DataTable extends SingleCustomWindow {
 
     render(parent) {
         super.render(parent);
+        this.wrapper = this.object.find('.data-wrapper');
         // this.searchField = $('.search-line > input');
     }
 }

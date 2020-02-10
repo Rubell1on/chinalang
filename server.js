@@ -133,7 +133,21 @@ app.get('/api/db/updateUsers', async (req, res) => {
             res.send(500, 'При обновлении данных произошла ошибка!');
         });
     res.send(200, `Данные пользователя ${sources.username} успешно обновлены!`);
-});
+})
+
+app.get('/api/db/courses', async (req, res) => {
+    const q = req.query;
+    const value = q.searchingValue;
+
+    let rows = [];
+    if (value === '') {
+        rows = await db.query('SELECT * FROM courses');
+    } else {
+        rows = await db.query(`SELECT * FROM users WHERE id='${value}' OR name='${value}' OR description='${value}'`);
+    }
+
+    res.json(rows[0]);
+})
 
 app.get('/test', async (req, res) => {
     console.log();

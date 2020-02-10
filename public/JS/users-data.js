@@ -64,11 +64,17 @@ DataTable.prototype.updateData = async function UpdateData() {
 
                         const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable]);
                         coursesWindow.render('');
-                        coursesWindow.renderChildren(windowChildren => {
-                            windowChildren.renderControls();
-                            windowChildren.renderChildren(tableChildren => {
-
-                            });
+                        coursesWindow.renderChildren(async windowChild => {
+                            if (windowChild.isTypeOf('dataTable')) {
+                                windowChild.renderControls();
+                                windowChild.removeChildren();
+                                const searchingValue = windowChild.controls[1].input.val();
+                                const data = await request.get('/api/db/courses', { searchingValue });
+                                windowChild.children = data.map(row => new DataStrip(row.name.split(' ').join(''), row), []);
+                                windowChild.renderChildren(tableChild => {
+                                    tableChild.text.text(tableChild.data.name);
+                                });
+                            }
                         });
                     });
                 }
