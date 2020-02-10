@@ -53,24 +53,24 @@ DataTable.prototype.updateData = async function UpdateData() {
                     input.render(parent);
                     input.icon.attr('src', '');
                     input.text.text(e[0]);
-                    // input.object.click(() => {
-                    //     const controls = [
-                    //         new Label('courses-label', 'Список курсов'),
-                    //         new SearchLine('courses-search')
-                    //     ];
+                    input.object.click(() => {
+                        const controls = [
+                            new Label('courses-label', 'Список курсов'),
+                            new SearchLine('courses-search')
+                        ];
 
-                    //     const coursesTable = new DataTable('courses-table', controls);
-                    //     coursesTable.wrapperClass = 'courses-wrapper'
+                        const coursesTable = new DataTable('courses-table', controls);
+                        coursesTable.wrapperClass = 'courses-wrapper'
 
-                    //     const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable]);
-                    //     coursesWindow.render('');
-                    //     coursesWindow.renderChildren(windowChildren => {
-                    //         windowChildren.renderControls();
-                    //         windowChildren.renderChildren(tableChildren => {
+                        const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable]);
+                        coursesWindow.render('');
+                        coursesWindow.renderChildren(windowChildren => {
+                            windowChildren.renderControls();
+                            windowChildren.renderChildren(tableChildren => {
 
-                    //         });
-                    //     });
-                    // });
+                            });
+                        });
+                    });
                 }
                 
                 return input;

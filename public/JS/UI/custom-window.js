@@ -7,13 +7,16 @@ class SingleCustomWindow {
 
     html = ''
 
-    render(parentName = '') {
+    render(parent = '') {
+        
         if (!this.isExisting()) {
-            if (parentName.isEmpty()) {
-                this.object = $('body').prepend(this.html).find(`.${this.className}`); 
-            } else {
-                this.object = $(`.${parentName}`).prepend(this.html).find(`.${this.className}`);
-            }
+            if (typeof parent === 'string') {
+                if (parent.isEmpty()) {
+                    this.object = $('body').append(this.html).find(`.${this.className}`); 
+                } else {
+                    this.object = $(`.${parent}`).append(this.html).find(`.${this.className}`);
+                }
+            } else this.object = $(parent).append(this.html).find(`.${this.className}`);
         } else {
             console.log(`${this.className} already created!`)
         }
@@ -45,12 +48,14 @@ class CustomWindow {
 
     html = ''
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').prepend(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).prepend(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        if (typeof parent === 'string') {
+            if (parent.isEmpty()) {
+                this.object = $('body').append(this.html).find(`.${this.className}`); 
+            } else {
+                this.object = $(`.${parent}`).append(this.html).find(`.${this.className}`);
+            }
+        } else this.object = $(parent).append(this.html).find(`.${this.className}`);
     }
 
     isExisting() {

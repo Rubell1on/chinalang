@@ -4,9 +4,9 @@ class DataTable extends SingleCustomWindow {
     constructor(className, controls = [], children = []) {
         super(className);
         this.wrapperClass = 'users-wrapper';
-        this.controlsWrapper = 'controls-wrapper';
+        this.controlsWrapper = `${this.className}-controls-wrapper`;
         this.html = 
-            `<div class="data-window users-window ${className}">` +
+            `<div class="data-window ${className}">` +
                 `<div class="${this.controlsWrapper}"></div>` +
                 `<div class="data-wrapper ${this.wrapperClass}"></div>` + 
             '</div>';
@@ -39,8 +39,8 @@ class DataTable extends SingleCustomWindow {
         }
     }
 
-    render(parentName) {
-        super.render(parentName);
+    render(parent) {
+        super.render(parent);
         // this.searchField = $('.search-line > input');
     }
 }
@@ -65,12 +65,8 @@ class DataStrip extends CustomWindow {
         this.onDataChange = new CustomEvent();
     }
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        super.render(parent);
 
         this.icon = this.object.find('.icon > img');
         this.text = this.object.find('div[class="text"]');
@@ -91,7 +87,7 @@ class DataWindow extends SingleCustomWindow {
     html = 
         `<div class="overlay-window-background ${this.className}-background">` +
         `<div class="overlay-window ${this.className}">` +
-            '<div class="inputs">' +
+            `<div class="inputs">` +
             '</div>' +
         '</div>' +
         '</div>';
@@ -99,20 +95,16 @@ class DataWindow extends SingleCustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(strip => {
-                strip.render(this.inputs.attr('class'));
+                strip.render(this.inputs);
                 callback(strip);
             });
         }
     }
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        super.render(parent);
 
-        this.inputs = this.object.find('.inputs');
+        this.inputs = this.object.find(`.inputs`);
 
         $(`.${this.className}-background`)
             .click(() => this.destroy())
@@ -141,12 +133,8 @@ class InputField extends CustomWindow {
             '</div>';
     }
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        super.render(parent)
 
         this.label = this.object.find('label');
         this.input = this.object.find('input');
@@ -166,14 +154,6 @@ class Button extends CustomWindow {
 
         this.html = `<div class="button-big ${className}"></div>`;
     }
-
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
-    }
 }
 
 class SearchLine extends CustomWindow {
@@ -187,12 +167,8 @@ class SearchLine extends CustomWindow {
             '</div>';
     }
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        super.render(parent);
 
         this.input = this.object.find('input');
     }
@@ -206,11 +182,7 @@ class Label extends CustomWindow {
         this.html = `<div class="label ${className}">${text}</div>`;
     }
 
-    render(parentName) {
-        if (parentName.isEmpty()) {
-            this.object = $('body').append(this.html).find(`.${this.className}`); 
-        } else {
-            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
-        }
+    render(parent) {
+        super.render(parent);
     }
 }

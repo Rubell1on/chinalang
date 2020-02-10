@@ -29,3 +29,7 @@
 .coursesButton > .icon-wrapper {
     display: none;
 }
+
+.courses-search > input {
+    background: #F1F1F1;
+}
