@@ -1,18 +1,17 @@
 class DataTable extends SingleCustomWindow {
     [Symbol.toStringTag] = 'dataTable'
     
-    constructor(className, label, children = []) {
+    constructor(className, controls = [], children = []) {
         super(className);
         this.wrapperClass = 'users-wrapper';
+        this.controlsWrapper = 'controls-wrapper';
         this.html = 
             `<div class="data-window users-window ${className}">` +
-                `<div class="data-list users-list">${label}</div>` +
-                '<div class="search-line">' +
-                    '<input type="text" name="" id="" placeholder="Поиск">' +
-                '</div>' +
-                `<div class="data-wrapper ${this.wrapperClass}">` + 
-                '</div>';
+                `<div class="${this.controlsWrapper}"></div>` +
+                `<div class="data-wrapper ${this.wrapperClass}"></div>` + 
+            '</div>';
         this.children = children;
+        this.controls = controls;
     }
 
     removeChildren() {
@@ -31,9 +30,18 @@ class DataTable extends SingleCustomWindow {
         }
     }
 
+    renderControls() {
+        if (this.controls.length > 0) {
+            this.controls.forEach(c => {
+                c.render(this.controlsWrapper);
+                // callback(strip);
+            });
+        }
+    }
+
     render(parentName) {
         super.render(parentName);
-        this.searchField = $('.search-line > input');
+        // this.searchField = $('.search-line > input');
     }
 }
 
@@ -45,7 +53,7 @@ class DataStrip extends CustomWindow {
         this.data = data;
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
         this.html = 
-            `<div class="data user ${className}">` +
+            `<div class="data user data-strip ${className}">` +
                 '<div class="icon-wrapper">' +
                     '<div class="icon">' +
                         `<img src="${this.defaultImg}" alt="" srcset="">` +
@@ -58,7 +66,12 @@ class DataStrip extends CustomWindow {
     }
 
     render(parentName) {
-        super.render(parentName);
+        if (parentName.isEmpty()) {
+            this.object = $('body').append(this.html).find(`.${this.className}`); 
+        } else {
+            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
+        }
+
         this.icon = this.object.find('.icon > img');
         this.text = this.object.find('div[class="text"]');
     }
@@ -67,8 +80,8 @@ class DataStrip extends CustomWindow {
 class DataWindow extends SingleCustomWindow {
     [Symbol.toStringTag] = 'dataWindow'
 
-    constructor(data, children = []) {
-        super('user-data-window');
+    constructor(className, data, children = []) {
+        super(className);
 
         this.data = data;
         this.children = children;
@@ -93,45 +106,19 @@ class DataWindow extends SingleCustomWindow {
     }
 
     render(parentName) {
-        super.render(parentName);
+        if (parentName.isEmpty()) {
+            this.object = $('body').append(this.html).find(`.${this.className}`); 
+        } else {
+            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
+        }
 
         this.inputs = this.object.find('.inputs');
-
-        // this.fields = {
-        //     username: this.object.find('input[id="username"]'),
-        //     role:  this.object.find('input[id="role"]'),
-        //     phone:  this.object.find('input[id="phone"]'),
-        //     email:  this.object.find('input[id="email"]'),
-        //     classesLeft:  this.object.find('input[id="classesLeft"]'),
-        //     skype:  this.object.find('input[id="skype"]')
-        // };
-
-        // this.setData();
 
         $(`.${this.className}-background`)
             .click(() => this.destroy())
             .find(`.${this.className}`)
             .click((e) => e.stopPropagation());
-        
-        // $('.submit').click(() => this.submit());
     }
-
-    // async submit() {
-    //     const diffs = this.checkDifferences();
-    //     const keys = Object.keys(diffs);
-    //     if (keys.length !== 0) {
-    //         const res = await request.get('/api/db/updateUsers', {sources: this.data, diffs})
-    //             .catch(e => {
-    //                 new NotificationError('err-window', error.responseText).render();
-    //                 console.log({error, status});
-    //             });
-
-    //         new NotificationSuccess('user-registered', data).render();
-    //         this.onSubmit.raise();
-    //         console.log({data, status})
-    //         this.destroy();
-    //     }
-    // }
 
     destroy() {
         const object = $(`.${this.className}-background`);
@@ -139,34 +126,6 @@ class DataWindow extends SingleCustomWindow {
             $(`.${this.className}-background`).remove();
         }
     }
-
-    // checkDifferences() {
-    //     // return Object.entries(this.fields).reduce((acc, curr) => {
-    //     //     const key = curr[0];
-    //     //     const value = curr[1].val();
-    //     //     if (value != this.data[key]) acc[key] = value;
-    //     //     return acc;
-    //     // }, {});
-
-    //     return this.children.reduce((acc, curr) => {
-    //         if (typeof curr !== 'Button') {
-    //             const key = curr.className;
-    //             const value = curr.input.val();
-    //             if (value != this.data[key]) acc[key] = value;
-    //         }
-
-    //         return acc;
-    //     }, {});
-    // }
-
-    // setData() {
-    //     Object.entries(this.fields).forEach(link => {
-    //         if (link[0] !== 'classes') {
-    //             const value = this.data[link[0]];
-    //             link[1].val(value);
-    //         }
-    //     });
-    // }
 }
 
 class InputField extends CustomWindow {
@@ -206,6 +165,45 @@ class Button extends CustomWindow {
         super(className);
 
         this.html = `<div class="button-big ${className}"></div>`;
+    }
+
+    render(parentName) {
+        if (parentName.isEmpty()) {
+            this.object = $('body').append(this.html).find(`.${this.className}`); 
+        } else {
+            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
+        }
+    }
+}
+
+class SearchLine extends CustomWindow {
+    [Symbol.toStringTag] = 'search-line'
+    constructor(className) {
+        super(className);
+
+        this.html = 
+            `<div class="search-line ${className}">` +
+                '<input type="text" name="" id="" placeholder="Поиск">' +
+            '</div>';
+    }
+
+    render(parentName) {
+        if (parentName.isEmpty()) {
+            this.object = $('body').append(this.html).find(`.${this.className}`); 
+        } else {
+            this.object = $(`.${parentName}`).append(this.html).find(`.${this.className}`);
+        }
+
+        this.input = this.object.find('input');
+    }
+}
+
+class Label extends CustomWindow {
+    [Symbol.toStringTag] = 'label'
+    constructor(className, text = '') {
+        super(className);
+
+        this.html = `<div class="label ${className}">${text}</div>`;
     }
 
     render(parentName) {

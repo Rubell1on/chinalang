@@ -29,23 +29,50 @@ DataWindow.prototype.submit = async function submit() {
 
 DataTable.prototype.updateData = async function UpdateData() {
     this.removeChildren();
-    const searchingValue = this.searchField.val();
+    const searchingValue = this.controls[2].input.val();
     const data = await request.get('/api/db/users', { searchingValue });
     this.children = data.map(row => new DataStrip(row.username, row), []);
     this.renderChildren(strip => {
         strip.text.text(strip.data.username);
         // strip.img.val(strip.data && strip.data.img ? )
         strip.object.click(() => {
-            const dataWindow = new DataWindow(strip.data);
+            const dataWindow = new DataWindow('user-data-window', strip.data);
             dataWindow.render('');
             const parent = dataWindow.inputs.attr('class');
 
             const children = Object.entries(strip.data).map(e => {
-                const input = new InputField(e[0]);
-                input.render(parent);
-                input.setIds(e[0]);
-                input.label.text(e[0]);
-                input.input.val(e[1]);
+                let input = undefined;
+                if (e[0] !== 'courses') {
+                    input = new InputField(e[0]);
+                    input.render(parent);
+                    input.setIds(e[0]);
+                    input.label.text(e[0]);
+                    input.input.val(e[1]);
+                } else {
+                    input = new DataStrip('coursesButton');
+                    input.render(parent);
+                    input.icon.attr('src', '');
+                    input.text.text(e[0]);
+                    // input.object.click(() => {
+                    //     const controls = [
+                    //         new Label('courses-label', 'Список курсов'),
+                    //         new SearchLine('courses-search')
+                    //     ];
+
+                    //     const coursesTable = new DataTable('courses-table', controls);
+                    //     coursesTable.wrapperClass = 'courses-wrapper'
+
+                    //     const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable]);
+                    //     coursesWindow.render('');
+                    //     coursesWindow.renderChildren(windowChildren => {
+                    //         windowChildren.renderControls();
+                    //         windowChildren.renderChildren(tableChildren => {
+
+                    //         });
+                    //     });
+                    // });
+                }
+                
                 return input;
             }, []);
 
@@ -66,10 +93,19 @@ DataTable.prototype.updateData = async function UpdateData() {
 }
 
 async function renderPage() {
-    const userWindow = new DataTable('users', 'Список пользователей');
+    const controls = [
+        new Label('users-label', 'Список пользователей'),
+        new Button('add-new-user'),
+        new SearchLine('users-search')
+    ];
+
+    const userWindow = new DataTable('users', controls);
     userWindow.render('content-window');
+    userWindow.renderControls();
     userWindow.updateData();
-    userWindow.searchField.change(async () => {
+    userWindow.controls[1].object.text('+');
+    userWindow.controls[1].object.attr('title', 'Добавить нового пользователя');
+    userWindow.controls[2].input.change(async () => {
         await userWindow.updateData();
     });
 

@@ -1,4 +1,22 @@
-.data-strip {
+.data-window {
+    height: 100%;
+}
+
+.data-window > .data-list {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.data-window > .data-wrapper {
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 62px);
+    padding-top: 10px;
+}
+
+.data-wrapper > .data {
     box-sizing: border-box;
     height: 50px;
     background: gray;
@@ -9,21 +27,21 @@
     cursor: pointer;
 }
 
-.data-strip > div {
+.data-wrapper > .data > div {
     float: left;
 }
 
-.data-strip:hover {
+.data-wrapper > .data:hover {
     background: #24466B;
 }
 
-.data-strip > .icon-wrapper {
+.data-wrapper > .data > .icon-wrapper {
     height: 100%;
     box-sizing: border-box;
     padding: 5px;
 }
 
-.data-strip > .icon-wrapper > .icon {
+.data-wrapper > .data > .icon-wrapper > .icon {
     height: 100%;
     background: white;
     border-radius: 40px;
@@ -32,11 +50,11 @@
 }
 
 
-.data-strip > .icon-wrapper > .icon > img {
+.data-wrapper > .data > .icon-wrapper > .icon > img {
     height: 100%;
 }
 
-.data-strip > .text {
+.data-wrapper > .data > .text {
     color: white;
     font-size: 18px;
     position: relative;

@@ -1,8 +1,31 @@
-.overlay-window {
+.user-data-window {
     width: 80%;
-    min-height: 400px;
+    min-height: 445px;
 }
 
 .submit {
     margin-top: 10px;
+}
+
+.add-new-user {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    float: left;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.users-search {
+    width: calc(100% - 35px);
+    float: left;
+}
+
+.coursesButton {
+    height: 40px;
+    background: #529AE4;
+}
+
+.coursesButton > .icon-wrapper {
+    display: none;
 }

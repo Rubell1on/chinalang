@@ -130,7 +130,7 @@ app.get('/api/db/updateUsers', async (req, res) => {
     const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При обновлении данных проихзошла ошибка!');
+            res.send(500, 'При обновлении данных произошла ошибка!');
         });
     res.send(200, `Данные пользователя ${sources.username} успешно обновлены!`);
 });
