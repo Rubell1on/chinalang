@@ -1,4 +1,6 @@
 class SingleCustomWindow {
+    [Symbol.toStringTag] = 'singleCustomWindow'
+
     constructor(className) {
         this.className = className;
     }
@@ -28,9 +30,15 @@ class SingleCustomWindow {
             this.object.remove();
         }
     }
+
+    isTypeOf(type) {
+        return this.toString().includes(type);
+    }
 }
 
 class CustomWindow {
+    [Symbol.toStringTag] = 'customWindow'
+
     constructor(className) {
         this.className = className;
     }
@@ -55,5 +63,9 @@ class CustomWindow {
         if (!$.isEmptyObject(this.object)) {
             this.object.remove();
         }
+    }
+
+    isTypeOf(type) {
+        return this.toString().includes(type);
     }
 }
