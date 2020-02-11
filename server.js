@@ -114,7 +114,7 @@ app.get('/api/db/users', async (req, res) => {
     if (value === '') {
         rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users');
     } else {
-        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username='${value}' OR role='${value}' OR phone='${value}' OR email='${value}' OR skype='${value}' OR classesLeft='${value}'`);
+        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`);
     }
 
     res.json(rows[0]);    
@@ -143,7 +143,7 @@ app.get('/api/db/courses', async (req, res) => {
     if (value === '') {
         rows = await db.query('SELECT * FROM courses');
     } else {
-        rows = await db.query(`SELECT * FROM users WHERE id='${value}' OR name='${value}' OR description='${value}'`);
+        rows = await db.query(`SELECT * FROM courses WHERE name REGEXP '${value}' OR description REGEXP '${value}'`);
     }
 
     res.json(rows[0]);

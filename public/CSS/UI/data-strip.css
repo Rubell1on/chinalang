@@ -36,7 +36,11 @@
     height: 100%;
 }
 
-.data-strip > .text {
+.data-strip > .text-wrapper {
+    height: 100%;
+}
+
+.data-strip > .text-wrapper > .text {
     color: white;
     font-size: 18px;
     position: relative;

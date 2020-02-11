@@ -37,6 +37,10 @@ class SingleCustomWindow {
     isTypeOf(type) {
         return this.toString().includes(type);
     }
+
+    getType() {
+        return this.toString();
+    }
 }
 
 class CustomWindow {
@@ -72,5 +76,9 @@ class CustomWindow {
 
     isTypeOf(type) {
         return this.toString().includes(type);
+    }
+
+    getType() {
+        return this.toString();
     }
 }

@@ -49,7 +49,7 @@ class DataTable extends SingleCustomWindow {
 class DataStrip extends CustomWindow {
     [Symbol.toStringTag] = 'dataStrip'
 
-    constructor(className, data) {
+    constructor(className, data, children = []) {
         super(className);
         this.data = data;
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
@@ -60,10 +60,13 @@ class DataStrip extends CustomWindow {
                         `<img src="${this.defaultImg}" alt="" srcset="">` +
                     '</div>' +
                 '</div>' +
-                `<div class="text"></div> ` +
+                `<div class="text-wrapper">
+                    <div class="text"></div>
+                </div> ` +
             '</div>';
 
         this.onDataChange = new CustomEvent();
+        this.children = children;
     }
 
     render(parent) {
@@ -71,6 +74,15 @@ class DataStrip extends CustomWindow {
 
         this.icon = this.object.find('.icon > img');
         this.text = this.object.find('div[class="text"]');
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(strip => {
+                strip.render(this.object);
+                callback(strip);
+            });
+        }
     }
 }
 
@@ -154,6 +166,17 @@ class Button extends CustomWindow {
         super(className);
 
         this.html = `<div class="button-big ${className}"></div>`;
+    }
+}
+
+class CheckboxButton extends SingleCustomWindow {
+    [Symbol.toStringTag] = 'checkbox-button'
+
+    constructor(className, enabled = false) {
+        super(className);
+
+        this.html = `<div class="button-big checkbox-button ${className}"></div>`;
+        this.enabled = enabled;
     }
 }
 
