@@ -141,12 +141,42 @@ app.get('/api/db/courses', async (req, res) => {
 
     let rows = [];
     if (value === '') {
-        rows = await db.query('SELECT * FROM courses');
+        // rows = await db.query('SELECT * FROM courses');
+        rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id');
     } else {
         rows = await db.query(`SELECT * FROM courses WHERE name REGEXP '${value}' OR description REGEXP '${value}'`);
     }
 
-    res.json(rows[0]);
+    const tempObject = rows[0].reduce((acc, row) => {
+        const id = row.id;
+
+        if (acc && !acc[id]) {
+            acc[id] = {
+                id,
+                name: row.name,
+                description: row.description,
+                classes: []
+            }
+        }
+        
+        if (row && row.class_name) {
+            const classInstance = {
+                id: row.class_id,
+                courseId: id,
+                name: row.class_name,
+                description: row.class_description,
+                files: row.files
+            }
+    
+            acc[id].classes.push(classInstance);
+        }
+
+        return acc;
+    }, {});
+
+    const combinedObject = Object.entries(tempObject).map(row => row[1], []);
+
+    res.json(combinedObject);
 })
 
 app.get('/test', async (req, res) => {

@@ -16,16 +16,16 @@ class DataTable extends SingleCustomWindow {
 
     removeChildren() {
         if (this.children.length > 0) {
-            this.children.forEach(strip => strip.destroy());
+            this.children.forEach(child => child.destroy());
             this.children = [];
         }
     }
 
     renderChildren(callback) {
         if (this.children.length > 0) {
-            this.children.forEach(strip => {
-                strip.render(this.wrapper);
-                callback(strip);
+            this.children.forEach(child => {
+                child.render(this.wrapper);
+                callback(child);
             });
         }
     }
@@ -78,9 +78,9 @@ class DataStrip extends CustomWindow {
 
     renderChildren(callback) {
         if (this.children.length > 0) {
-            this.children.forEach(strip => {
-                strip.render(this.object);
-                callback(strip);
+            this.children.forEach(child => {
+                child.render(this.object);
+                callback(child);
             });
         }
     }
@@ -107,9 +107,9 @@ class DataWindow extends SingleCustomWindow {
 
     renderChildren(callback) {
         if (this.children.length > 0) {
-            this.children.forEach(strip => {
-                strip.render(this.inputs);
-                callback(strip);
+            this.children.forEach(child => {
+                child.render(this.inputs);
+                callback(child);
             });
         }
     }
@@ -170,7 +170,7 @@ class Button extends CustomWindow {
 }
 
 class CheckboxButton extends SingleCustomWindow {
-    [Symbol.toStringTag] = 'checkbox-button'
+    [Symbol.toStringTag] = 'checkboxButton'
 
     constructor(className, enabled = false) {
         super(className);
@@ -181,7 +181,7 @@ class CheckboxButton extends SingleCustomWindow {
 }
 
 class SearchLine extends CustomWindow {
-    [Symbol.toStringTag] = 'search-line'
+    [Symbol.toStringTag] = 'searchLine'
     constructor(className) {
         super(className);
 
@@ -208,5 +208,24 @@ class Label extends CustomWindow {
 
     render(parent) {
         super.render(parent);
+    }
+}
+
+class ObjectWrapper extends CustomWindow {
+    [Symbol.toStringTag] = 'objectWrapper'
+    constructor(className, children = []) {
+        super(className);
+
+        this.html = `<div class="objects-wrapper ${className}"></div>`;
+        this.children = children;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.render(this.object);
+                callback(child);
+            });
+        }
     }
 }
