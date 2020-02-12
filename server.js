@@ -135,6 +135,19 @@ app.get('/api/db/updateUsers', async (req, res) => {
     res.send(200, `Данные пользователя ${sources.username} успешно обновлены!`);
 })
 
+app.get('/api/db/createUser', async (req, res) => {
+    const q = req.query;
+    const password = utils.rndSequence();
+    const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, JSON.stringify(q.courses)];
+    const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При обновлении данных произошла ошибка!');
+        });
+
+    res.send(201, `Пользователь ${q.username} успешно добавлен!`);
+})
+
 app.get('/api/db/courses', async (req, res) => {
     const q = req.query;
     const value = q.searchingValue;
@@ -142,9 +155,17 @@ app.get('/api/db/courses', async (req, res) => {
     let rows = [];
     if (value === '') {
         // rows = await db.query('SELECT * FROM courses');
-        rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id');
+        rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id')
+            .catch(e => {
+                console.error(e);
+                res.send(500, 'При отправке данных произошла ошибка!');
+            });
     } else {
-        rows = await db.query(`SELECT * FROM courses WHERE name REGEXP '${value}' OR description REGEXP '${value}'`);
+        rows = await db.query(`SELECT * FROM courses WHERE name REGEXP '${value}' OR description REGEXP '${value}'`)
+            .catch(e => {
+                console.error(e);
+                res.send(500, 'При отправке данных произошла ошибка!');
+            });
     }
 
     const tempObject = rows[0].reduce((acc, row) => {

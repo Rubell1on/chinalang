@@ -4,6 +4,7 @@ class request {
             $.ajax({
                 url,
                 type: 'GET',
+                dataType: 'json',
                 data,
                 success: (data) => resolve(data),
                 error: (error) => reject(error)
@@ -16,6 +17,7 @@ class request {
             $.ajax({
                 url,
                 type: 'POST',
+                dataType: 'json',
                 data,
                 success: (data) => resolve(data),
                 error: (error) => reject(error)

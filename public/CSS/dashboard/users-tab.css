@@ -102,6 +102,10 @@
     padding-top: 0;
 }
 
+.classes-table > .classes-table-data-wrapper >  div {
+    background: #a9a9a9;
+}
+
 .classes-table-data-wrapper >  div > .icon-wrapper {
     display: none;
 }

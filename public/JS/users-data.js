@@ -1,3 +1,107 @@
+async function createNewUser() {
+    const data = {
+        username: '',
+        role: '',
+        phone: '',
+        email: '',
+        skype: '',
+        classesLeft: 0,
+        courses: []
+    };
+
+    const dataWindow = new DataWindow('user-data-window', data);
+    dataWindow.render('');
+    const parent = dataWindow.inputs.attr('class');
+
+    const children = Object.entries(data).map(e => {
+        let input = undefined;
+        if (e[0] !== 'courses') {
+            input = new InputField(e[0]);
+            input.render(parent);
+            input.setIds(e[0]);
+            input.label.text(e[0]);
+            input.input.val(e[1]);
+        } else {
+            input = new DataStrip('courses', e[1]);
+            input.render(parent);
+            // input.icon.attr('src', '');
+            input.text.text(e[0]);
+            input.object.click(() => {
+                const controls = [
+                    new Label('courses-label', 'Список курсов'),
+                    new SearchLine('courses-search')
+                ];
+
+                const coursesTable = new DataTable('courses-table', controls);
+                coursesTable.wrapperClass = 'courses-wrapper'
+
+                const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
+                coursesWindow.render('');
+                coursesWindow.renderChildren(async windowChild => {
+                    switch (windowChild.getType()) {
+                        case '[object dataTable]':
+                            windowChild.renderControls();
+                            windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
+                            await windowChild.updateCoursesData(data.courses);
+
+                            break;
+                        
+                        case '[object button]':
+                            windowChild.object.text('Подтвердить выбор');
+                            windowChild.object.click(() => {
+                                dataWindow.children.find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(data.courses);
+                                coursesWindow.destroy();
+                            });
+
+                            break;
+                    }
+                });
+            });
+        }
+        
+        return input;
+    }, []);
+
+    const submit = new Button('submit');
+    submit.render(parent);
+    submit.object.text('Создать пользователя');
+    submit.object.click(async () => {
+        dataWindow.onSubmit.addListener(() => strip.onDataChange.raise());
+        const inputsData = getInputData();
+        await dataWindow.submit('/api/db/createUser', inputsData);
+    });
+
+    children.push(submit);           
+
+    dataWindow.children = children;
+
+    function getInputData() {
+        return dataWindow.children.reduce((acc, curr) => {
+            let key = '';
+            switch(curr.getType()) {
+                case '[object inputField]': 
+                    key = curr.className;
+                    acc[key] = curr.input.val();
+                    // if (value != data[key]) acc[key] = value;
+    
+                    break;
+                
+                case '[object dataStrip]':
+                    // if (curr && curr.compareData) {
+                    key = curr.className;
+                    //     const value = curr.compareData;
+                    //     if (value !== curr.data) acc[key] = value;
+                    // }
+                    acc[key] = data.courses;
+    
+                    break;
+            }
+    
+            return acc;
+        }, {});
+    }
+}
+
 DataTable.prototype.updateCoursesData = async function(userCourses) {
     this.removeChildren();
     const searchingValue = this.controls[1].input.val();
@@ -209,21 +313,17 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
     }, {});
 }
 
-DataWindow.prototype.submit = async function() {
-    const diffs = this.checkDifferences();
-    const keys = Object.keys(diffs);
-    if (keys.length !== 0) {
-        const res = await request.get('/api/db/updateUsers', {sources: this.data, diffs})
-            .catch(e => {
-                new NotificationError('err-window', e.responseText).render();
-                console.log(e);
-            });
+DataWindow.prototype.submit = async function(url, data) {
+    const res = await request.get(url, data)
+        .catch(e => {
+            new NotificationError('err-window', e.responseText).render();
+            console.log(e);
+        });
 
-        new NotificationSuccess('user-registered', res).render();
-        this.onSubmit.raise();
-        console.log(res);
-        this.destroy();
-    }
+    new NotificationSuccess('user-registered', res).render();
+    this.onSubmit.raise();
+    console.log(res);
+    this.destroy();
 }
 
 DataTable.prototype.updateData = async function() {
@@ -295,7 +395,13 @@ DataTable.prototype.updateData = async function() {
             submit.object.text('Применить');
             submit.object.click(async () => {
                 dataWindow.onSubmit.addListener(() => strip.onDataChange.raise());
-                await dataWindow.submit();
+
+                const diffs = dataWindow.checkDifferences();
+                const keys = Object.keys(diffs);
+
+                if (keys.length !== 0) {
+                    await dataWindow.submit('/api/db/updateUsers', {sources: dataWindow.data, diffs});
+                }
             });
 
             children.push(submit);           
@@ -317,8 +423,10 @@ async function renderPage() {
     userWindow.render('content-window');
     userWindow.renderControls();
     userWindow.updateData();
-    userWindow.controls[1].object.text('+');
-    userWindow.controls[1].object.attr('title', 'Добавить нового пользователя');
+    const addNewUser = userWindow.controls.find(c => c.isTypeOf('button'));
+    addNewUser.object.text('+');
+    addNewUser.object.attr('title', 'Добавить нового пользователя');
+    addNewUser.object.click(async () => createNewUser());
     userWindow.controls[2].input.change(async () => {
         await userWindow.updateData();
     });
