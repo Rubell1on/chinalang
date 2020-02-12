@@ -19,6 +19,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                     wChildren.text.text(wChildren.data.name);
                     if (userCourses == false) {
                         wChildren.renderChildren(s => {
+                            s.object.css('background', '#3cb371');
                             s.object.text('Подписать');
                             s.object.click(() => s.click(wChildren.data, userCourses));
                         });
@@ -31,6 +32,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                             if (userCourses[i].id === id) {
                                 wChildren.renderChildren(s => {
                                     s.enabled = true;
+                                    s.object.css('background', '#FB2267');
                                     s.object.text('Отписать');
                                     s.object.click(() => s.click(wChildren.data, userCourses));
                                 });
@@ -40,6 +42,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                         }
             
                         if (flag) wChildren.renderChildren(s => {
+                            s.object.css('background', '#3cb371');
                             s.object.text('Подписать');
                             s.object.click(() => s.click(wChildren.data, userCourses));
                         });
@@ -53,6 +56,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                         const course = userCourses.find(c => c.id === tChildren.data.courseId);
                         if (course && course.classes == false) {
                             tChildren.renderChildren(child => {
+                                child.object.css('background', '#3cb371');
                                 child.object.text('Открыть');
                                 child.object.click(() => child.changeClassesSubscription(tChildren.data, userCourses));
                             });
@@ -66,6 +70,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                                     if (course.classes[i].id === id) {
                                         tChildren.renderChildren(child => {
                                             child.enabled = true;
+                                            child.object.css('background', '#FB2267');
                                             child.object.text('Закрыть');
                                             child.object.click(() => child.changeClassesSubscription(tChildren.data, userCourses));
                                         });
@@ -76,6 +81,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                             }
                 
                             if (flag) tChildren.renderChildren(child => {
+                                child.object.css('background', '#3cb371');
                                 child.object.text('Открыть');
                                 child.object.click(() => child.changeClassesSubscription(tChildren.data, userCourses));
                             });
@@ -104,6 +110,7 @@ CheckboxButton.prototype.click = function(course, userCourses) {
             if (userCourses[i].id === course.id) {
                 userCourses.splice(i, 1);
                 this.enabled = false;
+                this.object.css('background', '#3cb371');
                 this.object.text('Подписать');
                 break;
             }
@@ -118,6 +125,7 @@ CheckboxButton.prototype.click = function(course, userCourses) {
 
         if (flag) {
             userCourses.push({id: course.id, classes: []});
+            this.object.css('background', '#FB2267');
             this.object.text('Отписать');
             this.enabled = true;
         }
@@ -136,6 +144,7 @@ CheckboxButton.prototype.changeClassesSubscription = function(lesson, userCourse
                     if (userCourses[i].classes[j].id === lesson.id) {
                         userCourses[i].classes.splice(j, 1);
                         this.enabled = false;
+                        this.object.css('background', '#3cb371');
                         this.object.text('Открыть');
 
                         break;
@@ -168,6 +177,7 @@ CheckboxButton.prototype.changeClassesSubscription = function(lesson, userCourse
 
         if (flag) {
             userCourses.find(c => c.id === lesson.courseId).classes.push(lesson);
+            this.object.css('background', '#FB2267');
             this.object.text('Закрыть');
             this.enabled = true;
         }

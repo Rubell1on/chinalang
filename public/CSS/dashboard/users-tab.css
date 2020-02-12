@@ -42,11 +42,12 @@
     top: 50%;
     transform: translateY(-50%);
     border-radius: 5px;
+    transition: none;
 }
 
-.data-wrapper > .objects-wrapper > .data > .subscribe:hover {
+/* .data-wrapper > .objects-wrapper > .data > .subscribe:hover {
     background: none;
-}
+} */
 
 .courses-data-window {
     min-height: 600px;
@@ -87,6 +88,8 @@
     top: 50%;
     transform: translateY(-50%);
     border-radius: 5px;
+    transition: none;
+    /* background: #3cb371; */
 }
 
 .classes-table {
