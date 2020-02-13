@@ -138,11 +138,11 @@ app.get('/api/db/updateUsers', async (req, res) => {
 app.get('/api/db/createUser', async (req, res) => {
     const q = req.query;
     const password = utils.rndSequence();
-    const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, JSON.stringify(q.courses)];
+    const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
     const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При обновлении данных произошла ошибка!');
+            res.send(500, 'При создании пользователя произошла ошибка!');
         });
 
     res.send(201, `Пользователь ${q.username} успешно добавлен!`);

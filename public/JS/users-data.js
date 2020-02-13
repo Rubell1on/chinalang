@@ -92,7 +92,7 @@ async function createNewUser() {
                     //     const value = curr.compareData;
                     //     if (value !== curr.data) acc[key] = value;
                     // }
-                    acc[key] = data.courses;
+                    acc[key] = JSON.stringify(data.courses);
     
                     break;
             }
@@ -280,7 +280,8 @@ CheckboxButton.prototype.changeClassesSubscription = function(lesson, userCourse
         }
 
         if (flag) {
-            userCourses.find(c => c.id === lesson.courseId).classes.push(lesson);
+            // userCourses.find(c => c.id === lesson.courseId).classes.push(lesson);
+            userCourses.find(c => c.id === lesson.courseId).classes.push({id: lesson.id, courseId: lesson.courseId});
             this.object.css('background', '#FB2267');
             this.object.text('Закрыть');
             this.enabled = true;
