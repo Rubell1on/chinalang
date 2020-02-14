@@ -51,10 +51,6 @@
     background: none;
 } */
 
-.courses-data-window {
-    min-height: 600px;
-}
-
 .courses-table {
     height: calc(100% - 70px);
     margin-bottom: 20px;

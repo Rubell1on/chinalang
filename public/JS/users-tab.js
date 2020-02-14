@@ -108,9 +108,9 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
     const data = await request.get('/api/db/courses', { searchingValue });
     // this.children = data.map(row => new DataStrip(row.name.split(' ').join(''), row, [new CheckboxButton('subscribe')]), []);
     this.children = data.map(row => {
-        const rowName = row.name.replace(' ', '');
+        const rowName = row.name.replace(/ /g, '');
         const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
-        const classes = row.classes.map(r => new DataStrip(r.name.replace(' ', ''), r, [new CheckboxButton('subscribe')]));
+        const classes = row.classes.map(r => new DataStrip(r.name.replace(/ /g, ''), r, [new CheckboxButton('subscribe')]));
         const classesTable = new DataTable('classes-table', [], classes);
 
         return new ObjectWrapper(`${rowName}-strip-wrapper`, [courseStrip, classesTable]);
