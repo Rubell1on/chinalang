@@ -20,7 +20,7 @@ app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 
-app.listen(3000, '192.168.1.133', async () => {
+app.listen(3000, '192.168.0.106', async () => {
     const result = await db.connect().catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
     console.log('Подключение к серверу MySQL успешно установлено')
     console.log('Сервер запущен');
@@ -99,6 +99,9 @@ app.get('/dashboard/:section', (req, res) => {
     switch(section) {
         case 'users':
             res.render('dashboard/admin/users');
+            break;
+        case 'courses':
+            res.render('dashboard/admin/courses');
             break;
         default:
             res.send(404);
@@ -198,6 +201,31 @@ app.get('/api/db/courses', async (req, res) => {
     const combinedObject = Object.entries(tempObject).map(row => row[1], []);
 
     res.json(combinedObject);
+})
+
+app.get('/api/db/createCourse', async (req, res) => {
+    const q = req.query;
+    const data = [q.name, q.description];
+
+    await db.query(`INSERT INTO courses(name, description) VALUES(?, ?)`, data)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При создании курса произошла ошибка!');
+        });
+    
+    res.send(201, 'Курс успешно создан!');
+})
+
+app.get('/api/db/removeCourse', async (req, res) => {
+    const q = req.query;
+
+    await db.query(`DELETE FROM courses WHERE id = ${q.id}`)   
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При удалении курса произошла ошибка!');
+        });
+
+    res.send(201, 'Курс успешно удален!');
 })
 
 app.get('/test', async (req, res) => {

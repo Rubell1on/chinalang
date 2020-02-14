@@ -3,11 +3,14 @@
     min-height: unset;
 }
 
-.submit {
-    margin-top: 10px;
+.courses-search {
+    background: white;
+    width: calc(100% - 35px);
+    float: left;
+    border-radius: 5px;
 }
 
-.add-new-user {
+.add-new-course {
     width: 30px;
     height: 30px;
     padding: 0;
@@ -17,22 +20,8 @@
     line-height: 30px;
 }
 
-.users-search {
-    width: calc(100% - 35px);
-    float: left;
-}
-
-.courses {
-    height: 40px;
-    background: #529AE4;
-}
-
-.courses > .icon-wrapper {
+.data-wrapper > .objects-wrapper > div > .icon-wrapper {
     display: none;
-}
-
-.courses-search > input {
-    background: #F1F1F1;
 }
 
 .data-wrapper > .objects-wrapper > .data > .subscribe {
@@ -45,40 +34,6 @@
     transform: translateY(-50%);
     border-radius: 5px;
     transition: none;
-}
-
-/* .data-wrapper > .objects-wrapper > .data > .subscribe:hover {
-    background: none;
-} */
-
-.courses-data-window {
-    min-height: 600px;
-}
-
-.courses-table {
-    height: calc(100% - 70px);
-    margin-bottom: 20px;
-}
-
-.courses-table > .data-wrapper {
-    margin-top: 10px;
-    padding-top: 0px;
-}
-
-.data-wrapper > .objects-wrapper > .classes-table {
-    display: none;
-}
-
-.data-wrapper > .objects-wrapper > div > .icon-wrapper {
-    display: none;
-}
-
-.data-wrapper > div > .text {
-    text-overflow: ellipsis;
-}
-
-.submit-courses {
-    margin: 0 auto;
 }
 
 .data-wrapper > .data > .subscribe {
@@ -114,4 +69,8 @@
 
 .classes-table-data-wrapper > div > .text {
     text-overflow: ellipsis;
+}
+
+.submit-course {
+    margin: 0 auto;
 }

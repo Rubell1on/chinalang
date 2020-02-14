@@ -159,6 +159,26 @@ class InputField extends CustomWindow {
     }
 }
 
+class TextArea extends InputField {
+    [Symbol.toStringTag] = 'textArea'
+
+    constructor(className) {
+        super(className);
+
+        this.html = 
+            `<div class="text-field ${this.className}">` +
+                '<label for="username">Имя</label>' +
+                '<textarea type="text" id="username" required></textarea>' +
+            '</div>';
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.input = this.object.find('textarea');
+    }
+}
+
 class Button extends CustomWindow {
     [Symbol.toStringTag] = 'button'
 
