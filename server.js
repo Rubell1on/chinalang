@@ -125,11 +125,7 @@ app.get('/api/db/users', async (req, res) => {
 
 app.get('/api/db/updateUsers', async (req, res) => {
     const { diffs, sources } = req.query;
-    const template = Object.entries(diffs).reduce((acc, curr) => {
-        acc.push(`${curr[0]} = '${curr[1]}'`);
-        return acc;
-    }, [])
-    .join(', ');
+    const template = utils.obj2strArr(diffs).join(', ');
     const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
         .catch(e => {
             console.error(e);
@@ -214,6 +210,19 @@ app.get('/api/db/createCourse', async (req, res) => {
         });
     
     res.send(201, 'Курс успешно создан!');
+})
+
+app.get('/api/db/updateCourse', async (req, res) => {
+    const {data, source} = req.query;
+
+    const template = utils.obj2strArr(data).join(', ');
+    const rows = await db.query(`UPDATE courses SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При обновлении курса произошла ошибка!');
+        });
+
+    res.send(201, 'Курс успешно обновлен!');
 })
 
 app.get('/api/db/removeCourse', async (req, res) => {

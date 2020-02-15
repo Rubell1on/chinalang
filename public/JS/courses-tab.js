@@ -19,12 +19,14 @@ DataTable.prototype.updateCoursesData = async function() {
                     wChildren.text.text(wChildren.data.name);
                     wChildren.addLesson = new Button('add-new-class', '+');
                     wChildren.addLesson.prepandRender(wChildren.object);
+                    wChildren.object.click(async () => {
+                        await this.createNewCourse(wChildren.data);
+                        // this.updateCoursesData();
+                    });
                     wChildren.addLesson.object.click(() => {
-                        console.log('hello');
-                        wChildren.createNewLesson();
+                        wChildren.createNewClass();
                         wChildren.onDataChange.addListener(() => this.updateCoursesData());
                     });
-                    // if (userCourses == false) {
                     wChildren.renderChildren(s => {
                         s.object.text('-');
                         s.object.click(() => {
@@ -76,6 +78,7 @@ DataTable.prototype.updateCoursesData = async function() {
 
                     break;
                 }
+            wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
         });
     });
 }
@@ -93,7 +96,7 @@ DataWindow.prototype.submit = async function(url, data) {
     this.destroy();
 }
 
-DataTable.prototype.createNewCourse = async function() {
+DataTable.prototype.createNewCourse = async function(data = {}) {
     const children = [
         new Label('course-window-label', 'Создать новый курс'),
         new InputField('course-name'),
@@ -105,31 +108,72 @@ DataTable.prototype.createNewCourse = async function() {
     courseWindow.render('');
     courseWindow.renderChildren(() => {});
     const nameField = courseWindow.children[1];
-    nameField.label.text('Название курса');
     const descriptionField = courseWindow.children[2];
-    descriptionField.label.text('Описание курса');
     const submit = courseWindow.children[3].object;
+    nameField.label.text('Название курса');
+    descriptionField.label.text('Описание курса');
     submit.text('Создать');
+
+    if (data) {
+        nameField.input.val(data.name);
+        descriptionField.input.val(data.description);
+    }
     
     submit.click(async () => {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
-            const res = await request.get('/api/db/createCourse', {name, description: descriptionField.input.val()})
+            let res 
+            if (!Object.keys(data).length) {
+                res = await request.get('/api/db/createCourse', {name, description: descriptionField.input.val()})
                 .catch(e => {
                     new NotificationError('err-window', e.responseText).render();
                     console.log(e);
                 });
-            this.updateCoursesData();
-            new NotificationSuccess('success-window', res).render();
-            courseWindow.destroy();
+
+                this.updateCoursesData();
+                new NotificationSuccess('success-window', res).render();
+                courseWindow.destroy();
+            } else {
+                const newData = {
+                    name: nameField.input.val(),
+                    description: descriptionField.input.val()
+                };
+
+                const diffData = diff(data, newData);
+                if (Object.keys(diffData).length) {
+                    res = await request.get('/api/db/updateCourse', {source: data ,data: diffData})
+                        .catch(e => {
+                            new NotificationError('err-window', e.responseText).render();
+                            console.log(e);
+                        });
+                    
+                    this.updateCoursesData();
+                    new NotificationSuccess('success-window', res).render();
+                    courseWindow.destroy();
+                } else {
+                    new NotificationSuccess('success-window', 'Данные остались без изменений!').render();
+                }
+            }
+            
         } else {
             new NotificationError('err-window', 'Небходимо заполнить поле с названием курса').render();
             nameField.input.focus();
         }   
     });
+
+    function diff(first, second) {
+        return Object.entries(second).reduce((acc, curr) => {
+            const key = curr[0];
+            const value = curr[1];
+
+            if (first[key] !== value) acc[key] = value;
+
+            return acc;
+        }, {})
+    }
 }
 
-DataStrip.prototype.createNewLesson = async function() {
+DataStrip.prototype.createNewClass = async function() {
     const children = [
         new Label('course-window-label', 'Создать новый урок'),
         new InputField('lesson-name'),

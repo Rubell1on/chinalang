@@ -39,5 +39,12 @@ module.exports = {
     },
     rndSequence: function rndSequence(length = 6) {
         return Math.random().toString(36).substring(length)
+    },
+
+    obj2strArr: function (object) {
+        return Object.entries(object).reduce((acc, curr) => {
+            acc.push(`${curr[0]} = '${curr[1]}'`);
+            return acc;
+        }, []);
     }
 }
