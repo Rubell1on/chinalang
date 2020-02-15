@@ -17,19 +17,34 @@ DataTable.prototype.updateCoursesData = async function() {
             switch(wChildren.getType()) {
                 case '[object dataStrip]':
                     wChildren.text.text(wChildren.data.name);
+                    wChildren.addLesson = new Button('add-new-class', '+');
+                    wChildren.addLesson.prepandRender(wChildren.object);
+                    wChildren.addLesson.object.click(() => {
+                        console.log('hello');
+                        wChildren.createNewLesson();
+                        wChildren.onDataChange.addListener(() => this.updateCoursesData());
+                    });
                     // if (userCourses == false) {
-                        wChildren.renderChildren(s => {
-                            s.object.css('background', '#3cb371');
-                            s.object.text('-');
-                            s.object.click(async () => {
+                    wChildren.renderChildren(s => {
+                        s.object.text('-');
+                        s.object.click(() => {
+                            const window = new YesNoWindow('yes-no-window', 'Вы уверены?', 'Удалить выбранный курс?');
+                            window.render('');
+                            window.yes.click(async () => {
                                 const res = await request.get('/api/db/removeCourse', wChildren.data).catch(e => {
                                     new NotificationError('err-window', e).render();
                                     console.log(e);
                                 });
                                 new NotificationSuccess('success-window', res).render();
                                 this.updateCoursesData();
+                                window.destroy();
+                            });
+
+                            window.no.click(() => {
+                                 window.destroy();
                             });
                         });
+                    });
 
                     break;
 
@@ -37,55 +52,32 @@ DataTable.prototype.updateCoursesData = async function() {
                     wChildren.renderChildren(tChildren => {
                         tChildren.text.text(tChildren.data.name);
                         tChildren.renderChildren(child => {
-                            child.object.css('background', '#3cb371');
-                            child.object.text('Открыть');
-                            child.object.click(() => child.changeClassesSubscription(tChildren.data, userCourses));
+                            child.object.text('-');
+                            child.object.click(() => {
+                                const window = new YesNoWindow('yes-no-window', 'Вы уверены?', 'Удалить выбранный урок?');
+                                window.render('');
+                                window.yes.click(async () => {
+                                    const res = await request.get('/api/db/removeClass', tChildren.data).catch(e => {
+                                        new NotificationError('err-window', e).render();
+                                        console.log(e);
+                                    });
+                                    new NotificationSuccess('success-window', res).render();
+                                    this.updateCoursesData();
+                                    window.destroy();
+                                });
+
+                                window.no.click(() => {
+                                    window.destroy();
+                                });
+                            })
+                            // child.object.click(() => child.changeClassesSubscription(tChildren.data, userCourses));
                         });
                     });
-
-                    // wrapper.children.find(c => c.isTypeOf('dataStrip')).object.click(() => {
-                    //     const strip = wChildren.object;
-                    //     if (strip.css('display') == 'none') {
-                    //         strip.css('display', 'block');
-                    //     } else {
-                    //         strip.css('display', 'none');
-                    //     }
-                    // });
 
                     break;
                 }
         });
     });
-}
-
-CheckboxButton.prototype.click = function(course, userCourses) {
-    let flag = true;
-
-    if (this.enabled) {
-        for (let i = 0; i < userCourses.length; i++) {
-            if (userCourses[i].id === course.id) {
-                userCourses.splice(i, 1);
-                this.enabled = false;
-                this.object.css('background', '#3cb371');
-                this.object.text('Подписать');
-                break;
-            }
-        }
-    } else {
-        for (let i = 0; i < userCourses.length; i++) {
-            if (userCourses[i].id === course.id) {
-                flag = false;
-                break;
-            }
-        }
-
-        if (flag) {
-            userCourses.push({id: course.id, classes: []});
-            this.object.css('background', '#FB2267');
-            this.object.text('Отписать');
-            this.enabled = true;
-        }
-    }
 }
 
 DataWindow.prototype.submit = async function(url, data) {
@@ -135,8 +127,42 @@ DataTable.prototype.createNewCourse = async function() {
             nameField.input.focus();
         }   
     });
+}
+
+DataStrip.prototype.createNewLesson = async function() {
+    const children = [
+        new Label('course-window-label', 'Создать новый урок'),
+        new InputField('lesson-name'),
+        new TextArea('lesson-description'),
+        new Button('submit-lesson')
+    ];
+
+    const lessonWindow = new DataWindow('lesson-window', [], children);
+    lessonWindow.render('');
+    lessonWindow.renderChildren(() => {});
+    const nameField = lessonWindow.children[1];
+    nameField.label.text('Название урока');
+    const descriptionField = lessonWindow.children[2];
+    descriptionField.label.text('Описание урока');
+    const submit = lessonWindow.children[3].object;
+    submit.text('Создать');
     
-    
+    submit.click(async () => {
+        const name = nameField.input.val();
+        if (!name.isEmpty()) {
+            const res = await request.get('/api/db/createClass', {courseId: this.data.id, name, description: descriptionField.input.val()})
+                .catch(e => {
+                    new NotificationError('err-window', e.responseText).render();
+                    console.log(e);
+                });
+            this.onDataChange.raise();
+            new NotificationSuccess('success-window', res).render();
+            lessonWindow.destroy();
+        } else {
+            new NotificationError('err-window', 'Небходимо заполнить поле с названием курса').render();
+            nameField.input.focus();
+        }   
+    });
 }
 
 

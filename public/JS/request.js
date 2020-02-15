@@ -6,7 +6,7 @@ class request {
                 type: 'GET',
                 dataType: 'json',
                 data,
-                success: (data) => resolve(data),
+                success: response => resolve(response),
                 error: (error) => reject(error)
             });
         });
@@ -19,7 +19,7 @@ class request {
                 type: 'POST',
                 dataType: 'json',
                 data,
-                success: (data) => resolve(data),
+                success: response => resolve(response),
                 error: (error) => reject(error)
             });
         });

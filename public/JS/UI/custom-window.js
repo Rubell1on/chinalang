@@ -7,6 +7,21 @@ class SingleCustomWindow {
 
     html = ''
 
+    prepandRender(parent = '') {
+        
+        if (!this.isExisting()) {
+            if (typeof parent === 'string') {
+                if (parent.isEmpty()) {
+                    this.object = $('body').prepand(this.html).find(`.${this.className}`); 
+                } else {
+                    this.object = $(`.${parent}`).prepand(this.html).find(`.${this.className}`);
+                }
+            } else this.object = $(parent).prepand(this.html).find(`.${this.className}`);
+        } else {
+            console.log(`${this.className} already created!`)
+        }
+    }
+
     render(parent = '') {
         
         if (!this.isExisting()) {
@@ -51,6 +66,16 @@ class CustomWindow {
     }
 
     html = ''
+
+    prepandRender(parent) {
+        if (typeof parent === 'string') {
+            if (parent.isEmpty()) {
+                this.object = $('body').prepend(this.html).find(`.${this.className}`); 
+            } else {
+                this.object = $(`.${parent}`).prepend(this.html).find(`.${this.className}`);
+            }
+        } else this.object = $(parent).prepend(this.html).find(`.${this.className}`);
+    }
 
     render(parent) {
         if (typeof parent === 'string') {

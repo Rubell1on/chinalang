@@ -219,13 +219,37 @@ app.get('/api/db/createCourse', async (req, res) => {
 app.get('/api/db/removeCourse', async (req, res) => {
     const q = req.query;
 
-    await db.query(`DELETE FROM courses WHERE id = ${q.id}`)   
+    await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
         .catch(e => {
             console.error(e);
             res.send(500, 'При удалении курса произошла ошибка!');
         });
 
     res.send(201, 'Курс успешно удален!');
+})
+
+app.get('/api/db/createClass', async (req, res) => {
+    const q = req.query;
+    const data = [q.courseId, q.name, q.description]
+    await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При создании урока произошла ошибка!');
+        });
+
+    res.send(201, 'Урок успешно создан!');
+})
+
+app.get('/api/db/removeClass', async (req, res) => {
+    const q = req.query;
+
+    await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При удалении урока произошла ошибка!');
+        });
+
+    res.send(200, 'Урок успешно удален!');
 })
 
 app.get('/test', async (req, res) => {

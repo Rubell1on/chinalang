@@ -182,10 +182,10 @@ class TextArea extends InputField {
 class Button extends CustomWindow {
     [Symbol.toStringTag] = 'button'
 
-    constructor(className) {
+    constructor(className, value = '') {
         super(className);
 
-        this.html = `<div class="button-big ${className}"></div>`;
+        this.html = `<div class="button-big ${className}">${value}</div>`;
     }
 }
 
@@ -246,6 +246,42 @@ class ObjectWrapper extends CustomWindow {
                 child.render(this.object);
                 callback(child);
             });
+        }
+    }
+}
+
+class YesNoWindow extends CustomWindow {
+    [Symbol.toStringTag] = 'YesNoWindow'
+
+    constructor(className, title = '', info = '', ) {
+        super(className);
+        const name = 'yes-no-window';
+
+        this.children = [
+            new Label(`${name}-title`, title),
+            new Label(`${className}-info`, info),
+            new ObjectWrapper(`${name}-controls`, [new Button(`${name}-yes`, 'Да'), new Button(`${name}-no`, 'Нет')])
+        ];
+    }
+
+    render(parent) {
+        this.object = new DataWindow(this.className, [], this.children);
+        this.object.render(parent);
+        this.object.renderChildren(child => {
+            switch(child.getType()) {
+                case '[object objectWrapper]':
+                    child.renderChildren(c => {});
+                    break;
+            }
+        });
+
+        this.yes = this.object.children[2].children[0].object;
+        this.no = this.object.children[2].children[1].object;
+    }
+
+    destroy() {
+        if (!$.isEmptyObject(this.object)) {
+            this.object.destroy();
         }
     }
 }
