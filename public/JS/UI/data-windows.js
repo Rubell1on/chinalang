@@ -285,3 +285,21 @@ class YesNoWindow extends CustomWindow {
         }
     }
 }
+
+class FileInput extends CustomWindow {
+    [Symbol.toStringTag] = 'fileInput'
+
+    constructor(className) {
+        super(className);
+
+        this.html = `<div class="fileInput-wrapper ${this.className}">
+                        <input type="file" name="fileData" class="fileInput">
+                    </div>`;
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.input = this.object.find('input[type="file"]');
+    }
+}

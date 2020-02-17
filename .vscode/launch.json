@@ -25,7 +25,8 @@
                 "refresh_token": "1//0chW7y3Bt3iQgCgYIARAAGAwSNwF-L9IrsKxmHxPBncsEWMoyUES7AYiBqHfl0nIltnkxFalZgBitXKLmgIoFfy3xkm_9zu8iIlI",
                 "scope": "https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly",
                 "token_type": "Bearer",
-                "expiry_date": "1581145197994"
+                "expiry_date": "1581145197994",
+                "yandex_token": "AgAAAAA780DaAAYO5ajiR1E6RUCWn_GlMAaH5hA"
             }
         },
         {

@@ -105,12 +105,13 @@ async function createNewUser() {
 DataTable.prototype.updateCoursesData = async function(userCourses) {
     this.removeChildren();
     const searchingValue = this.controls[1].input.val();
-    const data = await request.get('/api/db/courses', { searchingValue });
+    const res = await request.get('/api/db/courses', { searchingValue });
+    const data = res.response;
     // this.children = data.map(row => new DataStrip(row.name.split(' ').join(''), row, [new CheckboxButton('subscribe')]), []);
     this.children = data.map(row => {
-        const rowName = row.name.replace(/ /g, '');
+        const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
         const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
-        const classes = row.classes.map(r => new DataStrip(r.name.replace(/ /g, ''), r, [new CheckboxButton('subscribe')]));
+        const classes = row.classes.map(r => new DataStrip(r.name.replace(/[ .,&?*$;@\(\)]/g, ''), r, [new CheckboxButton('subscribe')]));
         const classesTable = new DataTable('classes-table', [], classes);
 
         return new ObjectWrapper(`${rowName}-strip-wrapper`, [courseStrip, classesTable]);
@@ -330,7 +331,8 @@ DataWindow.prototype.submit = async function(url, data) {
 DataTable.prototype.updateData = async function() {
     this.removeChildren();
     const searchingValue = this.controls[2].input.val();
-    const data = await request.get('/api/db/users', { searchingValue });
+    const res = await request.get('/api/db/users', { searchingValue });
+    const data = res.response;
     this.children = data.map(row => new DataStrip(row.username, row), []);
     this.renderChildren(strip => {
         strip.text.text(strip.data.username);

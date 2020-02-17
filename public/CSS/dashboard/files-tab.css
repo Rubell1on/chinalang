@@ -1,0 +1,57 @@
+.overlay-window {
+    height: unset;
+    min-height: unset;
+}
+
+.add-new-file {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    float: left;
+    margin-right: 5px;
+    font-weight: bold;
+    line-height: 30px;
+    background: #3cb371;
+}
+
+.files-search {
+    width: calc(100% - 35px);
+    float: left;
+}
+
+.data-strip > .icon-wrapper {
+    display: none;
+}
+
+.data-wrapper .data-strip > .button-big {
+    float: right;
+    margin-right: 10px;
+    padding: 6px;
+    font-size: 18px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 5px;
+    transition: none;
+    background: #FB2267;
+    width: 30px;
+    height: 30px;
+    line-height: 15px;
+}
+
+.submit-file {
+    margin: 0 auto;
+}
+
+.objects-wrapper {
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.objects-wrapper > div {
+    float: left;
+}
+
+.yes-no-window-title {
+    font-weight: bold;
+}

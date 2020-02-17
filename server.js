@@ -3,9 +3,10 @@ const app = express();
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
 const Enum = require('./public/JS/enum');
+const bodyParser = require('body-parser');
 const envVars = new utils.EnvVars();
 const gAPI = require('./public/JS/GoogleAPI');
-
+const yAPI = require('./public/JS/yandexApi');
 const dbSettings = envVars.getDBSettings();
 const db = mysql.createConnection(dbSettings).promise();
 
@@ -13,12 +14,16 @@ const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
 const gmailClient = new gAPI.GmailAPI(credentials, token);
 
+const yandexToken = envVars.getYandexAPIToken().token;
+const yandexDisk = new yAPI(yandexToken);
+
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.listen(3000, '192.168.0.106', async () => {
     const result = await db.connect().catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
@@ -103,6 +108,11 @@ app.get('/dashboard/:section', (req, res) => {
         case 'courses':
             res.render('dashboard/admin/courses');
             break;
+
+        case 'files':
+            res.render('dashboard/admin/files');
+            break;
+
         default:
             res.send(404);
             break;
@@ -261,6 +271,66 @@ app.get('/api/db/removeClass', async (req, res) => {
     res.send(200, 'Урок успешно удален!');
 })
 
-app.get('/test', async (req, res) => {
+app.route('/api/db/files')
+    .get(async (req, res) => {
+        const value = req.query.searchingValue;
+
+        let rows;
+        if (!value) rows = await db.query('SELECT * FROM files');
+        else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`);
+
+        res.send(200, rows[0]);
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+
+        const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`);
+        res.send(201);
+    })
+    .delete(async (req, res) => {
+        const q = req.body;
+
+        const response = await yandexDisk.deleteData(q.link);
+        const statusCode = response.res.statusCode;
+        if (statusCode === 204) {
+            await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`);
+            res.send(204);
+        } else {
+            res.send(statusCode);
+        }
+    })
+    .put(async (req, res) => {
+        const q = req.body;
+        const root = 'chinalang';
+        const filesList = await yandexDisk.getList();
+        const dirList = yandexDisk.getDirList(filesList);
+    
+        if (!dirList.includes(root)) {
+            await yandexDisk.createFolder(root);
+        }
+
+        const name = utils.translate(q.name);
+        
+        const filePath = `${root}/${name}`;
+        const link = await yandexDisk.getUploadLink(filePath);
+        res.status(200).json({data: link.body, path: filePath});
+    })
+
+app.get('/test', (req, res) => {
+    res.render('inputTest/index');
+})
+
+app.post('/test', async (req, res) => {
+    const q = req.body;
+    const root = 'chinalang';
+    const filesList = await yandexDisk.getList();
+    const dirList = yandexDisk.getDirList(filesList);
+
+    if (!dirList.includes(root)) {
+        await yandexDisk.createFolder(root);
+    }
+
+    const link = await yandexDisk.getUploadLink(`${root}/${q.name}`);
+    res.status(200).json(link.body);
     console.log();
 })
