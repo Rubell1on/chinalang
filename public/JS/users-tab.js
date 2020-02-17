@@ -126,7 +126,10 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                         wChildren.renderChildren(s => {
                             s.object.css('background', '#3cb371');
                             s.object.text('Подписать');
-                            s.object.click(() => s.click(wChildren.data, userCourses));
+                            s.object.click(e => {
+                                s.click(wChildren.data, userCourses);
+                                e.stopPropagation();
+                            });
                         });
                     } else {
                         const id = wChildren.data.id;
@@ -139,7 +142,10 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                                     s.enabled = true;
                                     s.object.css('background', '#FB2267');
                                     s.object.text('Отписать');
-                                    s.object.click(() => s.click(wChildren.data, userCourses));
+                                    s.object.click(e => {
+                                        s.click(wChildren.data, userCourses);
+                                        e.stopPropagation();
+                                    });
                                 });
                                 flag = false;
                                 break;
@@ -149,7 +155,10 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                         if (flag) wChildren.renderChildren(s => {
                             s.object.css('background', '#3cb371');
                             s.object.text('Подписать');
-                            s.object.click(() => s.click(wChildren.data, userCourses));
+                            s.object.click(e => {
+                                s.click(wChildren.data, userCourses);
+                                e.stopPropagation();
+                            });
                         });
                     }
 

@@ -50,8 +50,21 @@
 
 .objects-wrapper > div {
     float: left;
+    margin-right: 10px;
+    padding: 6px;
+    font-size: 18px;
+    position: relative;
+    border-radius: 5px;
+    transition: none;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-.yes-no-window-title {
+.objects-wrapper > div:first-child {
+    margin-right: 5px;
+}
+
+.inputs > .file-window-label, .yes-no-window-title {
     font-weight: bold;
+    font-size: 20px;
 }

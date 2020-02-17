@@ -120,3 +120,8 @@
 .submit-course, .submit-class {
     margin: 0 auto;
 }
+
+.inputs > .course-window-label {
+    font-weight: bold;
+    font-size: 20px;
+}
