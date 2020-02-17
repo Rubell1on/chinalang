@@ -1,3 +1,14 @@
+function diff(first, second) {
+    return Object.entries(second).reduce((acc, curr) => {
+        const key = curr[0];
+        const value = curr[1];
+
+        if (first[key] !== value) acc[key] = value;
+
+        return acc;
+    }, {})
+}
+
 DataTable.prototype.updateCoursesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
@@ -22,7 +33,7 @@ DataTable.prototype.updateCoursesData = async function() {
                     wChildren.addLesson.prepandRender(wChildren.object);
                     wChildren.object.click(async () => {
                         await this.createNewCourse(wChildren.data);
-                        // this.updateCoursesData();
+                        this.updateCoursesData();
                     });
                     wChildren.addLesson.object.click(() => {
                         wChildren.createNewClass();
@@ -55,6 +66,7 @@ DataTable.prototype.updateCoursesData = async function() {
                     wChildren.renderChildren(tChildren => {
                         tChildren.text.text(tChildren.data.name);
                         tChildren.object.click(() => tChildren.createNewClass(tChildren.data));
+                        tChildren.onDataChange.addListener(() => this.updateCoursesData());
                         tChildren.renderChildren(child => {
                             child.object.text('-');
                             child.object.click(() => {
@@ -99,8 +111,10 @@ DataWindow.prototype.submit = async function(url, data) {
 }
 
 DataTable.prototype.createNewCourse = async function(data = {}) {
+    const self = this;
+    const keys = Object.keys(data);
     const children = [
-        new Label('course-window-label', 'Создать новый курс'),
+        new Label('course-window-label', keys.length ? 'Редактировать курс' : 'Создать новый курс'),
         new InputField('course-name'),
         new TextArea('course-description'),
         new Button('submit-course')
@@ -116,7 +130,7 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
     descriptionField.label.text('Описание курса');
     submit.text('Создать');
 
-    if (data) {
+    if (keys.length) {
         nameField.input.val(data.name);
         descriptionField.input.val(data.description);
     }
@@ -125,14 +139,14 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
             let res; 
-            if (!Object.keys(data).length) {
+            if (!keys.length) {
                 res = await request.get('/api/db/createCourse', {name, description: descriptionField.input.val()})
                 .catch(e => {
                     new NotificationError('err-window', e.responseText).render();
                     console.log(e);
                 });
 
-                this.updateCoursesData();
+                self.updateCoursesData();
                 new NotificationSuccess('success-window', res).render();
                 courseWindow.destroy();
             } else {
@@ -149,7 +163,7 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
                             console.log(e);
                         });
                     
-                    this.updateCoursesData();
+                    self.updateCoursesData();
                     new NotificationSuccess('success-window', res).render();
                     courseWindow.destroy();
                 } else {
@@ -162,22 +176,12 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
             nameField.input.focus();
         }   
     });
-
-    function diff(first, second) {
-        return Object.entries(second).reduce((acc, curr) => {
-            const key = curr[0];
-            const value = curr[1];
-
-            if (first[key] !== value) acc[key] = value;
-
-            return acc;
-        }, {})
-    }
 }
 
 DataStrip.prototype.createNewClass = async function(data = {}) {
+    const keys = Object.keys(data);
     const children = [
-        new Label('course-window-label', 'Создать новый урок'),
+        new Label('course-window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
         new InputField('lesson-name'),
         new TextArea('lesson-description'),
         new Button('submit-class')
@@ -193,7 +197,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     const submit = lessonWindow.children[3].object;
     submit.text('Создать');
 
-    if (data) {
+    if (keys.length) {
         nameField.input.val(data.name);
         descriptionField.input.val(data.description);
     }
@@ -201,7 +205,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     submit.click(async () => {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
-            if (!Object.keys(data).length) {
+            if (!keys.length) {
                 const res = await request.get('/api/db/createClass', {courseId: this.data.id, name, description: descriptionField.input.val()})
                 .catch(e => {
                     new NotificationError('err-window', e.responseText).render();
@@ -224,10 +228,10 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
                             new NotificationError('err-window', e.responseText).render();
                             console.log(e);
                         });
-                    
-                    this.updateCoursesData();
+                    this.onDataChange.raise();
+                    // this.updateCoursesData();
                     new NotificationSuccess('success-window', res).render();
-                    courseWindow.destroy();
+                    lessonWindow.destroy();
                 } else {
                     new NotificationSuccess('success-window', 'Данные остались без изменений!').render();
                 }

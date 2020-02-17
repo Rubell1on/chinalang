@@ -259,6 +259,19 @@ app.get('/api/db/createClass', async (req, res) => {
     res.send(201, 'Урок успешно создан!');
 })
 
+app.get('/api/db/updateClass', async (req, res) => {
+    const {data, source} = req.query;
+
+    const template = utils.obj2strArr(data).join(', ');
+    await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
+        .catch(e => {
+            console.error(e);
+            res.send(500, 'При удалении урока произошла ошибка!');
+        });
+
+    res.send(200, 'Урок успешно обновлен!');
+})
+
 app.get('/api/db/removeClass', async (req, res) => {
     const q = req.query;
 
