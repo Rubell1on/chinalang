@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const envVars = new utils.EnvVars();
 const gAPI = require('./public/JS/GoogleAPI');
 const yAPI = require('./public/JS/yandexApi');
+const Node = require('./public/JS/Node').Node;
 const dbSettings = envVars.getDBSettings();
 const db = mysql.createConnection(dbSettings).promise();
 
@@ -315,35 +316,41 @@ app.route('/api/db/files')
     .put(async (req, res) => {
         const q = req.body;
         const root = 'chinalang';
+        const docs = 'documents';
+        // const photos = 'photos';
+
         const filesList = await yandexDisk.getList();
-        const dirList = yandexDisk.getDirList(filesList);
-    
-        if (!dirList.includes(root)) {
+        const tree = utils.getDirTree(filesList.body.items);
+
+        if (tree.find(root) === null) {
             await yandexDisk.createFolder(root);
+            const response = await yandexDisk.getUploadLink(`${root}/temp.tmp`);
+            await yandexDisk.putData(response.body.href, Buffer.from('temp'));
         }
+        if (tree.find(docs) === null) {
+            const path = `${root}/${docs}`;
+            await yandexDisk.createFolder(path);
+            const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
+            await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+        }
+        // if (tree.find(photos) === null) {
+        //     const path = `${root}/${photos}`;
+        //     await yandexDisk.createFolder(path);
+        //     const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
+        //     await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+        // }
 
         const name = utils.translate(q.name);
         
-        const filePath = `${root}/${name}`;
+        const filePath = `${root}/${docs}/${name}`;
         const link = await yandexDisk.getUploadLink(filePath);
         res.status(200).json({data: link.body, path: filePath});
     })
 
 app.get('/test', (req, res) => {
-    res.render('inputTest/index');
+    console.log();
 })
 
 app.post('/test', async (req, res) => {
-    const q = req.body;
-    const root = 'chinalang';
-    const filesList = await yandexDisk.getList();
-    const dirList = yandexDisk.getDirList(filesList);
-
-    if (!dirList.includes(root)) {
-        await yandexDisk.createFolder(root);
-    }
-
-    const link = await yandexDisk.getUploadLink(`${root}/${q.name}`);
-    res.status(200).json(link.body);
     console.log();
 })

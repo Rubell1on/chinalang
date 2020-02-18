@@ -128,7 +128,7 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
     const submit = courseWindow.children[3].object;
     nameField.label.text('Название курса');
     descriptionField.label.text('Описание курса');
-    submit.text('Создать');
+    submit.text(keys.length ? 'Редактировать' : 'Создать');
 
     if (keys.length) {
         nameField.input.val(data.name);
@@ -180,6 +180,9 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
 
 DataStrip.prototype.createNewClass = async function(data = {}) {
     const keys = Object.keys(data);
+
+    
+
     const children = [
         new Label('course-window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
         new InputField('lesson-name'),
@@ -195,7 +198,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     const descriptionField = lessonWindow.children[2];
     descriptionField.label.text('Описание урока');
     const submit = lessonWindow.children[3].object;
-    submit.text('Создать');
+    submit.text(keys.length ? 'Редактировать' : 'Создать');
 
     if (keys.length) {
         nameField.input.val(data.name);

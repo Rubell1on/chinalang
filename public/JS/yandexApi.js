@@ -93,7 +93,7 @@ module.exports = class yandexApi {
         });
     }
 
-    deleteData(path) {
+    deleteData(path, permanently = false) {
         return new Promise((resolve, reject) => {
             request.delete({
                 headers: {
@@ -101,7 +101,7 @@ module.exports = class yandexApi {
                     'Authorization': `OAuth ${this.TOKEN}`  
                 },
                 encoding: null,
-                url: `https://cloud-api.yandex.net/v1/disk/resources?path=${path}&permanently=false`
+                url: `https://cloud-api.yandex.net/v1/disk/resources?path=${path}&permanently=${permanently}`
             }, (err, res, body) => {
                 if (err) reject(err);
                 else resolve({res, body});
@@ -109,21 +109,18 @@ module.exports = class yandexApi {
         });
     }
 
-    getDirList(list) {        
-        const paths = list.body.items;
-        return paths.reduce((acc, el) => {
-            let str;
-            if (arguments.length > 1) {
-                const regexp = new RegExp(arguments[1], 'g');
-                str = el.path.match(regexp);
-            } else str = el.path.match(/\/\w*-\d{4}\//g);
-            if (str) {
-                const dirName = str[0].slice(1, -1);
-                if (!acc.includes(dirName)) {
-                    acc.push(dirName);  
-                }
-            }
-            return acc;
-        }, []);
+    getDirList() {
+        return new Promise((resolve, reject) => {
+            request.get({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `OAuth ${this.TOKEN}`   
+                },
+                url: 'https://cloud-api.yandex.net/v1/disk/resources/public?limit=100000&type=dir'
+            }, (err, res, body) => {
+                if (err) reject(err);
+                else resolve({res, body: JSON.parse(body)});
+            });
+        });
     }
 }

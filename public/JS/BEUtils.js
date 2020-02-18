@@ -1,3 +1,5 @@
+const Node = require('./Node').Node;
+
 module.exports = {
     EnvVars: class EnvVars {
         constructor() {
@@ -64,5 +66,28 @@ module.exports = {
             text = text.split(engToRus ? eng[x].toUpperCase() : rus[x].toUpperCase()).join(engToRus ? rus[x].toUpperCase() : eng[x].toUpperCase());	
         }
         return text;
+    },
+
+    getDirTree: function (list) {
+        const root = new Node('root');
+
+        list.forEach(el => {
+            const dirNames = el.path
+                .split('/')
+                .filter(val => val.indexOf('disk:') === -1 && val.indexOf('.') === -1);
+
+            let node = root;
+
+            for (let i = 0; i < dirNames.length; i++) {
+                const name = dirNames[i];
+                const temp = node.find(name);
+                if (temp === null) {
+                    node.addChild(new Node(name));
+                    node = node.find(name);
+                } else node = temp;
+            }
+        });
+
+        return root;
     }
 }

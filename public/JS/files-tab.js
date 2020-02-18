@@ -51,52 +51,52 @@ DataTable.prototype.createNewFile = async function(data = {}) {
     fileWindow.render('');
     fileWindow.renderChildren(() => {});
     const nameField = fileWindow.children[1];
+    const submit = fileWindow.children[3].object;
+    nameField.label.text('Название файла');
+    submit.text('Создать');
+    submit.css('opacity', '0.5');
     const fileInput = fileWindow.children[2];
     fileInput.input.attr('accept', '.pdf, .doc, .rar, .zip, .txt');
     fileInput.input.change(function() {
         const fileName = this.files[0].name;
         nameField.input.val(fileName);
-    });
-
-    const submit = fileWindow.children[3].object;
-    nameField.label.text('Название файла');
-    submit.text('Создать');
-    
-    submit.click(async function() {
-        const name = nameField.input.val();
-        const file = fileInput.input[0].files[0];
-        const fileInfo = {
-            name: name.isEmpty() ? file.name : name,
-            type: 'document'
-        }
-        const res = await request.put('/api/db/files', fileInfo);
-        const data = res.response;
-        const response = await putOnDisk(data.data.href, file);
-        if (response.status === 'success') {
-            fileInfo.path = data.path;
-            await request.post('/api/db/files', fileInfo).catch((e, status) => {
-                console.error({e, status});
-            });
-            fileWindow.destroy();
-            await self.updateFilesData();
-        }
-
-        async function putOnDisk(url, data) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url,
-                    type: 'PUT',
-                    data,
-                    processData : false,
-                    success: (res, status) => {
-                        resolve({res, status});
-                    },
-                    error: (err, status) => {
-                        reject({err, status});
-                    }
+        submit.css('opacity', '1');
+        submit.click(async function() {
+            const name = nameField.input.val();
+            const file = fileInput.input[0].files[0];
+            const fileInfo = {
+                name: name.isEmpty() ? file.name : name,
+                type: 'document'
+            }
+            const res = await request.put('/api/db/files', fileInfo);
+            const data = res.response;
+            const response = await putOnDisk(data.data.href, file);
+            if (response.status === 'success') {
+                fileInfo.path = data.path;
+                await request.post('/api/db/files', fileInfo).catch((e, status) => {
+                    console.error({e, status});
                 });
-            });
-        }
+                fileWindow.destroy();
+                await self.updateFilesData();
+            }
+    
+            async function putOnDisk(url, data) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url,
+                        type: 'PUT',
+                        data,
+                        processData : false,
+                        success: (res, status) => {
+                            resolve({res, status});
+                        },
+                        error: (err, status) => {
+                            reject({err, status});
+                        }
+                    });
+                });
+            }
+        });
     });
 }
 

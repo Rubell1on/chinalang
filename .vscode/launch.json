@@ -40,6 +40,12 @@
             "request": "launch",
             "name": "Enum debug",
             "program": "${workspaceFolder}/public/JS/enum.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Node debug",
+            "program": "${workspaceFolder}/Node.js"
         }
     ]
 }
