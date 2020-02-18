@@ -107,7 +107,6 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
     const searchingValue = this.controls[1].input.val();
     const res = await request.get('/api/db/courses', { searchingValue });
     const data = res.response;
-    // this.children = data.map(row => new DataStrip(row.name.split(' ').join(''), row, [new CheckboxButton('subscribe')]), []);
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
         const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);

@@ -14,7 +14,6 @@ DataTable.prototype.updateCoursesData = async function() {
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const res = await request.get('/api/db/courses', { searchingValue });
     const data = res.response;
-    // this.children = data.map(row => new DataStrip(row.name.split(' ').join(''), row, [new CheckboxButton('subscribe')]), []);
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
         const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
@@ -181,18 +180,46 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
 DataStrip.prototype.createNewClass = async function(data = {}) {
     const keys = Object.keys(data);
 
-    
+    const controls = [new Button('add-file-link', 'Ссылка на файл')];
 
     const children = [
         new Label('course-window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
         new InputField('lesson-name'),
-        new TextArea('lesson-description'),
+        new TextArea('lesson-description', controls),
         new Button('submit-class')
     ];
 
     const lessonWindow = new DataWindow('lesson-window', [], children);
     lessonWindow.render('');
-    lessonWindow.renderChildren(() => {});
+    lessonWindow.renderChildren(c => {
+        if (c.isTypeOf('textArea')) {
+            c.renderControls();
+            c.controls[0].object.click(() => {
+                const controls = [
+                    new Label('files-label', 'Список файлов'),
+                    new SearchLine('files-search')
+                ];
+            
+                const filesTable = new DataTable('files-table', controls);
+                filesTable.wrapperClass = 'files-wrapper';
+
+                DataTable.prototype.setTextArea = function(callback) {
+                    const textArea = lessonWindow.children.find(c => c.isTypeOf('textArea'));
+                    callback(textArea);
+                }
+
+                const filesWindow = new DataWindow('files-window', [], [filesTable]);
+                filesWindow.render('');
+                filesWindow.renderChildren(child => {
+                    if (child.isTypeOf('dataTable')) child.renderControls();
+                });
+            
+                const addCourse = filesTable.controls.find(c => c.isTypeOf('button'));
+                filesTable.updateFilesData([]);
+                filesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await filesTable.updateFilesData([]));
+            });
+        }
+    });
     const nameField = lessonWindow.children[1];
     nameField.label.text('Название урока');
     const descriptionField = lessonWindow.children[2];
@@ -232,7 +259,6 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
                             console.log(e);
                         });
                     this.onDataChange.raise();
-                    // this.updateCoursesData();
                     new NotificationSuccess('success-window', res).render();
                     lessonWindow.destroy();
                 } else {
@@ -255,9 +281,6 @@ async function renderPage() {
 
     const coursesTable = new DataTable('courses-table', controls);
     coursesTable.wrapperClass = 'courses-wrapper';
-
-    // const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
-    // coursesWindow.render('content-window');
     coursesTable.render('content-window');
     coursesTable.renderControls();
 
@@ -267,20 +290,36 @@ async function renderPage() {
     addCourse.object.click(async () => coursesTable.createNewCourse());
     coursesTable.updateCoursesData([]);
     coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
-                // await windowChild.updateCoursesData(userCourses);
-
-                // break;
-            
-        //     case '[object button]':
-        //         windowChild.object.text('Подтвердить выбор');
-        //         windowChild.object.click(() => {
-        //             dataWindow.children.find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(userCourses);
-        //             coursesWindow.destroy();
-        //         });
-
-        //         break;
-        // }
-    // });
 }
 
 renderPage();
+
+DataTable.prototype.updateFilesData = async function() {
+    this.removeChildren();
+    const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
+    const res = await request.get('/api/db/files', { searchingValue });    
+    const data = res.response;
+    this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('add-file')]), []);
+
+    this.renderChildren(
+            wChildren => {
+            switch(wChildren.getType()) {
+                case '[object dataStrip]':
+                    wChildren.text.text(wChildren.data.name);
+                    wChildren.renderChildren(s => {
+                        s.object.text('Добавить');
+                        s.object.click(() => {
+                            this.setTextArea(e => {
+                                const area = e.input;
+                                const temp = area.val();
+                                area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
+                            });
+                        });
+                    });
+
+                    break;
+                }
+            wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
+        }
+    );
+}

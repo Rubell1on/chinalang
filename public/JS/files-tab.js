@@ -2,6 +2,7 @@ DataTable.prototype.updateFilesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const res = await request.get('/api/db/files', { searchingValue });
+
     const data = res.response;
     this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('remove')]), []);
 
@@ -109,9 +110,6 @@ async function renderPage() {
 
     const filesTable = new DataTable('files-table', controls);
     filesTable.wrapperClass = 'files-wrapper';
-
-    // const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
-    // coursesWindow.render('content-window');
     filesTable.render('content-window');
     filesTable.renderControls();
 

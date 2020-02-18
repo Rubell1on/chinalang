@@ -125,3 +125,52 @@
     font-weight: bold;
     font-size: 20px;
 }
+
+/*  */
+
+.text-field-controls > .add-file-link {
+    font-size: 18px;
+    padding: 5px 8px;
+    background: #3cb371;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.lesson-description > textarea[type="text"] {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.files-search > input {
+    background: #F1F1F1;
+}
+
+.files-table > .files-table-data-wrapper > .data-strip {
+    transition: none;
+    background: grey;
+}
+
+.files-table-data-wrapper > div > .icon-wrapper {
+    display: none;
+}
+
+.files-table-data-wrapper > div > .add-file {
+    float: right;
+    font-size: 18px;
+    padding: 8px 10px;
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    right: 5px;
+    /* transition: none; */
+    background: #3cb371;
+}
+
+.files-table-data-wrapper > div > .add-file:hover {
+    background: #24466B;
+}
+
+.files-table-controls-wrapper > .files-label {
+    font-weight: bold;
+    font-size: 20px;
+}

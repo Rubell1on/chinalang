@@ -3,7 +3,6 @@ class DataTable extends SingleCustomWindow {
     
     constructor(className, controls = [], children = []) {
         super(className);
-        // this.wrapperClass = `${this.className}-data-wrapper`;
         this.controlsWrapper = `${this.className}-controls-wrapper`;
         this.html = 
             `<div class="data-window ${className}">` +
@@ -24,6 +23,7 @@ class DataTable extends SingleCustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(child => {
+                child.parent = this;
                 child.render(this.wrapper);
                 callback(child);
             });
@@ -33,8 +33,8 @@ class DataTable extends SingleCustomWindow {
     renderControls() {
         if (this.controls.length > 0) {
             this.controls.forEach(c => {
+                c.parent = this;
                 c.render(this.controlsWrapper);
-                // callback(strip);
             });
         }
     }
@@ -42,7 +42,6 @@ class DataTable extends SingleCustomWindow {
     render(parent) {
         super.render(parent);
         this.wrapper = this.object.find('.data-wrapper');
-        // this.searchField = $('.search-line > input');
     }
 }
 
@@ -79,6 +78,7 @@ class DataStrip extends CustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(child => {
+                child.parent = this;
                 child.render(this.object);
                 callback(child);
             });
@@ -108,6 +108,7 @@ class DataWindow extends SingleCustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(child => {
+                child.parent = this;
                 child.render(this.inputs);
                 callback(child);
             });
@@ -162,20 +163,31 @@ class InputField extends CustomWindow {
 class TextArea extends InputField {
     [Symbol.toStringTag] = 'textArea'
 
-    constructor(className) {
+    constructor(className, controls = []) {
         super(className);
+
+        this.controls = controls;
 
         this.html = 
             `<div class="text-field ${this.className}">` +
                 '<label for="username">Имя</label>' +
+                '<div class="text-field-controls"></div>' +
                 '<textarea type="text" id="username" required></textarea>' +
             '</div>';
+    }
+
+    renderControls() {
+        this.controls.forEach(c => {
+            c.parent = this;
+            c.render(this.controlsObject);
+        });
     }
 
     render(parent) {
         super.render(parent);
 
         this.input = this.object.find('textarea');
+        this.controlsObject = this.object.find('.text-field-controls');
     }
 }
 
@@ -243,6 +255,7 @@ class ObjectWrapper extends CustomWindow {
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(child => {
+                child.parent = this;
                 child.render(this.object);
                 callback(child);
             });
@@ -268,6 +281,7 @@ class YesNoWindow extends CustomWindow {
         this.object = new DataWindow(this.className, [], this.children);
         this.object.render(parent);
         this.object.renderChildren(child => {
+            child.parent = this;
             switch(child.getType()) {
                 case '[object objectWrapper]':
                     child.renderChildren(c => {});
