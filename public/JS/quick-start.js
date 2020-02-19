@@ -4,8 +4,57 @@ $('.get-free-lesson').click(() => {
 });
 
 $('.login').click(() => {
-    const world = 'world';
-    $('.main-text').text(`hello ${world}`);
+    const children = [
+        new Label('login-window-label', 'Авторизация'),
+        new InputField('username-field', 'username', 'Имя пользователя'),
+        new InputField('password-field', 'password', 'Пароль'),
+        new Button('login-submit', 'Войти')
+    ];
+
+    const loginWindow = new DataWindow('login-window', [], children);
+    loginWindow.render('');
+    loginWindow.renderChildren(c => {
+        if (c.isTypeOf('button')) {
+            c.object.click(async () => {
+                const inputs = loginWindow.children.filter(child => child.isTypeOf('inputField'));
+
+                const userData = {};
+                let flag = true;
+
+                for (let i in inputs) {
+                    const child = inputs[i];
+
+                    const val = child.value;
+                    if (child.input.attr('required')) {
+                        
+                        if (!val.isEmpty()) {
+                            const key = child.className.match(/^\w*/g)[0];
+                            userData[key] = val;
+                        }
+                        else {
+                            flag = false;
+                            child.input.focus();
+                            break;
+                        }
+                    } else {
+                        userData[child.className] = val;
+                    }
+                }
+
+                if (flag) {
+                    const res = await request.get('/login', userData);
+                    if (res.status === 'success') {
+                        const k = 'apiKey';
+                        const apiKey = res.response[k];
+                        localStorage.setItem(k, apiKey);
+                        location.href = `${location.origin}/dashboard/users?apiKey=${apiKey}`;
+                    }
+                } else {
+                    new NotificationError('error-window', 'Необходимо заполнить выделенные поля!').render('');
+                }
+            })
+        }
+    });
 });
 
 

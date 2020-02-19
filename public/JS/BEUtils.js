@@ -46,7 +46,7 @@ module.exports = {
         }
     },
     rndSequence: function rndSequence(length = 6) {
-        return Math.random().toString(36).substring(length)
+        return Math.random().toString(36).substring(2, 2 + length)
     },
 
     obj2strArr: function (object) {

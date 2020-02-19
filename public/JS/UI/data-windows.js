@@ -87,7 +87,7 @@ class DataStrip extends CustomWindow {
 }
 
 class DataWindow extends SingleCustomWindow {
-    constructor(className, data, children = []) {
+    constructor(className, data = [], children = []) {
         super(className);
         this[Symbol.toStringTag] = 'dataWindow';
 
@@ -133,14 +133,14 @@ class DataWindow extends SingleCustomWindow {
 }
 
 class InputField extends CustomWindow {
-    constructor(className) {
+    constructor(className, id = 'username', label = 'Имя') {
         super(className);
         this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
             `<div class="text-field ${this.className}">` +
-                '<label for="username">Имя</label>' +
-                '<input type="text" id="username" required>' +
+                `<label for="${id}">${label}</label>` +
+                `<input type="text" id="${id}" required>` +
             '</div>';
     }
 
@@ -154,6 +154,18 @@ class InputField extends CustomWindow {
     setIds(id) {
         this.label.attr('for', id);
         this.input.attr('id', id);
+    }
+
+    setLabelText(value) {
+        this.label.text(value);
+    }
+
+    setInputValue(value) {
+        this.input.val(value);
+    }
+
+    get value() {
+        return this.input.val();
     }
 }
 

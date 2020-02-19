@@ -29,6 +29,27 @@
     margin-top: 15px;
 }
 
+/*  */
+
+.login-window-label {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+}
+
+.login-window-background .login-window {
+    height: unset;
+    min-height: unset;
+}
+
+.login-window > .inputs {
+    width: 100%;
+}
+
+.login-submit {
+    margin: 0 auto;
+}
+
 @media (max-width: 700px) {
     .quick-start-window {
         width: 90%;

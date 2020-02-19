@@ -1,8 +1,11 @@
 const className = 'menu-strip';
-$(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users`);
-$(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses`);
-$(`.${className} .files-tab`).click(() => location.href = `${location.origin}/dashboard/files`);
+const k = 'apiKey';
+const apiKey = localStorage.getItem(k);
+const part = `?${k}=${apiKey}`;
+$(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users${part}`);
+$(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses${part}`);
+$(`.${className} .files-tab`).click(() => location.href = `${location.origin}/dashboard/files${part}`);
 $(`.${className} .blog-tab`).css('opacity', '0.5');
-// .click(() => location.href = `${location.origin}/dashboard/blog`);
+// .click(() => location.href = `${location.origin}/dashboard/blog${part}`);
 $(`.${className} .history-tab`).css('opacity', '0.5');
-// .click(() => location.href = `${location.origin}/dashboard/hystory`);
+// .click(() => location.href = `${location.origin}/dashboard/hystory${part}`);

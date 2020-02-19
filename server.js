@@ -42,30 +42,53 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     const q = req.query;
 
-    const rows = await db.query(`SELECT username, password, role FROM users WHERE username='${q.username}'`).catch(e => {
+    const rows = await db.query(`SELECT id, username, password, role FROM users WHERE username='${q.username}'`).catch(e => {
         console.error(e);
         res.send(400);
     });
 
     const users = rows[0];
+    const id = users[0].id
     const password = users[0].password;
     const role = users[0].role;
 
     if (users.length) {
         if (password === q.password) {
-            if (role === roles.student) {
-                //TO DO
+            const apiKey = utils.rndSequence(10);
+            const data = [id, apiKey];
+
+            const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`);
+            if (rows[0].length) {
+                await db.query(`UPDATE usersapi SET apiKey = '${apiKey}' WHERE userId = '${id}'`);
+                res.status(200).json({apiKey});
             } else {
-                res.render('dashboard');
-                // res.redirect('/dashboard',)
-                // res.send('<p>Some html</p>');
+                await db.query('INSERT INTO usersapi(userId, apiKey) VALUES(?, ?)', data);
+                res.status(201).json({apiKey});
             }
+            
+
+            // if (role === roles.student) {
+            //     //TO DO
+            // } else {
+            //     res.render('dashboard');
+            //     // res.redirect('/dashboard',)
+            //     // res.send('<p>Some html</p>');
+            // }
+
         } else {
             res.send(403, 'Неверный логин или пароль!');
         }
     } else {
         res.send(404, 'Пользователь не найден!');
     }
+
+    // class UserAPIBuffer {
+    //     constructor() {
+    //         this._buffer = [];
+    //     }
+
+    //     add
+    // }
 })
 
 app.get('/free', async (req, res) => {
@@ -101,25 +124,41 @@ app.get('/free', async (req, res) => {
     }
 })
 
-app.get('/dashboard/:section', (req, res) => {
+app.get('/dashboard/:section', async (req, res) => {
     console.log();
-    const section = req.params.section;
+    const q = req.query;
+    if (q && q.apiKey) {
+        const rows = await db.query(`SELECT users.id, users.role FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`);
+        const users = rows[0];
 
-    switch(section) {
-        case 'users':
-            res.render('dashboard/admin/users');
-            break;
-        case 'courses':
-            res.render('dashboard/admin/courses');
-            break;
+        if (users.length) {
+            const section = req.params.section;
 
-        case 'files':
-            res.render('dashboard/admin/files');
-            break;
+            if (users[0].role === 'student') {
 
-        default:
-            res.send(404);
-            break;
+            } else {
+                switch(section) {
+                    case 'users':
+                        res.render('dashboard/admin/users');
+                        break;
+                    case 'courses':
+                        res.render('dashboard/admin/courses');
+                        break;
+    
+                    case 'files':
+                        res.render('dashboard/admin/files');
+                        break;
+    
+                    default:
+                        res.send(404);
+                        break;
+                }
+            }
+        } else {
+            res.redirect('/');
+        }
+    } else {
+        res.redirect('/');
     }
 })
 
