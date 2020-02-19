@@ -55,14 +55,14 @@ app.get('/login', async (req, res) => {
     if (users.length) {
         if (password === q.password) {
             const apiKey = utils.rndSequence(10);
-            const data = [id, apiKey];
+            const data = [id, apiKey, req.ip];
 
             const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`);
             if (rows[0].length) {
-                await db.query(`UPDATE usersapi SET apiKey = '${apiKey}' WHERE userId = '${id}'`);
+                await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`);
                 res.status(200).json({apiKey});
             } else {
-                await db.query('INSERT INTO usersapi(userId, apiKey) VALUES(?, ?)', data);
+                await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data);
                 res.status(201).json({apiKey});
             }
         } else {
@@ -110,31 +110,35 @@ app.get('/dashboard/:section', async (req, res) => {
     console.log();
     const q = req.query;
     if (q && q.apiKey) {
-        const rows = await db.query(`SELECT users.id, users.role FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`);
+        const rows = await db.query(`SELECT users.id, users.role, usersapi.userIp FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`);
         const users = rows[0];
 
         if (users.length) {
-            const section = req.params.section;
-
-            if (users[0].role === 'student') {
-
-            } else {
-                switch(section) {
-                    case 'users':
-                        res.render('dashboard/admin/users');
-                        break;
-                    case 'courses':
-                        res.render('dashboard/admin/courses');
-                        break;
+            if (users && users[0].userIp === req.ip) {
+                const section = req.params.section;
     
-                    case 'files':
-                        res.render('dashboard/admin/files');
-                        break;
+                if (users[0].role === 'student') {
     
-                    default:
-                        res.send(404);
-                        break;
+                } else {
+                    switch(section) {
+                        case 'users':
+                            res.render('dashboard/admin/users');
+                            break;
+                        case 'courses':
+                            res.render('dashboard/admin/courses');
+                            break;
+        
+                        case 'files':
+                            res.render('dashboard/admin/files');
+                            break;
+        
+                        default:
+                            res.send(404);
+                            break;
+                    }
                 }
+            } else {
+                res.redirect('/');
             }
         } else {
             res.redirect('/');

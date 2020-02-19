@@ -68,6 +68,8 @@ class DataStrip extends CustomWindow {
         this.children = children;
     }
 
+
+
     render(parent) {
         super.render(parent);
 
