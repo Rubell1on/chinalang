@@ -3,6 +3,10 @@
     min-height: unset;
 }
 
+.data-window > .users-data-wrapper {
+    max-height: unset;
+}
+
 .submit {
     margin-top: 10px;
 }
@@ -54,12 +58,13 @@
 
 .courses-table {
     height: calc(100% - 70px);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .courses-table > .data-wrapper {
     margin-top: 10px;
     padding-top: 0px;
+    max-height: 305px;
 }
 
 .data-wrapper > .objects-wrapper > .classes-table {

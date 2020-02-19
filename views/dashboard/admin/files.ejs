@@ -16,8 +16,14 @@
     <link rel="stylesheet" href="/public/CSS/UI/notification.css">
     <link rel="stylesheet" href="/public/CSS/UI/label.css">
     <link rel="stylesheet" href="/public/CSS/UI/fileInput.css">
+
+    <script src="../../../public/JS/jquery-3.4.1.js"></script>
+    <script src="../../../public/JS/Utils.js"></script>
+    <script src="../../../public/JS/UI/custom-window.js"></script>
+    <script src="../../../public/JS/UI/data-windows.js"></script>
 </head>
 <body>
+    <%- include('../../blocks/header-controls.ejs') %>
     <div class="wrapper">
         <div class="controls">
             <%- include('../../blocks/admin-menu-strip.ejs') %>
@@ -27,12 +33,9 @@
             </div>
         </div>
     </div>
-    <script src="../../../public/JS/Utils.js"></script>
-    <script src="../../../public/JS/UI/custom-window.js"></script>
     <script src="../../../public/JS/UI/notification-window.js"></script>
     <script src="../../../public/JS/Event.js"></script>
     <script src="../../../public/JS/request.js"></script>
-    <script src="../../../public/JS/UI/data-windows.js"></script>
     <script src="../../../public/JS/files-tab.js"></script>
     <script src="../../../public/JS/authController.js"></script>
 </body>
