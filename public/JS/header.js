@@ -1,7 +1,8 @@
 async function render() {
+    const username = localStorage.getItem('username');
     const children = [
         new Button('menu-button', '≡'),
-        new DropDownList('user-menu', '#username')
+        new DropDownList('user-menu', username)
     ];
 
     const header = new ObjectWrapper('header-wrapper', children);
@@ -32,6 +33,7 @@ async function render() {
                         if (button.className === 'exit-button') {
                             button.object.click(() => {
                                 localStorage.removeItem('apiKey');
+                                localStorage.removeItem('username');
                                 location.href = `${location.origin}/`;
                             })
                         }

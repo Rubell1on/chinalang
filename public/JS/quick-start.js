@@ -47,6 +47,7 @@ $('.login').click(() => {
                         const k = 'apiKey';
                         const apiKey = res.response[k];
                         localStorage.setItem(k, apiKey);
+                        localStorage.setItem('username', res.response['username']);
                         location.href = `${location.origin}/dashboard/users?apiKey=${apiKey}`;
                     }
                 } else {

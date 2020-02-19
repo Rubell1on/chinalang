@@ -60,10 +60,10 @@ app.get('/login', async (req, res) => {
             const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`);
             if (rows[0].length) {
                 await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`);
-                res.status(200).json({apiKey});
+                res.status(200).json({username: users[0].username, apiKey});
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data);
-                res.status(201).json({apiKey});
+                res.status(201).json({username: users[0].username, apiKey});
             }
         } else {
             res.send(403, 'Неверный логин или пароль!');
