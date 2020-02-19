@@ -301,25 +301,24 @@ DataTable.prototype.updateFilesData = async function() {
     const data = res.response;
     this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('add-file')]), []);
 
-    this.renderChildren(
-            wChildren => {
-            switch(wChildren.getType()) {
-                case '[object dataStrip]':
-                    wChildren.text.text(wChildren.data.name);
-                    wChildren.renderChildren(s => {
-                        s.object.text('Добавить');
-                        s.object.click(() => {
-                            this.setTextArea(e => {
-                                const area = e.input;
-                                const temp = area.val();
-                                area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
-                            });
+    this.renderChildren(wChildren => {
+        switch(wChildren.getType()) {
+            case '[object dataStrip]':
+                wChildren.text.text(wChildren.data.name);
+                wChildren.renderChildren(s => {
+                    s.object.text('Добавить');
+                    s.object.click(() => {
+                        this.setTextArea(e => {
+                            const area = e.input;
+                            const temp = area.val();
+                            area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
                         });
+                        this.parent.destroy();
                     });
+                });
 
-                    break;
-                }
-            wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
+                break;
         }
-    );
+        wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
+    });
 }

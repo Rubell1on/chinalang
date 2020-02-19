@@ -3,18 +3,24 @@ $('.get-free-lesson').click(() => {
     window.render('');
 });
 
+$('.login').click(() => {
+    const world = 'world';
+    $('.main-text').text(`hello ${world}`);
+});
+
+
 class QuickStartWindow extends SingleCustomWindow {
     constructor() {
         super('quick-start-window');
-    }
+        this[Symbol.toStringTag] = 'quickStartWindow';
+        
+        this.textTemplates = [
+            'Запишитесь на бесплатный урок',
+            'Оставьте заявку на бесплатный урок',
+            'Договоритесь с менеджером о времени'
+        ];
 
-    textTemplates = [
-        'Запишитесь на бесплатный урок',
-        'Оставьте заявку на бесплатный урок',
-        'Договоритесь с менеджером о времени'
-    ];
-
-    html = 
+        this.html = 
         `<div class="overlay-window-background ${this.className}-background">` +
         `<div class="overlay-window ${this.className}">` +
             '<div class="info"></div>' +
@@ -39,6 +45,7 @@ class QuickStartWindow extends SingleCustomWindow {
             '</div>' +
         '</div>' +
         '</div>';
+    }
 
     render(parentName) {
         super.render(parentName);

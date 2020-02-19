@@ -1,8 +1,8 @@
 class DataTable extends SingleCustomWindow {
-    [Symbol.toStringTag] = 'dataTable'
-    
     constructor(className, controls = [], children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'dataTable';
+        
         this.controlsWrapper = `${this.className}-controls-wrapper`;
         this.html = 
             `<div class="data-window ${className}">` +
@@ -46,10 +46,10 @@ class DataTable extends SingleCustomWindow {
 }
 
 class DataStrip extends CustomWindow {
-    [Symbol.toStringTag] = 'dataStrip'
-
     constructor(className, data, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'dataStrip';
+
         this.data = data;
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
         this.html = 
@@ -87,24 +87,22 @@ class DataStrip extends CustomWindow {
 }
 
 class DataWindow extends SingleCustomWindow {
-    [Symbol.toStringTag] = 'dataWindow'
-
     constructor(className, data, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'dataWindow';
 
         this.data = data;
         this.children = children;
         this.onSubmit = new CustomEvent();
-    }
-
-    html = 
-        `<div class="overlay-window-background ${this.className}-background">` +
-        `<div class="overlay-window ${this.className}">` +
-            `<div class="inputs">` +
+        this.html = 
+            `<div class="overlay-window-background ${this.className}-background">` +
+            `<div class="overlay-window ${this.className}">` +
+                `<div class="inputs">` +
+                '</div>' +
             '</div>' +
-        '</div>' +
-        '</div>';
-
+            '</div>';
+    }
+    
     renderChildren(callback) {
         if (this.children.length > 0) {
             this.children.forEach(child => {
@@ -135,10 +133,9 @@ class DataWindow extends SingleCustomWindow {
 }
 
 class InputField extends CustomWindow {
-    [Symbol.toStringTag] = 'inputField'
-
     constructor(className) {
         super(className);
+        this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
             `<div class="text-field ${this.className}">` +
@@ -161,10 +158,9 @@ class InputField extends CustomWindow {
 }
 
 class TextArea extends InputField {
-    [Symbol.toStringTag] = 'textArea'
-
     constructor(className, controls = []) {
         super(className);
+        this[Symbol.toStringTag] = 'textArea';
 
         this.controls = controls;
 
@@ -192,20 +188,18 @@ class TextArea extends InputField {
 }
 
 class Button extends CustomWindow {
-    [Symbol.toStringTag] = 'button'
-
     constructor(className, value = '') {
         super(className);
+        this[Symbol.toStringTag] = 'button';
 
         this.html = `<div class="button-big ${className}">${value}</div>`;
     }
 }
 
 class CheckboxButton extends SingleCustomWindow {
-    [Symbol.toStringTag] = 'checkboxButton'
-
     constructor(className, enabled = false) {
         super(className);
+        this[Symbol.toStringTag] = 'checkboxButton';
 
         this.html = `<div class="button-big checkbox-button ${className}"></div>`;
         this.enabled = enabled;
@@ -213,9 +207,9 @@ class CheckboxButton extends SingleCustomWindow {
 }
 
 class SearchLine extends CustomWindow {
-    [Symbol.toStringTag] = 'searchLine'
     constructor(className) {
         super(className);
+        this[Symbol.toStringTag] = 'searchLine';
 
         this.html = 
             `<div class="search-line ${className}">` +
@@ -231,9 +225,9 @@ class SearchLine extends CustomWindow {
 }
 
 class Label extends CustomWindow {
-    [Symbol.toStringTag] = 'label'
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'label';
 
         this.html = `<div class="label ${className}">${text}</div>`;
     }
@@ -244,9 +238,9 @@ class Label extends CustomWindow {
 }
 
 class ObjectWrapper extends CustomWindow {
-    [Symbol.toStringTag] = 'objectWrapper'
     constructor(className, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'objectWrapper';
 
         this.html = `<div class="objects-wrapper ${className}"></div>`;
         this.children = children;
@@ -264,10 +258,9 @@ class ObjectWrapper extends CustomWindow {
 }
 
 class YesNoWindow extends CustomWindow {
-    [Symbol.toStringTag] = 'YesNoWindow'
-
     constructor(className, title = '', info = '', ) {
         super(className);
+        this[Symbol.toStringTag] = 'YesNoWindow';
         const name = 'yes-no-window';
 
         this.children = [
@@ -301,10 +294,9 @@ class YesNoWindow extends CustomWindow {
 }
 
 class FileInput extends CustomWindow {
-    [Symbol.toStringTag] = 'fileInput'
-
     constructor(className) {
         super(className);
+        this[Symbol.toStringTag] = 'fileInput';
 
         this.html = `<div class="fileInput-wrapper ${this.className}">
                         <input type="file" name="fileData" class="fileInput">

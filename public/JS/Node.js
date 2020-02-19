@@ -1,8 +1,7 @@
 module.exports = {
     Node: class Node {
-        [Symbol.toStringTag] = 'node'
-
         constructor(value) {
+            this[Symbol.toStringTag] = 'node';
             this.value = value;
             this.children = [];
             this.parent = null;

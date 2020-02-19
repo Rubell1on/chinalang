@@ -26,10 +26,13 @@ app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.listen(3000, '192.168.0.106', async () => {
-    const result = await db.connect().catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
-    console.log('Подключение к серверу MySQL успешно установлено')
-    console.log('Сервер запущен');
+app.listen(3000, '192.168.0.106', () => {
+    db.connect()
+        .then(res => {
+            console.log('Подключение к серверу MySQL успешно установлено')
+            console.log('Сервер запущен');
+        })
+        .catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
 })
 
 app.get('/', (req, res) => {

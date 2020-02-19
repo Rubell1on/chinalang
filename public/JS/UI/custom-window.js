@@ -1,11 +1,9 @@
 class SingleCustomWindow {
-    [Symbol.toStringTag] = 'singleCustomWindow'
-
     constructor(className) {
+        this[Symbol.toStringTag] = 'singleCustomWindow';
         this.className = className;
+        this.html = '';
     }
-
-    html = ''
 
     prepandRender(parent = '') {
         
@@ -59,13 +57,11 @@ class SingleCustomWindow {
 }
 
 class CustomWindow {
-    [Symbol.toStringTag] = 'customWindow'
-
     constructor(className) {
+        this[Symbol.toStringTag] = 'customWindow';
         this.className = className;
+        this.html = '';
     }
-
-    html = ''
 
     prepandRender(parent) {
         if (typeof parent === 'string') {

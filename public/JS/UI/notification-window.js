@@ -3,9 +3,8 @@ class NotificationWindow extends CustomWindow {
         super(className);
         this.html = `<div class="notification ${this.className}">${text}</div>`;
         this.targetPos = targetPos;
+        this.animationTime = 500;
     }
-
-    animationTime = 500;
 
     render() {
         super.render('');
