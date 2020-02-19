@@ -65,30 +65,12 @@ app.get('/login', async (req, res) => {
                 await db.query('INSERT INTO usersapi(userId, apiKey) VALUES(?, ?)', data);
                 res.status(201).json({apiKey});
             }
-            
-
-            // if (role === roles.student) {
-            //     //TO DO
-            // } else {
-            //     res.render('dashboard');
-            //     // res.redirect('/dashboard',)
-            //     // res.send('<p>Some html</p>');
-            // }
-
         } else {
             res.send(403, 'Неверный логин или пароль!');
         }
     } else {
         res.send(404, 'Пользователь не найден!');
     }
-
-    // class UserAPIBuffer {
-    //     constructor() {
-    //         this._buffer = [];
-    //     }
-
-    //     add
-    // }
 })
 
 app.get('/free', async (req, res) => {
