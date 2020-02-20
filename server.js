@@ -60,10 +60,10 @@ app.get('/login', async (req, res) => {
             const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`);
             if (rows[0].length) {
                 await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`);
-                res.status(200).json({username: users[0].username, apiKey});
+                res.status(200).json({id, username: users[0].username, apiKey});
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data);
-                res.status(201).json({username: users[0].username, apiKey});
+                res.status(201).json({id, username: users[0].username, apiKey});
             }
         } else {
             res.send(403, 'Неверный логин или пароль!');
@@ -150,9 +150,11 @@ app.get('/dashboard/:section', async (req, res) => {
 
 app.get('/api/db/users', async (req, res) => {
     const q = req.query;
-    const value = q.searchingValue;
 
     let rows = [];
+
+    const value = q.searchingValue;
+
     if (value === '') {
         rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users');
     } else {
@@ -161,6 +163,19 @@ app.get('/api/db/users', async (req, res) => {
 
     res.json(rows[0]);    
 })
+
+app.route('/api/db/userData')
+    .get(async (req, res) => {
+        const q = req.query;
+
+        if (q && q.apiKey) {
+            const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`);
+
+            res.status(200).json(rows[0]);
+        } else {
+            res.send(300);
+        }
+    });
 
 app.get('/api/db/updateUsers', async (req, res) => {
     const { diffs, sources } = req.query;

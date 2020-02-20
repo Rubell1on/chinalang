@@ -16,6 +16,7 @@
     height: 1px;
     min-height: 300px; */
     max-height: 500px;
+    max-width: 500px;
     background: white;
     border-radius: 10px;
     padding: 10px;

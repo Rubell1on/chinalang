@@ -44,11 +44,9 @@ $('.login').click(() => {
                 if (flag) {
                     const res = await request.get('/login', userData);
                     if (res.status === 'success') {
-                        const k = 'apiKey';
-                        const apiKey = res.response[k];
-                        localStorage.setItem(k, apiKey);
-                        localStorage.setItem('username', res.response['username']);
-                        location.href = `${location.origin}/dashboard/users?apiKey=${apiKey}`;
+                        auth.setData(res.response);
+
+                        location.href = `${location.origin}/dashboard/users?apiKey=${auth.getData()['apiKey']}`;
                     }
                 } else {
                     new NotificationError('error-window', 'Необходимо заполнить выделенные поля!').render('');

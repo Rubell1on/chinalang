@@ -69,6 +69,62 @@
     margin-bottom: 0;
 }
 
+.user-profile-label {
+    font-weight: bold;
+}
+
+.user-profile-tables {
+    overflow: hidden;
+}
+
+.user-profile-tables > div {
+    float: left;
+}
+
+.user-data-fields {
+    width: 60%;
+}
+
+.user-photo-field {
+    width: 40%;
+}
+
+.photo-label {
+    font-size: 16px;
+    text-align: left;
+}
+
+.photo-field {
+    margin-bottom: 5px;
+}
+
+.user-profile-tables > div:first-child {
+    box-sizing: border-box;
+    padding-right: 5px;
+}
+
+.button-big.change-photo, .delete-photo {
+    padding: 5px 8px;
+    font-size: 18px;
+    width: 100%;
+    background: gray;
+    opacity: 0.7;
+    transition: opacity 200ms ease;
+}
+
+.button-big.change-photo:hover, .delete-photo:hover {
+    opacity: 1;
+    background: gray;
+}
+
+.user-photo-field-data-wrapper > .change-photo {
+    margin-bottom: 5px;
+}
+
+.submit-user-data {
+    margin: 0 auto;
+}
+
 
 @media (max-width: 700px) {
     .header-wrapper > .menu-button {

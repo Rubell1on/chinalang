@@ -135,14 +135,14 @@ class DataWindow extends SingleCustomWindow {
 }
 
 class InputField extends CustomWindow {
-    constructor(className, id = 'username', label = 'Имя') {
+    constructor(className, id = 'username', label = 'Имя', value = '') {
         super(className);
         this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
             `<div class="text-field ${this.className}">` +
                 `<label for="${id}">${label}</label>` +
-                `<input type="text" id="${id}" required>` +
+                `<input type="text" id="${id}" required value="${value}">` +
             '</div>';
     }
 
