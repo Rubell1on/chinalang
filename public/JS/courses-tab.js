@@ -44,13 +44,16 @@ DataTable.prototype.updateCoursesData = async function() {
                             const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить курс "${wChildren.data.name}"?`);
                             window.render('');
                             window.yes.click(async () => {
-                                const res = await request.get('/api/db/removeCourse', wChildren.data).catch(e => {
-                                    new NotificationError('err-window', e).render();
+                                const res = await request.delete('/api/db/courses', JSON.stringify(wChildren.data)).catch(e => {
+                                    notificationController.error(e.error.responseText);
                                     console.log(e);
                                 });
-                                new NotificationSuccess('success-window', res).render();
-                                this.updateCoursesData();
-                                window.destroy();
+
+                                if (res.status === 'success') {
+                                    notificationController.success(res.response);
+                                    this.updateCoursesData();
+                                    window.destroy();
+                                }
                             });
 
                             window.no.click(() => {
@@ -72,13 +75,17 @@ DataTable.prototype.updateCoursesData = async function() {
                                 const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить урок "${tChildren.data.name}"?`);
                                 window.render('');
                                 window.yes.click(async () => {
-                                    const res = await request.get('/api/db/removeClass', tChildren.data).catch(e => {
-                                        new NotificationError('err-window', e).render();
-                                        console.log(e);
-                                    });
-                                    new NotificationSuccess('success-window', res).render();
-                                    this.updateCoursesData();
-                                    window.destroy();
+                                    const res = await request.delete('/api/db/class', JSON.stringify(tChildren.data))
+                                        .catch(e => {
+                                            notificationController.error(e.error.responseText)
+                                            console.log(e);
+                                        });
+                                    
+                                    if (res.status === 'success') {
+                                        notificationController.success(res.response);
+                                        this.updateCoursesData();
+                                        window.destroy();
+                                    }
                                 });
 
                                 window.no.click(() => {
@@ -94,19 +101,6 @@ DataTable.prototype.updateCoursesData = async function() {
             wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
         });
     });
-}
-
-DataWindow.prototype.submit = async function(url, data) {
-    const res = await request.get(url, data)
-        .catch(e => {
-            new NotificationError('err-window', e.responseText).render();
-            console.log(e);
-        });
-
-    new NotificationSuccess('user-registered', res).render();
-    this.onSubmit.raise();
-    console.log(res);
-    this.destroy();
 }
 
 DataTable.prototype.createNewCourse = async function(data = {}) {
@@ -139,15 +133,17 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
         if (!name.isEmpty()) {
             let res; 
             if (!keys.length) {
-                res = await request.get('/api/db/createCourse', {name, description: descriptionField.input.val()})
-                .catch(e => {
-                    new NotificationError('err-window', e.responseText).render();
-                    console.log(e);
-                });
+                res = await request.post('/api/db/courses', JSON.stringify({name, description: descriptionField.input.val()}))
+                    .catch(e => {
+                        notificationController.error(e.error.responseText);
+                        console.log(e);
+                    });
 
-                self.updateCoursesData();
-                new NotificationSuccess('success-window', res).render();
-                courseWindow.destroy();
+                if (res.status === 'success') {
+                    self.updateCoursesData();
+                    notificationController.success(res.response);
+                    courseWindow.destroy();
+                }
             } else {
                 const newData = {
                     name: nameField.input.val(),
@@ -156,22 +152,24 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
 
                 const diffData = diff(data, newData);
                 if (Object.keys(diffData).length) {
-                    res = await request.get('/api/db/updateCourse', {source: data ,data: diffData})
+                    res = await request.put('/api/db/courses', JSON.stringify({source: data ,data: diffData}))
                         .catch(e => {
-                            new NotificationError('err-window', e.responseText).render();
+                            notificationController.error(e.error.responseText)
                             console.log(e);
                         });
-                    
-                    self.updateCoursesData();
-                    new NotificationSuccess('success-window', res).render();
-                    courseWindow.destroy();
+
+                    if (res.status === 'success') {
+                        self.updateCoursesData();
+                        notificationController.success(res.response);
+                        courseWindow.destroy();
+                    }
                 } else {
-                    new NotificationSuccess('success-window', 'Данные остались без изменений!').render();
+                    notificationController.success('Данные остались без изменений!');
                 }
             }
             
         } else {
-            new NotificationError('err-window', 'Небходимо заполнить поле с названием курса').render();
+            notificationController.error('Небходимо заполнить поле с названием курса');
             nameField.input.focus();
         }   
     });
@@ -236,15 +234,17 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
             if (!keys.length) {
-                const res = await request.get('/api/db/createClass', {courseId: this.data.id, name, description: descriptionField.input.val()})
-                .catch(e => {
-                    new NotificationError('err-window', e.responseText).render();
-                    console.log(e);
-                });
+                const res = await request.post('/api/db/class', JSON.stringify({courseId: this.data.id, name, description: descriptionField.input.val()}))
+                    .catch(e => {
+                        notificationController.error(e.error.responseText);
+                        console.log(e);
+                    });
 
-                this.onDataChange.raise();
-                new NotificationSuccess('success-window', res).render();
-                lessonWindow.destroy();
+                if (res.status === 'success') {
+                    this.onDataChange.raise();
+                    notificationController.success(res.response);
+                    lessonWindow.destroy();
+                }
             } else {
                 const newData = {
                     name: nameField.input.val(),
@@ -253,20 +253,23 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 
                 const diffData = diff(data, newData);
                 if (Object.keys(diffData).length) {
-                    res = await request.get('/api/db/updateClass', {source: data ,data: diffData})
+                    res = await request.put('/api/db/class', JSON.stringify({source: data ,data: diffData}))
                         .catch(e => {
-                            new NotificationError('err-window', e.responseText).render();
+                            notificationController.error(e.error.responseText);
                             console.log(e);
                         });
-                    this.onDataChange.raise();
-                    new NotificationSuccess('success-window', res).render();
-                    lessonWindow.destroy();
+
+                    if (res.status === 'success') {
+                        this.onDataChange.raise();
+                        notificationController.success(res.response);
+                        lessonWindow.destroy();
+                    }
                 } else {
-                    new NotificationSuccess('success-window', 'Данные остались без изменений!').render();
+                    notificationController.success('Данные остались без изменений!')
                 }
             } 
         } else {
-            new NotificationError('err-window', 'Небходимо заполнить поле с названием курса').render();
+            notificationController.error('Небходимо заполнить поле с названием курса');
             nameField.input.focus();
         }   
     });
@@ -297,28 +300,31 @@ renderPage();
 DataTable.prototype.updateFilesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
-    const res = await request.get('/api/db/files', { searchingValue });    
-    const data = res.response;
-    this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('add-file')]), []);
+    const res = await request.get('/api/db/files', { searchingValue });
 
-    this.renderChildren(wChildren => {
-        switch(wChildren.getType()) {
-            case '[object dataStrip]':
-                wChildren.text.text(wChildren.data.name);
-                wChildren.renderChildren(s => {
-                    s.object.text('Добавить');
-                    s.object.click(() => {
-                        this.setTextArea(e => {
-                            const area = e.input;
-                            const temp = area.val();
-                            area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
+    if (res.status === 'success') {
+        const data = res.response;
+        this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('add-file')]), []);
+
+        this.renderChildren(wChildren => {
+            switch(wChildren.getType()) {
+                case '[object dataStrip]':
+                    wChildren.text.text(wChildren.data.name);
+                    wChildren.renderChildren(s => {
+                        s.object.text('Добавить');
+                        s.object.click(() => {
+                            this.setTextArea(e => {
+                                const area = e.input;
+                                const temp = area.val();
+                                area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
+                            });
+                            this.parent.destroy();
                         });
-                        this.parent.destroy();
                     });
-                });
 
-                break;
-        }
-        wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
-    });
+                    break;
+            }
+            wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
+        });
+    }
 }

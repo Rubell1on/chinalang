@@ -85,8 +85,8 @@ app.get('/login', async (req, res) => {
     }
 })
 
-app.get('/free', async (req, res) => {
-    const q = req.query;
+app.post('/free', async (req, res) => {
+    const q = req.body;
     
     const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE username='${q.username}' OR email='${q.email}'`)
         .catch(e => {
@@ -166,29 +166,52 @@ app.get('/dashboard/:section', async (req, res) => {
     }
 })
 
-app.get('/api/db/users', async (req, res) => {
-    const q = req.query;
+app.route('/api/db/users')
+    .get(async (req, res) => {
+        const q = req.query;
 
-    let rows = [];
+        let rows = [];
 
-    const value = q.searchingValue;
+        const value = q.searchingValue;
 
-    if (value === '') {
-        rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users')
+        if (value === '') {
+            rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users')
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+        } else {
+            rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+        }
+
+        res.status(200).json(rows[0]);    
+    })
+    .put(async (req, res) => {
+        const { diffs, sources } = req.body;
+        const template = utils.obj2strArr(diffs).join(', ');
+        const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
             .catch(e => {
                 console.error(e);
-                res.status(500).send('Ошибка сервера!');
+                res.status(500).send('При обновлении данных произошла ошибка!');
             });
-    } else {
-        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+        res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+        const password = utils.rndSequence();
+        const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
+        const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
             .catch(e => {
                 console.error(e);
-                res.status(500).send('Ошибка сервера!');
+                res.status(500).send('При создании пользователя произошла ошибка!');
             });
-    }
 
-    res.status(200).json(rows[0]);    
-})
+        res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
+    })
 
 app.route('/api/db/userData')
     .get(async (req, res) => {
@@ -206,7 +229,7 @@ app.route('/api/db/userData')
             res.status(400).send('Неверный apiKey!');
         }
     })
-    .post(async (req, res) => {
+    .put(async (req, res) => {
         const apiKey = req.query.apiKey;
 
         const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
@@ -242,155 +265,129 @@ app.route('/api/db/userData')
         }
     })
 
-app.get('/api/db/updateUsers', async (req, res) => {
-    const { diffs, sources } = req.query;
-    const template = utils.obj2strArr(diffs).join(', ');
-    const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При обновлении данных произошла ошибка!');
-        });
-    res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
-})
+app.route('/api/db/courses')
+    .get(async (req, res) => {
+        const q = req.query;
+        const value = q.searchingValue;
 
-app.get('/api/db/createUser', async (req, res) => {
-    const q = req.query;
-    const password = utils.rndSequence();
-    const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
-    const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При создании пользователя произошла ошибка!');
-        });
-
-    res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
-})
-
-app.get('/api/db/courses', async (req, res) => {
-    const q = req.query;
-    const value = q.searchingValue;
-
-    let rows = [];
-    if (value === '') {
-        rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id')
-            .catch(e => {
-                console.error(e);
-                res.status(500).send('При отправке данных произошла ошибка!');
-            });
-    } else {
-        rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id WHERE courses.name REGEXP '${value}' OR courses.description REGEXP '${value}' OR classes.name REGEXP '${value}' OR classes.description REGEXP '${value}'`)
-            .catch(e => {
-                console.error(e);
-                res.status(500).send('При отправке данных произошла ошибка!');
-            });
-    }
-
-    const tempObject = rows[0].reduce((acc, row) => {
-        const id = row.id;
-
-        if (acc && !acc[id]) {
-            acc[id] = {
-                id,
-                name: row.name,
-                description: row.description,
-                classes: []
-            }
+        let rows = [];
+        if (value === '') {
+            rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id')
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('При отправке данных произошла ошибка!');
+                });
+        } else {
+            rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id WHERE courses.name REGEXP '${value}' OR courses.description REGEXP '${value}' OR classes.name REGEXP '${value}' OR classes.description REGEXP '${value}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('При отправке данных произошла ошибка!');
+                });
         }
+
+        const tempObject = rows[0].reduce((acc, row) => {
+            const id = row.id;
+
+            if (acc && !acc[id]) {
+                acc[id] = {
+                    id,
+                    name: row.name,
+                    description: row.description,
+                    classes: []
+                }
+            }
+            
+            if (row && row.class_name) {
+                const classInstance = {
+                    id: row.class_id,
+                    courseId: id,
+                    name: row.class_name,
+                    description: row.class_description,
+                    files: row.files
+                }
         
-        if (row && row.class_name) {
-            const classInstance = {
-                id: row.class_id,
-                courseId: id,
-                name: row.class_name,
-                description: row.class_description,
-                files: row.files
+                acc[id].classes.push(classInstance);
             }
-    
-            acc[id].classes.push(classInstance);
-        }
 
-        return acc;
-    }, {});
+            return acc;
+        }, {});
 
-    const combinedObject = Object.entries(tempObject).map(row => row[1], []);
+        const combinedObject = Object.entries(tempObject).map(row => row[1], []);
 
-    res.status(200).json(combinedObject);
-})
+        res.status(200).json(combinedObject);
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+        const data = [q.name, q.description];
 
-app.get('/api/db/createCourse', async (req, res) => {
-    const q = req.query;
-    const data = [q.name, q.description];
+        await db.query(`INSERT INTO courses(name, description) VALUES(?, ?)`, data)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При создании курса произошла ошибка!');
+            });
+        
+        res.status(201).send('Курс успешно создан!');
+    })
+    .put(async (req, res) => {
+        const {data, source} = req.body;
 
-    await db.query(`INSERT INTO courses(name, description) VALUES(?, ?)`, data)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При создании курса произошла ошибка!');
-        });
-    
-    res.status(201).send('Курс успешно создан!');
-})
+        const template = utils.obj2strArr(data).join(', ');
+        const rows = await db.query(`UPDATE courses SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При обновлении курса произошла ошибка!');
+            });
 
-app.get('/api/db/updateCourse', async (req, res) => {
-    const {data, source} = req.query;
+        res.status(201).send('Курс успешно обновлен!');
+    })
+    .delete(async (req, res) => {
+        const q = req.body;
 
-    const template = utils.obj2strArr(data).join(', ');
-    const rows = await db.query(`UPDATE courses SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При обновлении курса произошла ошибка!');
-        });
+        await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При удалении курса произошла ошибка!');
+            });
 
-    res.status(201).send('Курс успешно обновлен!');
-})
+        res.status(201).send('Курс успешно удален!');
+    })
 
-app.get('/api/db/removeCourse', async (req, res) => {
-    const q = req.query;
+app.route('/api/db/class')
+    .post(async (req, res) => {
+        const q = req.body;
+        const data = [q.courseId, q.name, q.description]
+        await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При создании урока произошла ошибка!');
+            });
 
-    await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При удалении курса произошла ошибка!');
-        });
+        res.status(201).send('Урок успешно создан!');
+    })
+    .put(async (req, res) => {
+        const { data, source } = req.body;
 
-    res.status(201).send('Курс успешно удален!');
-})
+        const template = utils.obj2strArr(data).join(', ');
+        await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При удалении урока произошла ошибка!');
+            });
 
-app.get('/api/db/createClass', async (req, res) => {
-    const q = req.query;
-    const data = [q.courseId, q.name, q.description]
-    await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При создании урока произошла ошибка!');
-        });
+        res.status(200).send('Урок успешно обновлен!');
+    })
 
-    res.status(201).send('Урок успешно создан!');
-})
+    .delete(async (req, res) => {
+        const q = req.body;
 
-app.get('/api/db/updateClass', async (req, res) => {
-    const {data, source} = req.query;
+        await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('При удалении урока произошла ошибка!');
+            });
 
-    const template = utils.obj2strArr(data).join(', ');
-    await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При удалении урока произошла ошибка!');
-        });
-
-    res.status(200).send('Урок успешно обновлен!');
-})
-
-app.get('/api/db/removeClass', async (req, res) => {
-    const q = req.query;
-
-    await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
-        .catch(e => {
-            console.error(e);
-            res.status(500).send('При удалении урока произошла ошибка!');
-        });
-
-    res.status(200).send('Урок успешно удален!');
-})
+        res.status(200).send('Урок успешно удален!');
+    })
 
 app.route('/api/db/files')
     .get(async (req, res) => {

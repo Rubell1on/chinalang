@@ -156,7 +156,7 @@ async function render() {
                                                                         const string = JSON.stringify({difference, source: data});
                                                                         const apiKey = auth.get('apiKey');
                                                                         notificationController.process('Данные отправляются на сервер!');
-                                                                        const res = await request.post(`/api/db/userData?apiKey=${apiKey}`, string)
+                                                                        const res = await request.put(`/api/db/userData?apiKey=${apiKey}`, string)
                                                                             .catch(e => {
                                                                                 console.error(e);
                                                                                 notificationController.error(e.error.responseText);

@@ -109,7 +109,7 @@ class QuickStartWindow extends SingleCustomWindow {
             .find(`.${this.className}`)
             .click((e) => e.stopPropagation());
         
-        $('.submit').click(() => this.submit());
+        $('.submit').click(async () => await this.submit());
     }
 
     setRandomText() {
@@ -123,20 +123,30 @@ class QuickStartWindow extends SingleCustomWindow {
         $(`.${this.className} .info`).append(template)
     }
 
-    register(data) {
-        $.ajax({
-            url:'/free',
-            data,
-            success: (data, status) => {
-                new NotificationSuccess('user-registered', data).render();
-                console.log({data, status})
-                this.destroy();
-            },
-            error: (error, status) => {
-                new NotificationError('err-window', error.responseText).render();
-                console.log({error, status})
-            }
-        })
+    async register(data) {
+        const res = await request.post('/free', JSON.stringify(data))
+            .catch(e => {
+                console.error(e)
+                notificationController.error(e.error.responseText)
+            });
+
+        if (res.status === 'success') {
+            notificationController.success(res.response);
+            this.destroy();
+        }
+        // $.ajax({
+        //     url:'/free',
+        //     data,
+        //     success: (data, status) => {
+        //         new NotificationSuccess('user-registered', data).render();
+        //         console.log({data, status})
+        //         this.destroy();
+        //     },
+        //     error: (error, status) => {
+        //         new NotificationError('err-window', error.responseText).render();
+        //         console.log({error, status})
+        //     }
+        // })
     }
 
     destroy() {
@@ -146,7 +156,7 @@ class QuickStartWindow extends SingleCustomWindow {
         }
     }
 
-    submit() {
+    async submit() {
         const data = {
             "username": undefined,
             "phone": undefined,
@@ -178,11 +188,13 @@ class QuickStartWindow extends SingleCustomWindow {
 
         if (flag) {
             console.log(JSON.stringify(data));
-            this.register(data);
-            new NotificationWindow('window', 'Данные отправлены! Ожидаю ответ.').render();
+            await this.register(data);
+            notificationController.process('Данные отправлены! Ожидаю ответ.')
+            // new NotificationWindow('window', 'Данные отправлены! Ожидаю ответ.').render();
         } else {
-            new NotificationError('err-window', "Некорректно заполнены поля").render();
-            console.error("Некорректно заполнены поля");
+            notificationController.error('Некорректно заполнены поля')
+            // new NotificationError('err-window', "Некорректно заполнены поля").render();
+            // console.error("Некорректно заполнены поля");
         }
     }
 }

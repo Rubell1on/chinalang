@@ -1,4 +1,4 @@
-async function createNewUser() {
+DataTable.prototype.createNewUser = async function() {
     const data = {
         username: '',
         role: '',
@@ -66,9 +66,18 @@ async function createNewUser() {
     submit.render(parent);
     submit.object.text('Создать пользователя');
     submit.object.click(async () => {
-        dataWindow.onSubmit.addListener(() => strip.onDataChange.raise());
         const inputsData = getInputData();
-        await dataWindow.submit('/api/db/createUser', inputsData);
+        const res = await request.post('/api/db/users', JSON.stringify(inputsData))
+            .catch(e => {
+                notificationController.error(e.error.responseText)
+                console.log(e);
+            });
+
+        if (res.status === 'success') {
+            notificationController.success(res.response);
+            this.updateData();
+            dataWindow.destroy();
+        }
     });
 
     children.push(submit);           
@@ -82,16 +91,11 @@ async function createNewUser() {
                 case '[object inputField]': 
                     key = curr.className;
                     acc[key] = curr.input.val();
-                    // if (value != data[key]) acc[key] = value;
     
                     break;
                 
                 case '[object dataStrip]':
-                    // if (curr && curr.compareData) {
                     key = curr.className;
-                    //     const value = curr.compareData;
-                    //     if (value !== curr.data) acc[key] = value;
-                    // }
                     acc[key] = JSON.stringify(data.courses);
     
                     break;
@@ -289,7 +293,6 @@ CheckboxButton.prototype.changeClassesSubscription = function(lesson, userCourse
         }
 
         if (flag) {
-            // userCourses.find(c => c.id === lesson.courseId).classes.push(lesson);
             userCourses.find(c => c.id === lesson.courseId).classes.push({id: lesson.id, courseId: lesson.courseId});
             this.object.css('background', '#FB2267');
             this.object.text('Закрыть');
@@ -321,19 +324,6 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
 
         return acc;
     }, {});
-}
-
-DataWindow.prototype.submit = async function(url, data) {
-    const res = await request.get(url, data)
-        .catch(e => {
-            new NotificationError('err-window', e.responseText).render();
-            console.log(e);
-        });
-
-    new NotificationSuccess('user-registered', res).render();
-    this.onSubmit.raise();
-    console.log(res);
-    this.destroy();
 }
 
 DataTable.prototype.updateData = async function() {
@@ -405,13 +395,22 @@ DataTable.prototype.updateData = async function() {
             submit.render(parent);
             submit.object.text('Применить');
             submit.object.click(async () => {
-                dataWindow.onSubmit.addListener(() => strip.onDataChange.raise());
-
                 const diffs = dataWindow.checkDifferences();
                 const keys = Object.keys(diffs);
 
                 if (keys.length !== 0) {
-                    await dataWindow.submit('/api/db/updateUsers', {sources: dataWindow.data, diffs});
+                    const res = await request.put('/api/db/users', JSON.stringify({sources: dataWindow.data, diffs}))
+                        .catch(e => {
+                            notificationController.error(e.error.responseText)
+                            console.log(e);
+                        });
+
+                    if (res.status === 'success') {
+                        notificationController.success(res.response);
+                        strip.onDataChange.raise()
+                        console.log(res);
+                        dataWindow.destroy();
+                    }
                 }
             });
 
@@ -437,7 +436,7 @@ async function renderPage() {
     const addNewUser = userWindow.controls.find(c => c.isTypeOf('button'));
     addNewUser.object.text('+');
     addNewUser.object.attr('title', 'Добавить нового пользователя');
-    addNewUser.object.click(async () => createNewUser());
+    addNewUser.object.click(async () => userWindow.createNewUser());
     userWindow.controls[2].input.change(async () => {
         await userWindow.updateData();
     });

@@ -32,6 +32,7 @@ class request {
                 url,
                 type: 'PUT',
                 // dataType: 'json',
+                contentType: 'Application/json',
                 data,
                 success: (response, status, jqXHR) => resolve({ response, status }),
                 error: (error, status, jqXHR) => reject({ error, status })
@@ -45,6 +46,7 @@ class request {
                 url,
                 type: 'DELETE',
                 // dataType: 'json',
+                contentType: 'Application/json',
                 data,
                 success: (response, status, jqXHR) => resolve({ response, status }),
                 error: (error, status, jqXHR) => reject({ error, status })
