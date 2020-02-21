@@ -18,9 +18,10 @@ class request {
                 url,
                 type: 'POST',
                 // dataType: 'json',
+                contentType: 'Application/json',
                 data,
-                success: (response, status, jqXHR) => resolve({ response, status }),
-                error: (error, status, jqXHR) => reject({ error, status })
+                success: (response, status, jqXHR) => resolve({ response, status, jqXHR }),
+                error: (error, status, jqXHR) => reject({ error, status, jqXHR })
             });
         });
     }

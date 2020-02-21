@@ -13,8 +13,10 @@ class CustomEvent {
         }
     }
 
-    removeListener(func) {
-
+    removeListener(ind) {
+        if (ind >= 0  && ind < this.events.length) {
+            return this.events.splice(ind, 1);
+        }  
     }
 
     removeAllListeners() {

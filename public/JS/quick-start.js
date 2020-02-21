@@ -42,14 +42,19 @@ $('.login').click(() => {
                 }
 
                 if (flag) {
-                    const res = await request.get('/login', userData);
+                    const res = await request.get('/login', userData)
+                        .catch(e => {
+                            console.log(e);
+                            notificationController.error(e.error.responseText);
+                        });
                     if (res.status === 'success') {
                         auth.setData(res.response);
 
                         location.href = `${location.origin}/dashboard/users?apiKey=${auth.getData()['apiKey']}`;
                     }
                 } else {
-                    new NotificationError('error-window', 'Необходимо заполнить выделенные поля!').render('');
+                    notificationController.error('Необходимо заполнить выделенные поля!');
+                    // new NotificationError('error-window', 'Необходимо заполнить выделенные поля!').render('');
                 }
             })
         }

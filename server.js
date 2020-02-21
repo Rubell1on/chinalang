@@ -3,7 +3,6 @@ const app = express();
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
 const Enum = require('./public/JS/enum');
-const bodyParser = require('body-parser');
 const envVars = new utils.EnvVars();
 const gAPI = require('./public/JS/GoogleAPI');
 const yAPI = require('./public/JS/yandexApi');
@@ -24,7 +23,7 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
 
 app.listen(3000, '192.168.0.106', () => {
     db.connect()
@@ -42,10 +41,11 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     const q = req.query;
 
-    const rows = await db.query(`SELECT id, username, password, role FROM users WHERE username='${q.username}'`).catch(e => {
-        console.error(e);
-        res.send(400);
-    });
+    const rows = await db.query(`SELECT id, username, password, role FROM users WHERE username='${q.username}'`)
+        .catch(e => {
+            console.error(e);
+            res.status(400).send('Неверное имя пользователя!');
+        });
 
     const users = rows[0];
     const id = users[0].id
@@ -57,38 +57,52 @@ app.get('/login', async (req, res) => {
             const apiKey = utils.rndSequence(10);
             const data = [id, apiKey, req.ip];
 
-            const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`);
+            const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
             if (rows[0].length) {
-                await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`);
+                await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Произошла ошибка при обновлении данных!');
+                });
                 res.status(200).json({id, username: users[0].username, apiKey});
             } else {
-                await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data);
+                await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Произошла ошибка при добавлении данных!');
+                });
                 res.status(201).json({id, username: users[0].username, apiKey});
             }
         } else {
-            res.send(403, 'Неверный логин или пароль!');
+            res.status(403).send('Неверный логин или пароль!');
         }
     } else {
-        res.send(404, 'Пользователь не найден!');
+        res.status(404).send('Пользователь не найден!');
     }
 })
 
 app.get('/free', async (req, res) => {
     const q = req.query;
     
-    const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE username='${q.username}' OR email='${q.email}'`).catch(e => {
-        console.error(e);
-        res.send(400);
-    });
+    const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE username='${q.username}' OR email='${q.email}'`)
+        .catch(e => {
+            console.error(e);
+            res.status(400).send('При регистрации пользователя произошла ошибка!');
+        });
     const count = rows[0][0].count;
 
     if (count === 0) {
         const password = utils.rndSequence();
         const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft) VALUES(?, ?, ?, ?, ?, ?, ?)', arr).catch(e => {
-            console.error(e);
-            res.send(500, 'Ошибка сервера!');
-        });
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
         const message = new gAPI.messageBuilder(
             {
                 name: 'chinaLang', 
@@ -100,9 +114,9 @@ app.get('/free', async (req, res) => {
         ).build();
 
         await gmailClient.sendMessage(message);
-        res.send(201, 'Пользователь зарегистрирован! Проверьте вашу электронную почту!');
+        res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
     } else {
-        res.send(400, 'Данный пользователь уже существует!');
+        res.status(400).send('Данный пользователь уже существует!');
     }
 })
 
@@ -110,7 +124,11 @@ app.get('/dashboard/:section', async (req, res) => {
     console.log();
     const q = req.query;
     if (q && q.apiKey) {
-        const rows = await db.query(`SELECT users.id, users.role, usersapi.userIp FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`);
+        const rows = await db.query(`SELECT users.id, users.role, usersapi.userIp FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
         const users = rows[0];
 
         if (users.length) {
@@ -133,7 +151,7 @@ app.get('/dashboard/:section', async (req, res) => {
                             break;
         
                         default:
-                            res.send(404);
+                            res.status(404).send('Запрашиваемая страница не найдена!');
                             break;
                     }
                 }
@@ -156,12 +174,20 @@ app.get('/api/db/users', async (req, res) => {
     const value = q.searchingValue;
 
     if (value === '') {
-        rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users');
+        rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users')
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
     } else {
-        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`);
+        rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
     }
 
-    res.json(rows[0]);    
+    res.status(200).json(rows[0]);    
 })
 
 app.route('/api/db/userData')
@@ -169,13 +195,52 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`);
+            const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
 
             res.status(200).json(rows[0]);
         } else {
-            res.send(300);
+            res.status(400).send('Неверный apiKey!');
         }
-    });
+    })
+    .post(async (req, res) => {
+        const apiKey = req.query.apiKey;
+
+        const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
+
+        if (rows[0].length) {
+            const users = rows[0];
+            const q = req.body;
+            const diffs = q.difference;
+
+            if (diffs && diffs['old-password']) {
+                if (users[0].password !== diffs['old-password']) {
+                    res.status(400).send('Старый пароль введен неверно!');
+                } else {
+                    delete diffs['old-password'];
+                }
+            }
+
+            const template = utils.obj2strArr(diffs).join(', ');
+
+            const result = await db.query(`UPDATE users JOIN usersapi ON users.id = usersapi.userId SET ${template} WHERE usersapi.apiKey = '${apiKey}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('При обновлении данных произошла ошибка!');
+                });
+            res.status(200).send('Данные пользователя успешно обновлены!');
+            
+        } else {
+            res.status(400).send('Отправлен неправильный apiKey!');
+        }
+    })
 
 app.get('/api/db/updateUsers', async (req, res) => {
     const { diffs, sources } = req.query;
@@ -183,9 +248,9 @@ app.get('/api/db/updateUsers', async (req, res) => {
     const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При обновлении данных произошла ошибка!');
+            res.status(500).send('При обновлении данных произошла ошибка!');
         });
-    res.send(200, `Данные пользователя ${sources.username} успешно обновлены!`);
+    res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
 })
 
 app.get('/api/db/createUser', async (req, res) => {
@@ -195,10 +260,10 @@ app.get('/api/db/createUser', async (req, res) => {
     const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При создании пользователя произошла ошибка!');
+            res.status(500).send('При создании пользователя произошла ошибка!');
         });
 
-    res.send(201, `Пользователь ${q.username} успешно добавлен!`);
+    res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
 })
 
 app.get('/api/db/courses', async (req, res) => {
@@ -207,17 +272,16 @@ app.get('/api/db/courses', async (req, res) => {
 
     let rows = [];
     if (value === '') {
-        // rows = await db.query('SELECT * FROM courses');
         rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id')
             .catch(e => {
                 console.error(e);
-                res.send(500, 'При отправке данных произошла ошибка!');
+                res.status(500).send('При отправке данных произошла ошибка!');
             });
     } else {
         rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id WHERE courses.name REGEXP '${value}' OR courses.description REGEXP '${value}' OR classes.name REGEXP '${value}' OR classes.description REGEXP '${value}'`)
             .catch(e => {
                 console.error(e);
-                res.send(500, 'При отправке данных произошла ошибка!');
+                res.status(500).send('При отправке данных произошла ошибка!');
             });
     }
 
@@ -250,7 +314,7 @@ app.get('/api/db/courses', async (req, res) => {
 
     const combinedObject = Object.entries(tempObject).map(row => row[1], []);
 
-    res.json(combinedObject);
+    res.status(200).json(combinedObject);
 })
 
 app.get('/api/db/createCourse', async (req, res) => {
@@ -260,10 +324,10 @@ app.get('/api/db/createCourse', async (req, res) => {
     await db.query(`INSERT INTO courses(name, description) VALUES(?, ?)`, data)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При создании курса произошла ошибка!');
+            res.status(500).send('При создании курса произошла ошибка!');
         });
     
-    res.send(201, 'Курс успешно создан!');
+    res.status(201).send('Курс успешно создан!');
 })
 
 app.get('/api/db/updateCourse', async (req, res) => {
@@ -273,10 +337,10 @@ app.get('/api/db/updateCourse', async (req, res) => {
     const rows = await db.query(`UPDATE courses SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При обновлении курса произошла ошибка!');
+            res.status(500).send('При обновлении курса произошла ошибка!');
         });
 
-    res.send(201, 'Курс успешно обновлен!');
+    res.status(201).send('Курс успешно обновлен!');
 })
 
 app.get('/api/db/removeCourse', async (req, res) => {
@@ -285,10 +349,10 @@ app.get('/api/db/removeCourse', async (req, res) => {
     await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При удалении курса произошла ошибка!');
+            res.status(500).send('При удалении курса произошла ошибка!');
         });
 
-    res.send(201, 'Курс успешно удален!');
+    res.status(201).send('Курс успешно удален!');
 })
 
 app.get('/api/db/createClass', async (req, res) => {
@@ -297,10 +361,10 @@ app.get('/api/db/createClass', async (req, res) => {
     await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При создании урока произошла ошибка!');
+            res.status(500).send('При создании урока произошла ошибка!');
         });
 
-    res.send(201, 'Урок успешно создан!');
+    res.status(201).send('Урок успешно создан!');
 })
 
 app.get('/api/db/updateClass', async (req, res) => {
@@ -310,10 +374,10 @@ app.get('/api/db/updateClass', async (req, res) => {
     await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При удалении урока произошла ошибка!');
+            res.status(500).send('При удалении урока произошла ошибка!');
         });
 
-    res.send(200, 'Урок успешно обновлен!');
+    res.status(200).send('Урок успешно обновлен!');
 })
 
 app.get('/api/db/removeClass', async (req, res) => {
@@ -322,10 +386,10 @@ app.get('/api/db/removeClass', async (req, res) => {
     await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
         .catch(e => {
             console.error(e);
-            res.send(500, 'При удалении урока произошла ошибка!');
+            res.status(500).send('При удалении урока произошла ошибка!');
         });
 
-    res.send(200, 'Урок успешно удален!');
+    res.status(200).send('Урок успешно удален!');
 })
 
 app.route('/api/db/files')
@@ -333,16 +397,28 @@ app.route('/api/db/files')
         const value = req.query.searchingValue;
 
         let rows;
-        if (!value) rows = await db.query('SELECT * FROM files');
-        else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`);
+        if (!value) rows = await db.query('SELECT * FROM files')
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
+        else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
 
-        res.send(200, rows[0]);
+        res.status(200).send(rows[0]);
     })
     .post(async (req, res) => {
         const q = req.body;
 
-        const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`);
-        res.send(201);
+        const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
+            .catch(e => {
+                console.error(e);
+                res.status(500).send('Ошибка сервера!');
+            });
+        res.status(201).send('Файл создан!');
     })
     .delete(async (req, res) => {
         const q = req.body;
@@ -350,10 +426,14 @@ app.route('/api/db/files')
         const response = await yandexDisk.deleteData(q.link);
         const statusCode = response.res.statusCode;
         if (statusCode === 204) {
-            await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`);
-            res.send(204);
+            await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+            res.status(204).send('Файл удален!');
         } else {
-            res.send(statusCode);
+            res.status(statusCode).send(response.res);
         }
     })
     .put(async (req, res) => {

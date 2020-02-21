@@ -68,7 +68,10 @@ class NotificationController {
 
     _removeChild(className) {
         const index = this._children.findIndex(c => c.className === className);
-        return this._children.splice(index, 1);
+
+        if (index !== -1) {
+            return this._children.splice(index, 1);
+        }
     }
 }
 
