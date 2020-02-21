@@ -9,7 +9,7 @@ class CustomEvent {
 
     raise() {
         if (this.events.length !== 0) {
-            this.events.forEach(f => f());
+            this.events.forEach(f => f(arguments[0]));
         }
     }
 
