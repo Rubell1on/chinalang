@@ -17,13 +17,17 @@ DataTable.prototype.updateFilesData = async function() {
                             const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить файл "${wChildren.data.name}"?`);
                             window.render('');
                             window.yes.click(async () => {
-                                const res = await request.delete('/api/db/files', JSON.stringify(wChildren.data)).catch(e => {
-                                    new NotificationError('err-window', e).render();
-                                    console.log(e);
-                                });
-                                new NotificationSuccess('success-window', res).render();
-                                this.updateFilesData();
-                                window.destroy();
+                                const res = await request.delete('/api/db/files', JSON.stringify(wChildren.data))
+                                    .catch(e => {
+                                        notificationController.error(e.error.responseText);
+                                        console.log(e);
+                                    });
+
+                                if (res.status === 'success') {
+                                    notificationController.success(res.response);
+                                    this.updateFilesData();
+                                    window.destroy();
+                                }
                             });
 
                             window.no.click(() => {
@@ -77,7 +81,7 @@ DataTable.prototype.createNewFile = async function(data = {}) {
             
             if (res.status === 'success') {
                 const data = res.response;
-                const response = await putOnDisk(data.data.href, file)
+                const response = await request.put(data.data.href, file, false)
                     .catch(e => {
                         console.error(e);
                         notificationController.error(e.error.responseText);
@@ -91,23 +95,6 @@ DataTable.prototype.createNewFile = async function(data = {}) {
                         });
                     fileWindow.destroy();
                     await self.updateFilesData();
-                }
-    
-                async function putOnDisk(url, data) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url,
-                            type: 'PUT',
-                            data,
-                            processData : false,
-                            success: (res, status) => {
-                                resolve({res, status});
-                            },
-                            error: (err, status) => {
-                                reject({err, status});
-                            }
-                        });
-                    });
                 }
             }
         });

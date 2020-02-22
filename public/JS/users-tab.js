@@ -337,6 +337,8 @@ DataTable.prototype.updateData = async function() {
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
         // strip.img.val(strip.data && strip.data.img ? )
+        const photoLink = strip.data && strip.data.photo ? strip.data.photo : strip.defaultImg;
+        strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const dataWindow = new DataWindow('user-data-window', strip.data);
             dataWindow.render('');
@@ -353,7 +355,7 @@ DataTable.prototype.updateData = async function() {
                 } else {
                     input = new DataStrip('courses', e[1]);
                     input.render(parent);
-                    // input.icon.attr('src', '');
+                    input.icon.attr('src', '');
                     input.text.text(e[0]);
                     input.object.click(() => {
                         const controls = [

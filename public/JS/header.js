@@ -81,8 +81,58 @@ async function render() {
         
                                                         });
                                                     } else {
-                                                        table.renderChildren(() => {
-        
+                                                        table.renderChildren(child => {
+                                                            switch(child.className) {
+                                                                case 'change-photo':
+                                                                    child.object.click(async () => {
+                                                                        const fileInput = table.children.find(c => c.isTypeOf('fileInput'));
+                                                                        const file = fileInput.input[0].files[0];
+                                                                        const fileType = file.name.match(/\.\w*/)[0];
+
+                                                                        const fileInfo = {
+                                                                            name: `${data.username}_photo${fileType}`,
+                                                                            type: 'photo'
+                                                                        }
+                                                                        const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
+                                                                            .catch(e => {
+                                                                                notificationController.error(e.error.responseText);
+                                                                                console.error(e);
+                                                                            });
+
+                                                                            if (res.status === 'success') {
+                                                                                const responseData = res.response;
+                                                                                const response = await request.put(responseData.data.href, file, false)
+                                                                                    .catch(e => {
+                                                                                        console.error(e);
+                                                                                        notificationController.error(e.error.responseText);
+                                                                                    });
+                                                                                    
+                                                                                if (response.status === 'success') {
+                                                                                    fileInfo.path = responseData.path;
+                                                                                    fileInfo.data = data;
+                                                                                    const res = await request.post('/api/db/files', JSON.stringify(fileInfo))
+                                                                                        .catch((e, status) => {
+                                                                                            console.error({e, status});
+                                                                                        });
+
+                                                                                    if (res.status) {
+                                                                                        window.destroy();
+                                                                                        await self.updateFilesData();
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                    });
+
+                                                                    break;
+
+                                                                case 'delete-photo':
+
+                                                                    break;
+
+                                                                case 'photo-field':
+                                                                    child.input.attr('accept', 'image/jpeg, image/png, image/jpg');
+                                                                    break;
+                                                            }
                                                         });
                                                     }
                                                 });

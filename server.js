@@ -175,20 +175,44 @@ app.route('/api/db/users')
         const value = q.searchingValue;
 
         if (value === '') {
-            rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses FROM users')
+            rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users')
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
         } else {
-            rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+            rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
         }
 
-        res.status(200).json(rows[0]);    
+        const photoLinks = rows[0].reduce((acc, curr) => {
+            const link = curr.photoLink;
+            if (link) {
+                acc.push(yandexDisk.getDowndloadLink(link));
+            } else {
+                acc.push(curr.photoLink);
+            }
+
+            return acc;
+        }, []);
+
+        const response = await yandexDisk.getPublished();
+
+        const files = response.body.items;
+
+        // const links = await Promise.all(photoLinks);
+
+        const users = rows[0].map((user, i) => {
+            const file = files.find(f => f.path.slice(6) === user.photoLink);
+            user.photo = file && file.file ? file.file : null;
+
+            return user;
+        }, []);
+
+        res.status(200).json(users);    
     })
     .put(async (req, res) => {
         const { diffs, sources } = req.body;
@@ -218,7 +242,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
@@ -232,7 +256,7 @@ app.route('/api/db/userData')
     .put(async (req, res) => {
         const apiKey = req.query.apiKey;
 
-        const rows = await db.query(`SELECT users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
+        const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
@@ -410,12 +434,22 @@ app.route('/api/db/files')
     .post(async (req, res) => {
         const q = req.body;
 
-        const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
-            .catch(e => {
-                console.error(e);
-                res.status(500).send('Ошибка сервера!');
-            });
-        res.status(201).send('Файл создан!');
+        if (q.type === 'document') {
+            const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+            res.status(201).send('Файл создан!');
+        } else if (q.type === 'photo') {
+            const response = await yandexDisk.publishFile(q.path);
+            const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+            res.status(201).send('Файл создан!');
+        }
     })
     .delete(async (req, res) => {
         const q = req.body;
@@ -437,7 +471,7 @@ app.route('/api/db/files')
         const q = req.body;
         const root = 'chinalang';
         const docs = 'documents';
-        // const photos = 'photos';
+        const photos = 'photos';
 
         const filesList = await yandexDisk.getList();
         const tree = utils.getDirTree(filesList.body.items);
@@ -447,23 +481,30 @@ app.route('/api/db/files')
             const response = await yandexDisk.getUploadLink(`${root}/temp.tmp`);
             await yandexDisk.putData(response.body.href, Buffer.from('temp'));
         }
-        if (tree.find(docs) === null) {
-            const path = `${root}/${docs}`;
-            await yandexDisk.createFolder(path);
-            const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
-            await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+
+        if (q.type === 'document') {
+            if (tree.find(docs) === null) {
+                const path = `${root}/${docs}`;
+                await yandexDisk.createFolder(path);
+                const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
+                await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+            }
         }
-        // if (tree.find(photos) === null) {
-        //     const path = `${root}/${photos}`;
-        //     await yandexDisk.createFolder(path);
-        //     const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
-        //     await yandexDisk.putData(response.body.href, Buffer.from('temp'));
-        // }
+
+        if (q.type === 'photo') {
+            if (tree.find(photos) === null) {
+                const path = `${root}/${photos}`;
+                await yandexDisk.createFolder(path);
+                const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`, true);
+                await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+            }
+        }
 
         const name = utils.translate(q.name);
-        
-        const filePath = `${root}/${docs}/${name}`;
+        const filePath = `${root}/${q.type === 'document' ? docs : photos}/${name}`;
+
         const link = await yandexDisk.getUploadLink(filePath);
+        
         res.status(200).json({data: link.body, path: filePath});
     })
 

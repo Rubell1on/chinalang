@@ -5,14 +5,14 @@ module.exports = class yandexApi {
         this.TOKEN = TOKEN;
     }
 
-    getUploadLink(path) {
+    getUploadLink(path, overwrite = false) {
         return new Promise((resolve, reject) => {
             request.get({
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `OAuth ${this.TOKEN}` 
                 },
-                url: `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${path}`
+                url: `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${path}&overwrite=${overwrite}`
             }, (err, res, body) => {
                 if (err) reject(err);
                 else resolve({res, body: JSON.parse(body)});
@@ -117,6 +117,36 @@ module.exports = class yandexApi {
                     'Authorization': `OAuth ${this.TOKEN}`   
                 },
                 url: 'https://cloud-api.yandex.net/v1/disk/resources/public?limit=100000&type=dir'
+            }, (err, res, body) => {
+                if (err) reject(err);
+                else resolve({res, body: JSON.parse(body)});
+            });
+        });
+    }
+
+    publishFile(path) {
+        return new Promise((resolve, reject) => {
+            request.put({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `OAuth ${this.TOKEN}`   
+                },
+                url: `https://cloud-api.yandex.net/v1/disk/resources/publish?path=${path}`
+            }, (err, res, body) => {
+                if (err) reject(err);
+                else resolve({res, body: JSON.parse(body)});
+            });
+        });
+    }
+
+    getPublished() {
+        return new Promise((resolve, reject) => {
+            request.get({
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `OAuth ${this.TOKEN}`   
+                },
+                url: 'https://cloud-api.yandex.net/v1/disk/resources/public?limit=100000'
             }, (err, res, body) => {
                 if (err) reject(err);
                 else resolve({res, body: JSON.parse(body)});
