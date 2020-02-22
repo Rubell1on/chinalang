@@ -17,7 +17,7 @@ DataTable.prototype.updateFilesData = async function() {
                             const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить файл "${wChildren.data.name}"?`);
                             window.render('');
                             window.yes.click(async () => {
-                                const res = await request.delete('/api/db/files', wChildren.data).catch(e => {
+                                const res = await request.delete('/api/db/files', JSON.stringify(wChildren.data)).catch(e => {
                                     new NotificationError('err-window', e).render();
                                     console.log(e);
                                 });
@@ -69,33 +69,46 @@ DataTable.prototype.createNewFile = async function(data = {}) {
                 name: name.isEmpty() ? file.name : name,
                 type: 'document'
             }
-            const res = await request.put('/api/db/files', fileInfo);
-            const data = res.response;
-            const response = await putOnDisk(data.data.href, file);
-            if (response.status === 'success') {
-                fileInfo.path = data.path;
-                await request.post('/api/db/files', fileInfo).catch((e, status) => {
-                    console.error({e, status});
+            const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
+                .catch(e => {
+                    notificationController.error(e.error.responseText);
+                    console.error(e);
                 });
-                fileWindow.destroy();
-                await self.updateFilesData();
-            }
-    
-            async function putOnDisk(url, data) {
-                return new Promise((resolve, reject) => {
-                    $.ajax({
-                        url,
-                        type: 'PUT',
-                        data,
-                        processData : false,
-                        success: (res, status) => {
-                            resolve({res, status});
-                        },
-                        error: (err, status) => {
-                            reject({err, status});
-                        }
+            
+            if (res.status === 'success') {
+                const data = res.response;
+                const response = await putOnDisk(data.data.href, file)
+                    .catch(e => {
+                        console.error(e);
+                        notificationController.error(e.error.responseText);
                     });
-                });
+                    
+                if (response.status === 'success') {
+                    fileInfo.path = data.path;
+                    await request.post('/api/db/files', JSON.stringify(fileInfo))
+                        .catch((e, status) => {
+                            console.error({e, status});
+                        });
+                    fileWindow.destroy();
+                    await self.updateFilesData();
+                }
+    
+                async function putOnDisk(url, data) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url,
+                            type: 'PUT',
+                            data,
+                            processData : false,
+                            success: (res, status) => {
+                                resolve({res, status});
+                            },
+                            error: (err, status) => {
+                                reject({err, status});
+                            }
+                        });
+                    });
+                }
             }
         });
     });
