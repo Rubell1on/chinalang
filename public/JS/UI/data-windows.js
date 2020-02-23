@@ -354,3 +354,49 @@ class DropDownList extends CustomWindow {
         this.textField.text(value);
     }
 }
+
+class PageLoader extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        
+        this.children = children;
+        this.html = 
+            `<div class="page-loader ${this.className}">`+
+                `<div class="page-loader-overlay ${this.className}-overlay">`+
+
+                '</div>' +
+            '</div>';
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.wrapper = this.object.find('.page-loader-overlay');
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.wrapper);
+                callback(child);
+            });
+        }
+    }
+}
+
+class Image extends CustomWindow {
+    constructor(className, src = '') {
+        super(className);
+
+        this.html = `<img class="image-widget ${this.className}" src=${src}>`
+    }
+
+    render(parent) {
+        super.render(parent);
+    }
+
+    setSrc(value) {
+        this.object.attr('src', value);
+    }
+}

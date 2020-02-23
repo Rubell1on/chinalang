@@ -24,7 +24,7 @@ DataTable.prototype.updateFilesData = async function() {
                                         console.log(e);
                                     });
 
-                                if (res.status === 'success') {
+                                if (res.status === 'nocontent') {
                                     notificationController.success(res.response);
                                     this.updateFilesData();
                                     window.destroy();
@@ -90,12 +90,16 @@ DataTable.prototype.createNewFile = async function(data = {}) {
                     
                 if (response.status === 'success') {
                     fileInfo.path = data.path;
-                    await request.post('/api/db/files', JSON.stringify(fileInfo))
+                    const postResponse = await request.post('/api/db/files', JSON.stringify(fileInfo))
                         .catch((e, status) => {
                             console.error({e, status});
                         });
-                    fileWindow.destroy();
-                    await self.updateFilesData();
+                    
+                    if (postResponse.status === 'success') {
+                        notificationController.success(postResponse.response);
+                        fileWindow.destroy();
+                        await self.updateFilesData();
+                    }
                 }
             }
         });

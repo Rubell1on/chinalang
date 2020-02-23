@@ -425,6 +425,15 @@ DataTable.prototype.updateData = async function() {
 }
 
 async function renderPage() {
+    const pageLoader = new PageLoader('user-tab-loader', [
+        new Label('loader-label', 'Идет загрузка страницы!'),
+        new Image('loader-image', '../../public/IMG/dashboard/spiner.gif')
+    ]);
+    pageLoader.render('');
+    pageLoader.renderChildren(() => {});   
+    
+    $(window).on('load', () => pageLoader.destroy());
+
     const controls = [
         new Label('users-label', 'Список пользователей'),
         new Button('add-new-user'),
