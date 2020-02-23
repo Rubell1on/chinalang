@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     const q = req.query;
 
-    const rows = await db.query(`SELECT id, username, password, role FROM users WHERE username='${q.username}'`)
+    const rows = await db.query(`SELECT id, username, password, role, photoLink FROM users WHERE username='${q.username}'`)
         .catch(e => {
             console.error(e);
             res.status(400).send('Неверное имя пользователя!');
@@ -51,6 +51,7 @@ app.get('/login', async (req, res) => {
     const id = users[0].id
     const password = users[0].password;
     const role = users[0].role;
+    const photoLink = users[0].photoLink;
 
     if (users.length) {
         if (password === q.password) {
@@ -62,20 +63,32 @@ app.get('/login', async (req, res) => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
+
+            const response = await yandexDisk.getPublished();
+            const files = response.body.items;
+            const file = files.find(f => f.path.slice(6) === photoLink);
+
+            let buffer = '';
+
+            if (file) {
+                const image = await yandexDisk.getData(file.file);
+                buffer = file && image && image.body ? Base64.encode(image.body) : '';
+            }
+
             if (rows[0].length) {
                 await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Произошла ошибка при обновлении данных!');
                 });
-                res.status(200).json({id, username: users[0].username, apiKey});
+                res.status(200).json({id, username: users[0].username, apiKey, photo: buffer});
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Произошла ошибка при добавлении данных!');
                 });
-                res.status(201).json({id, username: users[0].username, apiKey});
+                res.status(201).json({id, username: users[0].username, apiKey, photo: buffer});
             }
         } else {
             res.status(403).send('Неверный логин или пароль!');
@@ -188,26 +201,16 @@ app.route('/api/db/users')
                 });
         }
 
-        const photoLinks = rows[0].reduce((acc, curr) => {
-            const link = curr.photoLink;
-            if (link) {
-                acc.push(yandexDisk.getDowndloadLink(link));
-            } else {
-                acc.push(curr.photoLink);
-            }
-
-            return acc;
-        }, []);
-
         const response = await yandexDisk.getPublished();
 
         const files = response.body.items;
 
-        // const links = await Promise.all(photoLinks);
+        const links = await Promise.all(files.map(file => yandexDisk.getData(file.file)));
 
-        const users = rows[0].map((user, i) => {
-            const file = files.find(f => f.path.slice(6) === user.photoLink);
-            user.photo = file && file.file ? file.file : null;
+        const users = rows[0].map((user) => {
+            const i = files.findIndex(f => f.path.slice(6) === user.photoLink);
+            const link = i !== -1 ? links[i] : null;
+            user.photo = links && link && link.body ? Base64.encode(link.body) : null ;
 
             return user;
         }, []);
@@ -242,11 +245,27 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
+
+            const users = rows[0];
+
+            let buffer = '';
+            
+            if (users && users[0]) {
+                const response = await yandexDisk.getPublished();
+                const files = response.body.items;
+                const file = files.find(f => f.path.slice(6) === users[0].photoLink);
+
+                if (file) {
+                    const image = await yandexDisk.getData(file.file);
+                    buffer = file && image && image.body ? Base64.encode(image.body) : '';
+                    users[0].photo = buffer;
+                }
+            }
 
             res.status(200).json(rows[0]);
         } else {
@@ -457,11 +476,19 @@ app.route('/api/db/files')
         const response = await yandexDisk.deleteData(q.link);
         const statusCode = response.res.statusCode;
         if (statusCode === 204) {
-            await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
-                .catch(e => {
-                    console.error(e);
-                    res.status(500).send('Ошибка сервера!');
-                });
+            if (q.type === 'document') {
+                await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+            } else if (q.type === 'photo') {
+                await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+            }
             res.status(204).send('Файл удален!');
         } else {
             res.status(statusCode).send(response.res);

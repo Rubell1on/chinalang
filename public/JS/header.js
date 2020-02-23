@@ -1,8 +1,18 @@
 async function render() {
-    const username = localStorage.getItem('username');
+    // const username = localStorage.getItem('username');
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
     const children = [
         new Button('menu-button', '≡'),
-        new DropDownList('user-menu', username)
+        new DropDownList('user-menu', user.username)
     ];
 
     const header = new ObjectWrapper('header-wrapper', children);
@@ -20,6 +30,8 @@ async function render() {
                 break;
 
             case 'user-menu':
+                // const photo = auth.get('photo');
+                child.image.attr('src', user && user.photo ? `data:image/*;base64,${user.photo}` : child.defaultImg);
                 child.object.click(() => {
                     const children = [
                         new Button('user-settings', 'Настройки'),
@@ -33,7 +45,7 @@ async function render() {
                             button.object.click(() => auth.logOut());
                         } else {
                             button.object.click(async () => {
-                                const apiKey = auth.get('apiKey');
+                                // const apiKey = auth.get('apiKey');
                                 const res = await request.get('/api/db/userData', { apiKey })
                                     .catch(e => {
                                         console.log(e);
@@ -57,7 +69,7 @@ async function render() {
                                     const rightTableChildren = [
                                         new Label('photo-label', 'Фото'),
                                         new FileInput('photo-field'),
-                                        new Button('change-photo', 'Изменить фото'),
+                                        new Button('change-photo', 'Загрузить фото'),
                                         new Button('delete-photo', 'Удалить фото')
                                     ];
     
@@ -93,6 +105,8 @@ async function render() {
                                                                             name: `${data.username}_photo${fileType}`,
                                                                             type: 'photo'
                                                                         }
+
+                                                                        notificationController.process('Данные отправлены на сервер! Ожидаю ответ');
                                                                         const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
                                                                             .catch(e => {
                                                                                 notificationController.error(e.error.responseText);
@@ -113,9 +127,11 @@ async function render() {
                                                                                     const res = await request.post('/api/db/files', JSON.stringify(fileInfo))
                                                                                         .catch((e, status) => {
                                                                                             console.error({e, status});
+                                                                                            notificationController.error(e.error.responseText);
                                                                                         });
 
                                                                                     if (res.status) {
+                                                                                        notificationController.success(res.response);
                                                                                         window.destroy();
                                                                                         await self.updateFilesData();
                                                                                     }
@@ -126,6 +142,18 @@ async function render() {
                                                                     break;
 
                                                                 case 'delete-photo':
+                                                                    child.object.click(async () => {
+                                                                        notificationController.process('Отправлен запрос на удаление фото!');
+                                                                        const res = await request.delete('/api/db/files', JSON.stringify({ type: 'photo', id: user.id, name: user.username, link: user.photoLink }))
+                                                                            .catch(e => {
+                                                                                console.error(e);
+                                                                                notificationController.error(e.error.responseText);
+                                                                            });
+                                                                        
+                                                                        if (res.status === 'nocontent') {
+                                                                            notificationController.success('Фото успешно удалено!')
+                                                                        }
+                                                                    });
 
                                                                     break;
 

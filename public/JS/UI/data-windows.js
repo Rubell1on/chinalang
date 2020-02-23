@@ -327,13 +327,14 @@ class FileInput extends CustomWindow {
 class DropDownList extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
 
         this.html = 
             `<div class="dropdown ${className}">
                 <div class="dropdown-text">${text}</div>
                 <div class="dropdown-img-wrapper">
                     <div class="dropdown-img">
-                        <img src="../public/IMG/header/flags/russian_flag.png" alt="" srcset="">
+                        <img src="../../../public/IMG/dashboard/default_user.png" alt="" srcset="">
                     </div>
                     <div class="arrow-img">
                         <img src="../public/IMG/header/arrow_down.png" alt="" srcset="">
@@ -346,6 +347,7 @@ class DropDownList extends CustomWindow {
         super.render(parent);
 
         this.textField = this.object.find('.dropdown-text');
+        this.image = this.object.find('.dropdown-img > img');
     }
 
     set text(value) {

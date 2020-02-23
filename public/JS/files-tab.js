@@ -17,7 +17,8 @@ DataTable.prototype.updateFilesData = async function() {
                             const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить файл "${wChildren.data.name}"?`);
                             window.render('');
                             window.yes.click(async () => {
-                                const res = await request.delete('/api/db/files', JSON.stringify(wChildren.data))
+                                const childData = wChildren.data;
+                                const res = await request.delete('/api/db/files', JSON.stringify({id: childData.id, name: childData.name, type: 'document', link: childData.link}))
                                     .catch(e => {
                                         notificationController.error(e.error.responseText);
                                         console.log(e);

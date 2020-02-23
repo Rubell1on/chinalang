@@ -337,7 +337,7 @@ DataTable.prototype.updateData = async function() {
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
         // strip.img.val(strip.data && strip.data.img ? )
-        const photoLink = strip.data && strip.data.photo ? strip.data.photo : strip.defaultImg;
+        const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;
         strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const dataWindow = new DataWindow('user-data-window', strip.data);
