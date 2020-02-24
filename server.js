@@ -218,10 +218,10 @@ app.route('/api/db/users')
 
                 res.status(200).json(users);
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .put(async (req, res) => {
@@ -239,10 +239,10 @@ app.route('/api/db/users')
                     });
                 res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
             } else {
-                res.status(403);
+                res.status(403).end();;
             }
         } else {
-            res.status(401);
+            res.status(401).end();;
         }
         
     })
@@ -262,10 +262,10 @@ app.route('/api/db/users')
 
                 res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
             } else {
-                res.status(403);
+                res.status(403).end();;
             }
         } else {
-            res.status(401);
+            res.status(401).end();;
         }
     })
 
@@ -392,7 +392,7 @@ app.route('/api/db/courses')
 
             res.status(200).json(combinedObject);
         } else {
-            res.status(401);
+            res.status(401).end();;
         }
         
     })
@@ -412,10 +412,10 @@ app.route('/api/db/courses')
                 
                 res.status(201).send('Курс успешно создан!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .put(async (req, res) => {
@@ -434,10 +434,10 @@ app.route('/api/db/courses')
 
                 res.status(201).send('Курс успешно обновлен!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .delete(async (req, res) => {
@@ -455,10 +455,10 @@ app.route('/api/db/courses')
 
                 res.status(201).send('Курс успешно удален!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
 
@@ -478,10 +478,10 @@ app.route('/api/db/class')
 
                 res.status(201).send('Урок успешно создан!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .put(async (req, res) => {
@@ -500,10 +500,10 @@ app.route('/api/db/class')
 
                 res.status(200).send('Урок успешно обновлен!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
 
@@ -522,10 +522,10 @@ app.route('/api/db/class')
 
             res.status(200).send('Урок успешно удален!');
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
 
@@ -550,7 +550,7 @@ app.route('/api/db/files')
 
             res.status(200).send(rows[0]);
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .post(async (req, res) => {
@@ -577,10 +577,10 @@ app.route('/api/db/files')
                     res.status(201).send('Файл создан!');
                 }
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .delete(async (req, res) => {
@@ -611,10 +611,10 @@ app.route('/api/db/files')
                     res.status(statusCode).send(response.res);
                 }
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
     .put(async (req, res) => {
@@ -661,10 +661,10 @@ app.route('/api/db/files')
                 
                 res.status(200).json({data: link.body, path: filePath});
             } else {
-                res.status(403);
+                res.status(403).end();
             }
         } else {
-            res.status(401);
+            res.status(401).end();
         }
     })
 

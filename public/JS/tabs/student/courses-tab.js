@@ -12,7 +12,8 @@ function diff(first, second) {
 DataTable.prototype.updateCoursesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
-    const res = await request.get('/api/db/courses', { searchingValue });
+    const apiKey = auth.get('apiKey');
+    const res = await request.get(`/api/db/courses?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
@@ -44,7 +45,8 @@ DataTable.prototype.updateCoursesData = async function() {
                             const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить курс "${wChildren.data.name}"?`);
                             window.render('');
                             window.yes.click(async () => {
-                                const res = await request.delete('/api/db/courses', JSON.stringify(wChildren.data)).catch(e => {
+                                const apiKey = auth.get('apiKey');
+                                const res = await request.delete(`/api/db/courses?apiKey=${apiKey}`, JSON.stringify(wChildren.data)).catch(e => {
                                     notificationController.error(e.error.responseText);
                                     console.log(e);
                                 });
@@ -75,7 +77,8 @@ DataTable.prototype.updateCoursesData = async function() {
                                 const window = new YesNoWindow('yes-no-window', 'Вы уверены?', `Удалить урок "${tChildren.data.name}"?`);
                                 window.render('');
                                 window.yes.click(async () => {
-                                    const res = await request.delete('/api/db/class', JSON.stringify(tChildren.data))
+                                    const apiKey = auth.get('apiKey');
+                                    const res = await request.delete(`/api/db/class?apiKey=${apiKey}`, JSON.stringify(tChildren.data))
                                         .catch(e => {
                                             notificationController.error(e.error.responseText)
                                             console.log(e);
@@ -132,8 +135,9 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
             let res; 
+            const apiKey = auth.get('apiKey');
             if (!keys.length) {
-                res = await request.post('/api/db/courses', JSON.stringify({name, description: descriptionField.input.val()}))
+                res = await request.post(`/api/db/courses?apiKey=${apiKey}`, JSON.stringify({name, description: descriptionField.input.val()}))
                     .catch(e => {
                         notificationController.error(e.error.responseText);
                         console.log(e);
@@ -152,7 +156,7 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
 
                 const diffData = diff(data, newData);
                 if (Object.keys(diffData).length) {
-                    res = await request.put('/api/db/courses', JSON.stringify({source: data ,data: diffData}))
+                    res = await request.put(`/api/db/courses?apiKey=${apiKey}`, JSON.stringify({source: data ,data: diffData}))
                         .catch(e => {
                             notificationController.error(e.error.responseText)
                             console.log(e);
@@ -234,7 +238,8 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
         const name = nameField.input.val();
         if (!name.isEmpty()) {
             if (!keys.length) {
-                const res = await request.post('/api/db/class', JSON.stringify({courseId: this.data.id, name, description: descriptionField.input.val()}))
+                const apiKey = auth.get('apiKey');
+                const res = await request.post(`/api/db/class?apiKey=${apiKey}`, JSON.stringify({courseId: this.data.id, name, description: descriptionField.input.val()}))
                     .catch(e => {
                         notificationController.error(e.error.responseText);
                         console.log(e);
@@ -253,7 +258,8 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 
                 const diffData = diff(data, newData);
                 if (Object.keys(diffData).length) {
-                    res = await request.put('/api/db/class', JSON.stringify({source: data ,data: diffData}))
+                    const apiKey = auth.get('apiKey');
+                    res = await request.put(`/api/db/class?apiKey=${apiKey}`, JSON.stringify({source: data ,data: diffData}))
                         .catch(e => {
                             notificationController.error(e.error.responseText);
                             console.log(e);

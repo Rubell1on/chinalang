@@ -10,8 +10,8 @@ const data = ['apiKey', 'role'].reduce((acc, key) => {
 // const part = `?${k}=${data.apiKey}`;
 
 if (data.role === 'student') {
-    $(`.${className} .main-tab`).click(() => location.href = `${location.origin}/dashboard/main`);
-    $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses`);
+    $(`.${className} .main-tab`).click(() => location.href = `${location.origin}/lk/main`);
+    $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/lk/courses`);
     $(`.${className} .history-tab`).css('opacity', '0.5');
 } else {
     $(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users`);
