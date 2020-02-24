@@ -239,10 +239,10 @@ app.route('/api/db/users')
                     });
                 res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
             } else {
-                res.status(403).end();;
+                res.status(403).end();
             }
         } else {
-            res.status(401).end();;
+            res.status(401).end();
         }
         
     })
@@ -262,10 +262,10 @@ app.route('/api/db/users')
 
                 res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
             } else {
-                res.status(403).end();;
+                res.status(403).end();
             }
         } else {
-            res.status(401).end();;
+            res.status(401).end();
         }
     })
 
@@ -392,7 +392,7 @@ app.route('/api/db/courses')
 
             res.status(200).json(combinedObject);
         } else {
-            res.status(401).end();;
+            res.status(401).end();
         }
         
     })
