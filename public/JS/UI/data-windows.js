@@ -383,6 +383,10 @@ class PageLoader extends CustomWindow {
             });
         }
     }
+
+    hide(callback) {
+        this.object.animate({'opacity': 0}, 300, () => callback(this))
+    }
 }
 
 class Image extends CustomWindow {

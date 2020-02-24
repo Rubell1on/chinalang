@@ -425,14 +425,7 @@ DataTable.prototype.updateData = async function() {
 }
 
 async function renderPage() {
-    const pageLoader = new PageLoader('user-tab-loader', [
-        new Label('loader-label', 'Идет загрузка страницы!'),
-        new Image('loader-image', '../../public/IMG/dashboard/spiner.gif')
-    ]);
-    pageLoader.render('');
-    pageLoader.renderChildren(() => {});   
-    
-    $(window).on('load', () => pageLoader.destroy());
+    renderPageLoader()
 
     const controls = [
         new Label('users-label', 'Список пользователей'),
@@ -459,3 +452,14 @@ async function renderPage() {
 }
 
 renderPage();
+
+function renderPageLoader() {
+    const pageLoader = new PageLoader('user-tab-loader', [
+        new Label('loader-label', 'Идет загрузка страницы!'),
+        new Image('loader-image', '../../public/IMG/dashboard/spiner.gif')
+    ]);
+    pageLoader.render('');
+    pageLoader.renderChildren(() => {});   
+    
+    $(window).on('load', () => setTimeout(() => pageLoader.hide(self => self.destroy()), 500));
+}

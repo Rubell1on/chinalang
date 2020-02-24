@@ -276,6 +276,8 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 }
 
 async function renderPage() {
+    renderPageLoader();
+
     const controls = [
         new Label('courses-label', 'Список курсов'),
         new Button('add-new-course'),
@@ -327,4 +329,15 @@ DataTable.prototype.updateFilesData = async function() {
             wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
         });
     }
+}
+
+function renderPageLoader() {
+    const pageLoader = new PageLoader('user-tab-loader', [
+        new Label('loader-label', 'Идет загрузка страницы!'),
+        new Image('loader-image', '../../public/IMG/dashboard/spiner.gif')
+    ]);
+    pageLoader.render('');
+    pageLoader.renderChildren(() => {});   
+    
+    $(window).on('load', () => setTimeout(() => pageLoader.hide(self => self.destroy()), 500));
 }
