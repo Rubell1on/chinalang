@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Файлы</title>
+    <title>Курсы</title>
     <link rel="stylesheet" href="/public/CSS/dashboard/dashboard.css">
     <link rel="stylesheet" href="/public/CSS/UI/text-field.css">
     <link rel="stylesheet" href="/public/CSS/UI/button.css">
@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="/public/CSS/UI/search-line.css">
     <link rel="stylesheet" href="/public/CSS/UI/data-window.css">
     <link rel="stylesheet" href="/public/CSS/UI/data-strip.css">
-    <link rel="stylesheet" href="/public/CSS/dashboard/files-tab.css">
+    <link rel="stylesheet" href="/public/CSS/dashboard/courses-tab.css">
     <link rel="stylesheet" href="/public/CSS/UI/notification.css">
     <link rel="stylesheet" href="/public/CSS/UI/label.css">
-    <link rel="stylesheet" href="/public/CSS/UI/fileInput.css">
+    <link rel="stylesheet" href="/public/CSS/UI/text-area.css">
+    <link rel="stylesheet" href="/public/CSS/UI/yes-no-window.css">
     <link rel="stylesheet" href="/public/CSS/UI/page-loader.css">
 
     <script src="../../../public/JS/jquery-3.4.1.js"></script>
@@ -29,14 +30,15 @@
     <%- include('../../blocks/header-controls.ejs') %>
     <div class="wrapper">
         <div class="controls">
-            <%- include('../../blocks/admin-menu-strip.ejs') %>
+            <%- include('../../blocks/student-menu-strip.ejs') %>
         </div>
         <div class="window">
             <div class="content-window">
             </div>
         </div>
     </div>
+    <!-- <script src="../../../public/JS/authController.js"></script> -->
     <script src="../../../public/JS/Event.js"></script>
-    <script src="../../../public/JS/tabs/admin/files-tab.js"></script>
+    <script src="../../../public/JS/tabs/student/courses-tab.js"></script>
 </body>
 </html>

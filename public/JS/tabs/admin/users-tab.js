@@ -67,7 +67,8 @@ DataTable.prototype.createNewUser = async function() {
     submit.object.text('Создать пользователя');
     submit.object.click(async () => {
         const inputsData = getInputData();
-        const res = await request.post('/api/db/users', JSON.stringify(inputsData))
+        const apiKey = auth.get('apiKey');
+        const res = await request.post(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(inputsData))
             .catch(e => {
                 notificationController.error(e.error.responseText)
                 console.log(e);
@@ -329,7 +330,8 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
 DataTable.prototype.updateData = async function() {
     this.removeChildren();
     const searchingValue = this.controls[2].input.val();
-    const res = await request.get('/api/db/users', { searchingValue });
+    const apiKey = auth.get('apiKey');
+    const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
     this.children = data.map(row => new DataStrip(row.username, row), []);
     this.renderChildren(strip => {
@@ -401,7 +403,8 @@ DataTable.prototype.updateData = async function() {
                 const keys = Object.keys(diffs);
 
                 if (keys.length !== 0) {
-                    const res = await request.put('/api/db/users', JSON.stringify({sources: dataWindow.data, diffs}))
+                    const apiKey = auth.get('apiKey');
+                    const res = await request.put(`/api/db/users?apiKey=${apiKey}`, JSON.stringify({sources: dataWindow.data, diffs}))
                         .catch(e => {
                             notificationController.error(e.error.responseText)
                             console.log(e);

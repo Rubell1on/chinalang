@@ -48,13 +48,18 @@ $('.login').click(() => {
                             notificationController.error(e.error.responseText);
                         });
                     if (res.status === 'success') {
+                        const role = res.response.role;
+                        // delete res.response.role;
                         auth.setData(res.response);
 
-                        location.href = `${location.origin}/dashboard/users?apiKey=${auth.getData()['apiKey']}`;
+                        const pageRoute = role === 'student' ? 'lk' : 'dashboard';
+                        const courseRoute = role === 'student' ? 'courses' : 'users';
+
+                        // location.href = `${location.origin}/${pageRoute}/${courseRoute}?apiKey=${auth.getData()['apiKey']}`;
+                        location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
                     }
                 } else {
                     notificationController.error('Необходимо заполнить выделенные поля!');
-                    // new NotificationError('error-window', 'Необходимо заполнить выделенные поля!').render('');
                 }
             })
         }
