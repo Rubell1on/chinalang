@@ -1,7 +1,8 @@
 DataTable.prototype.updateFilesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
-    const res = await request.get('/api/db/files', { searchingValue });
+    const apiKey = auth.get('apiKey');
+    const res = await request.get(`/api/db/files?apiKey=${apiKey}`, { searchingValue });
 
     const data = res.response;
     this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('remove')]), []);
@@ -18,7 +19,8 @@ DataTable.prototype.updateFilesData = async function() {
                             window.render('');
                             window.yes.click(async () => {
                                 const childData = wChildren.data;
-                                const res = await request.delete('/api/db/files', JSON.stringify({id: childData.id, name: childData.name, type: 'document', link: childData.link}))
+                                const apiKey = auth.get('apiKey');
+                                const res = await request.delete(`/api/db/files?apiKey=${apiKey}`, JSON.stringify({id: childData.id, name: childData.name, type: 'document', link: childData.link}))
                                     .catch(e => {
                                         notificationController.error(e.error.responseText);
                                         console.log(e);
@@ -74,7 +76,8 @@ DataTable.prototype.createNewFile = async function(data = {}) {
                 name: name.isEmpty() ? file.name : name,
                 type: 'document'
             }
-            const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
+            const apiKey = auth.get('apiKey');
+            const res = await request.put(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
                 .catch(e => {
                     notificationController.error(e.error.responseText);
                     console.error(e);
@@ -90,7 +93,8 @@ DataTable.prototype.createNewFile = async function(data = {}) {
                     
                 if (response.status === 'success') {
                     fileInfo.path = data.path;
-                    const postResponse = await request.post('/api/db/files', JSON.stringify(fileInfo))
+                    const apiKey = auth.get('apiKey');
+                    const postResponse = await request.post(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
                         .catch((e, status) => {
                             console.error({e, status});
                         });

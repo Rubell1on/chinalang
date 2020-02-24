@@ -136,97 +136,54 @@ app.post('/free', async (req, res) => {
 })
 
 app.get('/dashboard/:section', async (req, res) => {
-    console.log();
-    // const q = req.query;
-    // if (q && q.apiKey) {
-        // const rows = await db.query(`SELECT users.id, users.role, usersapi.userIp FROM usersapi JOIN users ON usersapi.userId = users.id WHERE usersapi.apikey = '${q.apiKey}'`)
-            // .catch(e => {
-            //     console.error(e);
-            //     res.status(500).send('Ошибка сервера!');
-            // });
-        // const users = rows[0];
+    const section = req.params.section;
 
-        // if (users.length) {
-        //     if (users && users[0].userIp === req.ip) {
-                const section = req.params.section;
-    
-                // if (users[0].role === 'student') {
-                //     switch(section) {
-                //         case 'main':
-                //             res.render('./dashboard/student/main');
-                //             break;
+    switch(section) {
+        case 'users':
+            res.render('./dashboard/admin/users');
+            break;
+        case 'courses':
+            res.render('./dashboard/admin/courses');
+            break;
 
-                //         case 'courses':
-                //             res.render('./dashboard/student/courses');
-                //             break;
+        case 'files':
+            res.render('./dashboard/admin/files');
+            break;
 
-                //         case 'history':
-                //             res.render('./dashboard/student/courses');
-                //             break;
-
-                //         default:
-                //             res.status(404).send('Запрашиваемая страница не найдена!');
-                //             break;
-                //     }
-                // } else {
-                    switch(section) {
-                        case 'users':
-                            res.render('./dashboard/admin/users');
-                            break;
-                        case 'courses':
-                            res.render('./dashboard/admin/courses');
-                            break;
-        
-                        case 'files':
-                            res.render('./dashboard/admin/files');
-                            break;
-        
-                        default:
-                            res.status(404).send('Запрашиваемая страница не найдена!');
-                            break;
-                    }
-                // }
-            // } else {
-            //     res.redirect('/');
-            // }
-        // } else {
-        //     res.redirect('/');
-        // }
-    // } else {
-    //     res.redirect('/');
-    // }
+        default:
+            res.status(404).send('Запрашиваемая страница не найдена!');
+            break;
+    }
 })
 
 app.get('/lk/:section', (req, res) => {
     const section = req.params.section;
     
-    // if (users[0].role === 'student') {
-        switch(section) {
-            case 'main':
-                res.render('./dashboard/student/main');
-                break;
+    switch(section) {
+        case 'main':
+            res.render('./dashboard/student/main');
+            break;
 
-            case 'courses':
-                res.render('./dashboard/student/courses');
-                break;
+        case 'courses':
+            res.render('./dashboard/student/courses');
+            break;
 
-            case 'history':
-                res.render('./dashboard/student/courses');
-                break;
+        case 'history':
+            res.render('./dashboard/student/courses');
+            break;
 
-            default:
-                res.status(404).send('Запрашиваемая страница не найдена!');
-                break;
-        }
-    // }
+        default:
+            res.status(404).send('Запрашиваемая страница не найдена!');
+            break;
+    }
 })
 
 app.route('/api/db/users')
     .get(async (req, res) => {
-        const q = req.query;
-
         const data = await apiKeyManager.getUser(req.query.apiKey);
         if (data.length) {
+            const q = req.query;
+
             if (data[0].role === 'admin') {
                 let rows = [];
                 const value = q.searchingValue;
@@ -574,105 +531,141 @@ app.route('/api/db/class')
 
 app.route('/api/db/files')
     .get(async (req, res) => {
-        const value = req.query.searchingValue;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
 
-        let rows;
-        if (!value) rows = await db.query('SELECT * FROM files')
-            .catch(e => {
-                console.error(e);
-                res.status(500).send('Ошибка сервера!');
-            });
-        else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`)
-            .catch(e => {
-                console.error(e);
-                res.status(500).send('Ошибка сервера!');
-            });
+        if (data.length) {
+            const value = req.query.searchingValue;
 
-        res.status(200).send(rows[0]);
+            let rows;
+            if (!value) rows = await db.query('SELECT * FROM files')
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+            else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+
+            res.status(200).send(rows[0]);
+        } else {
+            res.status(401);
+        }
     })
     .post(async (req, res) => {
-        const q = req.body;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
 
-        if (q.type === 'document') {
-            const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
-                .catch(e => {
-                    console.error(e);
-                    res.status(500).send('Ошибка сервера!');
-                });
-            res.status(201).send('Файл создан!');
-        } else if (q.type === 'photo') {
-            const response = await yandexDisk.publishFile(q.path);
-            const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
-                .catch(e => {
-                    console.error(e);
-                    res.status(500).send('Ошибка сервера!');
-                });
-            res.status(201).send('Файл создан!');
+        if (data.length) {
+            if (data[0].role === 'admin') {
+                const q = req.body;
+
+                if (q.type === 'document') {
+                    const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+                    res.status(201).send('Файл создан!');
+                } else if (q.type === 'photo') {
+                    const response = await yandexDisk.publishFile(q.path);
+                    const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+                    res.status(201).send('Файл создан!');
+                }
+            } else {
+                res.status(403);
+            }
+        } else {
+            res.status(401);
         }
     })
     .delete(async (req, res) => {
-        const q = req.body;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
 
-        const response = await yandexDisk.deleteData(q.link);
-        const statusCode = response.res.statusCode;
-        if (statusCode === 204) {
-            if (q.type === 'document') {
-                await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
-                    .catch(e => {
-                        console.error(e);
-                        res.status(500).send('Ошибка сервера!');
-                    });
-            } else if (q.type === 'photo') {
-                await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
-                    .catch(e => {
-                        console.error(e);
-                        res.status(500).send('Ошибка сервера!');
-                    });
+        if (data.length) {
+            if (data[0].role === 'admin') {
+                const q = req.body;
+
+                const response = await yandexDisk.deleteData(q.link);
+                const statusCode = response.res.statusCode;
+                if (statusCode === 204) {
+                    if (q.type === 'document') {
+                        await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
+                            .catch(e => {
+                                console.error(e);
+                                res.status(500).send('Ошибка сервера!');
+                            });
+                    } else if (q.type === 'photo') {
+                        await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
+                            .catch(e => {
+                                console.error(e);
+                                res.status(500).send('Ошибка сервера!');
+                            });
+                    }
+                    res.status(204).send('Файл удален!');
+                } else {
+                    res.status(statusCode).send(response.res);
+                }
+            } else {
+                res.status(403);
             }
-            res.status(204).send('Файл удален!');
         } else {
-            res.status(statusCode).send(response.res);
+            res.status(401);
         }
     })
     .put(async (req, res) => {
-        const q = req.body;
-        const root = 'chinalang';
-        const docs = 'documents';
-        const photos = 'photos';
+        const data = await apiKeyManager.getUser(req.query.apiKey);
 
-        const filesList = await yandexDisk.getList();
-        const tree = utils.getDirTree(filesList.body.items);
+        if (data.length) {
+            if (data[0].role === 'admin') {
+                const q = req.body;
+                const root = 'chinalang';
+                const docs = 'documents';
+                const photos = 'photos';
 
-        if (tree.find(root) === null) {
-            await yandexDisk.createFolder(root);
-            const response = await yandexDisk.getUploadLink(`${root}/temp.tmp`);
-            await yandexDisk.putData(response.body.href, Buffer.from('temp'));
-        }
+                const filesList = await yandexDisk.getList();
+                const tree = utils.getDirTree(filesList.body.items);
 
-        if (q.type === 'document') {
-            if (tree.find(docs) === null) {
-                const path = `${root}/${docs}`;
-                await yandexDisk.createFolder(path);
-                const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
-                await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+                if (tree.find(root) === null) {
+                    await yandexDisk.createFolder(root);
+                    const response = await yandexDisk.getUploadLink(`${root}/temp.tmp`);
+                    await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+                }
+
+                if (q.type === 'document') {
+                    if (tree.find(docs) === null) {
+                        const path = `${root}/${docs}`;
+                        await yandexDisk.createFolder(path);
+                        const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
+                        await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+                    }
+                }
+
+                if (q.type === 'photo') {
+                    if (tree.find(photos) === null) {
+                        const path = `${root}/${photos}`;
+                        await yandexDisk.createFolder(path);
+                        const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`, true);
+                        await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+                    }
+                }
+
+                const name = utils.translate(q.name);
+                const filePath = `${root}/${q.type === 'document' ? docs : photos}/${name}`;
+
+                const link = await yandexDisk.getUploadLink(filePath);
+                
+                res.status(200).json({data: link.body, path: filePath});
+            } else {
+                res.status(403);
             }
+        } else {
+            res.status(401);
         }
-
-        if (q.type === 'photo') {
-            if (tree.find(photos) === null) {
-                const path = `${root}/${photos}`;
-                await yandexDisk.createFolder(path);
-                const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`, true);
-                await yandexDisk.putData(response.body.href, Buffer.from('temp'));
-            }
-        }
-
-        const name = utils.translate(q.name);
-        const filePath = `${root}/${q.type === 'document' ? docs : photos}/${name}`;
-
-        const link = await yandexDisk.getUploadLink(filePath);
-        
-        res.status(200).json({data: link.body, path: filePath});
     })
 
 app.get('/api/verify', async (req, res) => {
