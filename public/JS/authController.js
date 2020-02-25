@@ -42,7 +42,6 @@ class AuthController {
                         }
                     }
                 }
-                console.log(res.response);
             }
         }
     }

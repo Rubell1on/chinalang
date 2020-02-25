@@ -1,0 +1,15 @@
+.courses-table-data-wrapper > .data-strip > .icon-wrapper {
+    display: none;
+}
+
+.data-wrapper > .data > .subscribe {
+    margin-right: 10px;
+    padding: 6px;
+    font-size: 18px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 5px;
+    transition: none;
+    float: right;
+}

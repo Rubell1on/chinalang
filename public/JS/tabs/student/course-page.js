@@ -69,17 +69,44 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
 async function renderPage() {
     renderPageLoader();
 
+    const query = location.getQuery();
+    const apiKey = auth.get('apiKey');
+
+    const res = await request.get(`/api/db/courses?id=${query.id}&apiKey=${apiKey}`)
+        .catch(e => {
+            console.log(e);
+            notificationController.error(e.error.responseText);
+        });
+    
+    if (res.status === 'success') {
+
+    }
+
     const controls = [
         new Label('courses-label', 'Список курсов'),
-        new SearchLine('courses-search')
+        // new SearchLine('courses-search')
     ];
 
-    const coursesTable = new DataTable('courses-table', controls);
+    const children = [
+        new TextArea('course-description'),
+        new ObjectWrapper('classes-wrapper',[
+            new Label('classes-label', 'Список уроков')
+        ])
+    ];
+
+    const coursesTable = new DataTable('courses-table', controls, children);
     coursesTable.wrapperClass = 'courses-wrapper';
     coursesTable.render('content-window');
     coursesTable.renderControls();
-    coursesTable.updateCoursesData([]);
-    coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
+    coursesTable.renderChildren(child => {
+        switch(child.getType()) {
+            case '[object objectWrapper]':
+                child.renderChildren(() => {});
+                break;
+        }
+    });
+    // coursesTable.updateCoursesData([]);
+    // coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
 renderPage();

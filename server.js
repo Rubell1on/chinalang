@@ -136,18 +136,19 @@ app.post('/free', async (req, res) => {
 })
 
 app.get('/dashboard/:section', async (req, res) => {
+    const path = './dashboard/admin';
     const section = req.params.section;
 
     switch(section) {
         case 'users':
-            res.render('./dashboard/admin/users');
+            res.render(`${path}/users`);
             break;
         case 'courses':
-            res.render('./dashboard/admin/courses');
+            res.render(`${path}/courses`);
             break;
 
         case 'files':
-            res.render('./dashboard/admin/files');
+            res.render(`${path}/files`);
             break;
 
         default:
@@ -157,19 +158,25 @@ app.get('/dashboard/:section', async (req, res) => {
 })
 
 app.get('/lk/:section', (req, res) => {
+    const path = './dashboard/student';
+    const q = req.query;
     const section = req.params.section;
     
     switch(section) {
         case 'main':
-            res.render('./dashboard/student/main');
+            res.render(`${path}/main`);
             break;
 
         case 'courses':
-            res.render('./dashboard/student/courses');
+            if (q && q.id) {
+                res.render(`${path}/course-page`);
+            } else {
+                res.render(`${path}/courses`);
+            }
             break;
 
         case 'history':
-            res.render('./dashboard/student/courses');
+            res.render(`${path}/history`);
             break;
 
         default:
@@ -344,11 +351,13 @@ app.route('/api/db/courses')
         const data = await apiKeyManager.getUser(q.apiKey);
 
         if (data.length) {
-            const value = q.searchingValue;
+            const value = q && q.searchingValue ? q.searchingValue : '';
+
+            const template = q && q.id ? `WHERE courses.id = ${q.id}` : '';
 
             let rows = [];
             if (value === '') {
-                rows = await db.query('SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id')
+                rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id ${template}`)
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('При отправке данных произошла ошибка!');
