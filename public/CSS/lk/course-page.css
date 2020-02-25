@@ -1,0 +1,31 @@
+.label.course-name {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.courses-table-data-wrapper > .objects-wrapper {
+    margin-bottom: 10px;
+}
+
+.courses-table-data-wrapper > .objects-wrapper > .label {
+    text-align: left;
+    box-sizing: border-box;
+    padding-left: 5px;
+    margin-bottom: 0;
+    font-size: 16px;
+    color: gray;
+}
+
+.classes-wrapper > .classes-table {
+    display: none;
+}
+
+.classes-wrapper > .data-strip > .icon-wrapper {
+    display: none;
+}
+
+.classes-wrapper > .data-strip {
+    height: 35px;
+}

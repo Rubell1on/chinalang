@@ -38,6 +38,7 @@
 
 .data-strip > .text-wrapper {
     height: 100%;
+    width: 45%;
 }
 
 .data-strip > .text-wrapper > .text {
@@ -46,4 +47,7 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

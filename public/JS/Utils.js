@@ -6,6 +6,10 @@ String.prototype.toNumber = function() {
     return Number(this.match(/-?\d*/)[0]);
 }
 
+String.prototype.decrease = function() {
+    return this.replace(/[ .,&?*$;@\(\)]/g, '');
+}
+
 location.getQuery = function() {
     return this.search.substr(1).split('&').reduce((acc, curr) => {
         const temp = curr.split('=');

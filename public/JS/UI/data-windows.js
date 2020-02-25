@@ -404,3 +404,11 @@ class Image extends CustomWindow {
         this.object.attr('src', value);
     }
 }
+
+class Text extends CustomWindow {
+    constructor(className, text = '') {
+        super(className);
+
+        this.html = `<div class="text-widget">${text}</div>`;
+    }
+}
