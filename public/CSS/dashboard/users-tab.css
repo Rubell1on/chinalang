@@ -118,3 +118,13 @@
 .classes-table-data-wrapper > div > .text {
     text-overflow: ellipsis;
 }
+
+.userdata-lable {
+    font-weight: bold;
+}
+
+.courses-wrapper > .courses-label {
+    text-align: left;
+    margin: 0;
+    font-size: 16px;
+}

@@ -314,11 +314,12 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
 
                 break;
             
-            case '[object dataStrip]':
-                if (curr && curr.compareData) {
-                    const key = curr.className;
-                    const value = curr.compareData;
-                    if (value !== curr.data) acc[key] = value;
+            case '[object objectWrapper]':
+                const strip = curr.children.find(c => c.isTypeOf('dataStrip'));
+                if (strip && strip.compareData) {
+                    const key = strip.className;
+                    const value = strip.compareData;
+                    if (value !== strip.data) acc[key] = value;
                 }
 
                 break;
@@ -339,90 +340,94 @@ DataTable.prototype.updateData = async function() {
         strip.text.text(strip.data.username);
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
-        // strip.img.val(strip.data && strip.data.img ? )
         const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;
         strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
-            const dataWindow = new DataWindow('user-data-window', strip.data);
+            const data = strip.data;
+            const children = [
+                new Label('userdata-lable', 'Редактирование данных пользователя'),
+                new InputField('username', 'username', 'Имя пользователя', data.username),
+                new InputField('role', 'role', 'Роль', data.role),
+                new InputField('phone', 'phone', 'Номер телефона', data.phone),
+                new InputField('email', 'email', 'Эл.почта', data.email),
+                new InputField('skype', 'skype', 'Skype', data.skype, false),
+                new InputField('classesLeft', 'classes', 'Кол-во занятий', data.classesLeft),
+                new ObjectWrapper('courses-wrapper', [
+                    new Label('courses-label', 'Перечень курсов'),
+                    new DataStrip('courses', data.courses)
+                ]),
+                new Button('submit', 'Применить')
+            ];
+
+            const dataWindow = new DataWindow('user-data-window', strip.data, children);
             dataWindow.render('');
-            const parent = dataWindow.inputs.attr('class');
-
-            const children = Object.entries(strip.data).map(e => {
-                let input = undefined;
-                if (e[0] !== 'courses') {
-                    input = new InputField(e[0]);
-                    input.render(parent);
-                    input.setIds(e[0]);
-                    input.label.text(e[0]);
-                    input.input.val(e[1]);
-                } else {
-                    input = new DataStrip('courses', e[1]);
-                    input.render(parent);
-                    input.icon.attr('src', '');
-                    input.text.text(e[0]);
-                    input.object.click(() => {
-                        const controls = [
-                            new Label('courses-label', 'Список курсов'),
-                            new SearchLine('courses-search')
-                        ];
-
-                        const coursesTable = new DataTable('courses-table', controls);
-                        coursesTable.wrapperClass = 'courses-wrapper'
-
-                        const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
-                        coursesWindow.render('');
-                        coursesWindow.renderChildren(async windowChild => {
-                            switch (windowChild.getType()) {
-                                case '[object dataTable]':
-                                    windowChild.renderControls();
-                                    windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
-                                    await windowChild.updateCoursesData(userCourses);
-
-                                    break;
-                                
-                                case '[object button]':
-                                    windowChild.object.text('Подтвердить выбор');
-                                    windowChild.object.click(() => {
-                                        dataWindow.children.find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(userCourses);
-                                        coursesWindow.destroy();
+            dataWindow.renderChildren(child => {
+                switch(child.getType()) {
+                    case '[object objectWrapper]':
+                        child.renderChildren(c => {
+                            if (c.isTypeOf('dataStrip')) {
+                                c.text.text('Открыть перечень');
+                                c.object.click(() => {
+                                    const controls = [
+                                        new Label('courses-label', 'Список курсов'),
+                                        new SearchLine('courses-search')
+                                    ];
+            
+                                    const coursesTable = new DataTable('courses-table', controls);
+                                    coursesTable.wrapperClass = 'courses-wrapper'
+            
+                                    const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
+                                    coursesWindow.render('');
+                                    coursesWindow.renderChildren(async windowChild => {
+                                        switch (windowChild.getType()) {
+                                            case '[object dataTable]':
+                                                windowChild.renderControls();
+                                                windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
+                                                await windowChild.updateCoursesData(userCourses);
+            
+                                                break;
+                                            
+                                            case '[object button]':
+                                                windowChild.object.text('Подтвердить выбор');
+                                                windowChild.object.click(() => {
+                                                    dataWindow.children
+                                                        .find(c => c.isTypeOf('objectWrapper')).children
+                                                        .find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(userCourses);
+                                                    coursesWindow.destroy();
+                                                });
+            
+                                                break;
+                                        }
+                                    })
+                                })
+                            }
+                        })
+                        break;
+                    
+                    case '[object button]':
+                        child.object.click(async () => {
+                            const diffs = dataWindow.checkDifferences();
+                            const keys = Object.keys(diffs);
+            
+                            if (keys.length !== 0) {
+                                const apiKey = auth.get('apiKey');
+                                const res = await request.put(`/api/db/users?apiKey=${apiKey}`, JSON.stringify({sources: dataWindow.data, diffs}))
+                                    .catch(e => {
+                                        notificationController.error(e.error.responseText)
+                                        console.log(e);
                                     });
-
-                                    break;
+            
+                                if (res.status === 'success') {
+                                    notificationController.success(res.response);
+                                    strip.onDataChange.raise()
+                                    console.log(res);
+                                    dataWindow.destroy();
+                                }
                             }
                         });
-                    });
-                }
-                
-                return input;
-            }, []);
-
-            const submit = new Button('submit');
-            submit.render(parent);
-            submit.object.text('Применить');
-            submit.object.click(async () => {
-                const diffs = dataWindow.checkDifferences();
-                const keys = Object.keys(diffs);
-
-                if (keys.length !== 0) {
-                    const apiKey = auth.get('apiKey');
-                    const res = await request.put(`/api/db/users?apiKey=${apiKey}`, JSON.stringify({sources: dataWindow.data, diffs}))
-                        .catch(e => {
-                            notificationController.error(e.error.responseText)
-                            console.log(e);
-                        });
-
-                    if (res.status === 'success') {
-                        notificationController.success(res.response);
-                        strip.onDataChange.raise()
-                        console.log(res);
-                        dataWindow.destroy();
-                    }
+                        break;
                 }
             });
-
-            children.push(submit);           
-
-            dataWindow.children = children;
         });
         strip.onDataChange.addListener(() => this.updateData());
     });
