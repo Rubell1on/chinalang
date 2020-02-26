@@ -1,6 +1,7 @@
 .overlay-window {
     height: unset;
     min-height: unset;
+    max-height: unset;
 }
 
 .add-new-file {

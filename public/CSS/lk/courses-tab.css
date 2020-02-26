@@ -1,3 +1,9 @@
+.overlay-window {
+    height: unset;
+    min-height: unset;
+    max-height: unset;
+}
+
 .courses-table-data-wrapper > .data-strip > .icon-wrapper {
     display: none;
 }

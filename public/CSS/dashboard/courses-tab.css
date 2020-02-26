@@ -1,6 +1,7 @@
 .overlay-window {
     height: unset;
     min-height: unset;
+    max-height: unset;
 }
 
 .courses-search {
@@ -174,4 +175,8 @@
 .files-table-controls-wrapper > .files-label {
     font-weight: bold;
     font-size: 20px;
+}
+
+.inputs > div > textarea {
+    height: 310px;
 }
