@@ -29,3 +29,28 @@
 .classes-wrapper > .data-strip {
     height: 35px;
 }
+
+/*  */
+
+.class-table-data-wrapper > .class-label {
+    text-align: left;
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+.class-table-data-wrapper > .class-description-wrapper > .class-description-label {
+    text-align: left;
+    font-size: 16px;
+    color: gray;
+    margin-bottom: 0;
+    padding-left: 5px;
+}
+
+.class-table-data-wrapper > .class-description-wrapper > .class-description-text {
+    background: #f1f1f1;
+}
+
+.class-description-text > a {
+    font-weight: bold;
+}

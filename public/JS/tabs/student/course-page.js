@@ -41,6 +41,25 @@ async function renderPage() {
                                 strip.parent = object;
                                 strip.render(object.object);
                                 strip.text.text(c.name);
+                                strip.object.click(() => {
+                                    const classesWindow = new DataWindow('class-window', [], [
+                                        new DataTable('class-table', [], [
+                                            new Label('class-label', c.name),
+                                            new ObjectWrapper('class-description-wrapper', [
+                                                new Label('class-description-label', 'Описание урока'),
+                                                new Text('class-description-text', c.description)
+                                            ])
+                                        ])
+                                    ]);
+                                    classesWindow.render('');
+                                    classesWindow.renderChildren(table => {
+                                        table.renderChildren(child => {
+                                            if (child.isTypeOf('objectWrapper')) {
+                                                child.renderChildren(() => {});
+                                            }
+                                        });
+                                    })
+                                });
                             });
 
                             child.children = strips;

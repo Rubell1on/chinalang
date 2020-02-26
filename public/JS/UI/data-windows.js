@@ -409,6 +409,6 @@ class Text extends CustomWindow {
     constructor(className, text = '') {
         super(className);
 
-        this.html = `<div class="text-widget">${text}</div>`;
+        this.html = `<div class="text-widget ${this.className}">${text}</div>`;
     }
 }
