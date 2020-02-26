@@ -139,6 +139,7 @@
 .lesson-description > textarea[type="text"] {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
+    max-height: 280px;
 }
 
 .files-search > input {

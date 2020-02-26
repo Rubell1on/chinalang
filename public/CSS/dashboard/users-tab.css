@@ -25,6 +25,7 @@
 .users-search {
     width: calc(100% - 35px);
     float: left;
+    /* background: ; */
 }
 
 .courses {

@@ -43,7 +43,7 @@
     margin: 0 auto;
 }
 
-.objects-wrapper {
+/* .objects-wrapper {
     margin: 0 auto;
     width: fit-content;
 }
@@ -62,7 +62,7 @@
 
 .objects-wrapper > div:first-child {
     margin-right: 5px;
-}
+} */
 
 .inputs > .file-window-label, .yes-no-window-title {
     font-weight: bold;

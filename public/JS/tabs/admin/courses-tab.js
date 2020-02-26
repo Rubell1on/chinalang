@@ -308,7 +308,8 @@ renderPage();
 DataTable.prototype.updateFilesData = async function() {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
-    const res = await request.get('/api/db/files', { searchingValue });
+    const apiKey = auth.get('apiKey');
+    const res = await request.get(`/api/db/files?apiKey=${apiKey}`, { searchingValue });
 
     if (res.status === 'success') {
         const data = res.response;
