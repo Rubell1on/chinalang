@@ -1,11 +1,13 @@
 .advantages-block {
     word-break: break-word;
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     box-sizing: border-box;
     width: 100%;
     background: #F1F1F1;
     padding: 15px;
-    padding-top: calc(110px - 85px);
+    /* padding-top: calc(110px - 85px); */
 }
 
 .advantages-block > div {
@@ -19,7 +21,7 @@
 }
 
 .info-graphic-img {
-    width: 50%;
+    width: 80%;
     margin: 0 auto;
 }
 
