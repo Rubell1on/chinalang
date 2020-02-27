@@ -1,0 +1,83 @@
+.window > .content-window {
+    max-width: unset;
+}
+
+.window > .content-window > .purchase-table > .purchase-table-data-wrapper {
+    width: fit-content;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.purchase-table-data-wrapper > .objects-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.purchase-table-data-wrapper > .objects-wrapper > .label {
+    width: 100%;
+    font-weight: bold;
+}
+
+.purchase-table-data-wrapper > .objects-wrapper > .info-blocks {
+    flex: 130px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.objects-wrapper > .info-blocks > .label {
+    margin-bottom: unset;
+}
+
+.objects-wrapper > .info-blocks > .buy-classes > .label {
+    margin-bottom: unset;
+}
+
+.info-blocks {
+    background: #f1f1f1;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.objects-wrapper > .info-blocks > .classes-label {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.objects-wrapper > .info-blocks > .old-price {
+    text-decoration: line-through;
+    font-size: 16px;
+    opacity: 0.4;
+    margin-bottom: 10px;
+}
+
+.info-blocks > .buy-classes {
+    position: relative;
+    background: #FB2267;
+    color: white;
+    width: fit-content;
+    padding: 10px 30px;
+    border-radius: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.buy-classes > .old-total-price {
+    text-decoration: line-through;
+    font-size: 16px;
+    opacity: 0.4;
+}
+
+.info-blocks > .benefit {
+    opacity: 0.6;
+}
+
+/* @media (min-height: 700px) {
+    .purchase-table-data-wrapper > .objects-wrapper > .info-blocks {
+        flex: 150px;
+    }
+} */

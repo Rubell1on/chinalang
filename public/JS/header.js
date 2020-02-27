@@ -15,6 +15,8 @@ async function render() {
         new DropDownList('user-menu', user.username)
     ];
 
+    if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesLeft}</b>`));
+
     const header = new ObjectWrapper('header-wrapper', children);
     header.prepandRender('');
     header.renderChildren(child => {
@@ -27,6 +29,10 @@ async function render() {
                     const value = left < 0 ? 0 : -width;
                     $('.controls').animate({'left': `${value}px`}, 200);                 
                 });
+                break;
+            
+            case 'classes-left':
+                child.object.click(() => location.href = `${location.origin}/purchase`);
                 break;
 
             case 'user-menu':

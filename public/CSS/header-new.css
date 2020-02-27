@@ -125,6 +125,15 @@
     margin: 0 auto;
 }
 
+.header-wrapper > .classes-left {
+    float: right;
+    padding: 5px 8px;
+    font-size: 16px;
+    transform: translateY(-50%);
+    position: relative;
+    top: 50%;
+}
+
 
 @media (max-width: 700px) {
     .header-wrapper > .menu-button {

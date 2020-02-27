@@ -36,7 +36,7 @@ class AuthController {
                 if (res.status === 'success') {
                     const user = res.response[0];
                     if (user.role === 'student') {
-                        if (!location.pathname.includes('/lk/')) {
+                        if (location.pathname.includes('/dashboard/')) {
                             const l = location;
                             location.href = `${l.origin}/lk/courses`;
                         }

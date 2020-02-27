@@ -135,6 +135,51 @@ app.post('/free', async (req, res) => {
     }
 })
 
+app.route('/purchase')
+    .get((req, res) => {
+        res.render('purchasePage')
+    })
+
+app.route('/api/db/prices')
+    .get(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+        if (data.length) {
+            const q = req.query;
+            const russianTeachers = await db.query(`SELECT 
+                    id, 
+                    count, 
+                    teacherType, 
+                    oldClassPrice, 
+                    count * oldClassPrice as oldTotalPrice, 
+                    discount, 
+                    ROUNDTOHIGH(PERCENT(oldClassPrice, discount), 10) as newClassPrice,
+                    ROUNDTOHIGH(PERCENT(oldClassPrice, discount), 10) * count as newTotalPrice
+                FROM prices WHERE teacherType = 'russian'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+            const nativeTeachers = await db.query(`SELECT 
+                    id,
+                    count,
+                    teacherType,
+                    oldClassPrice,
+                    count * oldClassPrice as oldTotalPrice,
+                    discount,
+                    ROUNDTOLOW(PERCENT(oldClassPrice, discount), 10) as newClassPrice,
+                    ROUNDTOLOW(PERCENT(oldClassPrice, discount), 10) * count as newTotalPrice
+                FROM prices WHERE teacherType = 'native'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+
+                res.status(200).json({russianTeachers: russianTeachers[0], nativeTeachers: nativeTeachers[0]});
+        } else {
+            res.status(401).end();
+        }
+    })
+
 app.get('/dashboard/:section', async (req, res) => {
     const path = './dashboard/admin';
     const section = req.params.section;
@@ -191,7 +236,7 @@ app.route('/api/db/users')
         if (data.length) {
             const q = req.query;
 
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 let rows = [];
                 const value = q.searchingValue;
 
@@ -237,7 +282,7 @@ app.route('/api/db/users')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const template = utils.obj2strArr(diffs).join(', ');
                 const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
                     .catch(e => {
@@ -258,7 +303,7 @@ app.route('/api/db/users')
 
         const data = await apiKeyManager.getUser(req.query.apiKey);
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const password = utils.rndSequence();
                 const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
                 const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
@@ -281,7 +326,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesLeft, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
@@ -409,7 +454,7 @@ app.route('/api/db/courses')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
                 const data = [q.name, q.description];
 
@@ -431,7 +476,7 @@ app.route('/api/db/courses')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const {data, source} = req.body;
 
                 const template = utils.obj2strArr(data).join(', ');
@@ -453,7 +498,7 @@ app.route('/api/db/courses')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
 
                 await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
@@ -476,7 +521,7 @@ app.route('/api/db/class')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
                 const data = [q.courseId, q.name, q.description]
                 await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
@@ -497,7 +542,7 @@ app.route('/api/db/class')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const { data, source } = req.body;
 
                 const template = utils.obj2strArr(data).join(', ');
@@ -520,7 +565,7 @@ app.route('/api/db/class')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
             const q = req.body;
 
             await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
@@ -566,7 +611,7 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
 
                 if (q.type === 'document') {
@@ -596,7 +641,7 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
 
                 const response = await yandexDisk.deleteData(q.link);
@@ -630,7 +675,7 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === 'admin') {
+            if (data[0].role === roles.admin) {
                 const q = req.body;
                 const root = 'chinalang';
                 const docs = 'documents';

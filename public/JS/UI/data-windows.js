@@ -272,7 +272,7 @@ class ObjectWrapper extends CustomWindow {
 }
 
 class YesNoWindow extends CustomWindow {
-    constructor(className, title = '', info = '', ) {
+    constructor(className, title = '', info = '') {
         super(className);
         this[Symbol.toStringTag] = 'YesNoWindow';
         const name = 'yes-no-window';
@@ -410,5 +410,103 @@ class Text extends CustomWindow {
         super(className);
 
         this.html = `<div class="text-widget ${this.className}">${text}</div>`;
+    }
+}
+
+class PriceBlock extends CustomWindow {
+    constructor(className) {
+        super(className);
+
+        this._classesCount = 0;
+        this._newPrice = 0;
+        this._oldPrice = 0;
+        this._oldTotal = 0;
+        this._newTotal = 0;
+        this._benefit = 0;
+        this._discount = 0;
+    }
+
+    setClasses(count) {
+        this._classesCount = count;
+
+        return this;
+    }
+
+    getClasses() {
+        return this._classesCount;
+    }
+
+    setNewPrice(value) {
+        this._newPrice = value;
+
+        return this;
+    }
+
+    getNewPrice() {
+        return this._newPrice;
+    }
+
+    setOldPrice(value) {
+        this._oldPrice = value;
+
+        return this;
+    }
+
+    getOldPrice() {
+        return this._oldPrice;
+    }
+
+    setOldTotal(value) {
+        this._oldTotal = value;
+
+        return this;
+    }
+
+    getOldTotal() {
+        return this._oldTotal;
+    }
+
+    setNewTotal(value) {
+        this._newTotal = value;
+
+        return this;
+    }
+
+    getNewTotal() {
+        return this._newTotal;
+    }
+
+    setDiscount(value) {
+        this._discount = value;
+
+        return this;
+    }
+
+    getDiscount() {
+        return this._discount;
+    }
+
+    setBenefit(value) {
+        this._benefit = value;
+
+        return this;
+    }
+
+    render(parent) {
+        this.html = `
+            <div class="objects-wrapper info-blocks ${this.className}">
+                <div class="label classes-label">${this._classesCount} занятий</div>
+                <div class="label new-price">${this._newPrice} руб/урок</div>
+                <div class="label old-price">${this._oldPrice} руб/урок</div>
+                <div class="objects-wrapper buy-classes">
+                    <div class="label new-total-price">${this._newTotal} руб</div>
+                    <div class="label old-total-price">${this._oldTotal} руб</div>
+                </div>
+                <div class="label benefit">Выгода ${this._benefit} руб</div>
+                <div class="label discount">${this._discount}% скидка</div>
+            </div>
+        `;
+
+        super.render(parent);
     }
 }
