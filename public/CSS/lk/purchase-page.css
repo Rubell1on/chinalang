@@ -1,5 +1,6 @@
 .window > .content-window {
     max-width: unset;
+    height: unset;
 }
 
 .window > .content-window > .purchase-table > .purchase-table-data-wrapper {
@@ -17,12 +18,21 @@
 .purchase-table-data-wrapper > .objects-wrapper > .label {
     width: 100%;
     font-weight: bold;
+    font-size: 26px;
+    text-align: left;
+    padding-left: 5px;
+    margin-bottom: 20px;
 }
 
 .purchase-table-data-wrapper > .objects-wrapper > .info-blocks {
     flex: 130px;
     margin-right: 10px;
     margin-bottom: 10px;
+    transition: transform 200ms ease;
+}
+
+.purchase-table-data-wrapper > .objects-wrapper > .info-blocks:hover {
+    transform: scale(1.05);
 }
 
 .objects-wrapper > .info-blocks > .label {
@@ -81,3 +91,19 @@
         flex: 150px;
     }
 } */
+
+@media (max-width: 1240px) {
+    .window > .content-window {
+        height: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+    .purchase-table-data-wrapper > .objects-wrapper > .info-blocks {
+        flex: 100px;
+    }
+
+    .info-blocks > .buy-classes {
+        padding: 10px 15px;
+    }
+}

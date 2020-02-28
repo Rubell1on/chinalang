@@ -21,7 +21,7 @@
     box-sizing: border-box;
     height: 50px;
     background: gray;
-    border-radius: 5px;
+    border-radius: 10px;
     margin-bottom: 5px;
     transition: background 200ms ease;
     padding-left: 10px;

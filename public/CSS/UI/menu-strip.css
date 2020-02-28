@@ -4,9 +4,16 @@
     height: 1px;
     min-height: 40px;
     overflow: hidden;
-    padding-left: 20px;
+    /* padding-left: 20px; */
+    border-radius: 7px;
     cursor: pointer;
     transition: background 200ms ease;
+}
+
+.strip-separator {
+    min-height: 20px;
+    margin-left: 10px;
+    color: white;
 }
 
 .strip-button:hover {
