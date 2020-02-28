@@ -113,7 +113,7 @@ app.post('/free', async (req, res) => {
     if (count === 0) {
         const password = utils.rndSequence();
         const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
@@ -241,13 +241,13 @@ app.route('/api/db/users')
                 const value = q.searchingValue;
 
                 if (value === '') {
-                    rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users')
+                    rows = await db.query('SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users')
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
-                    rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -305,8 +305,8 @@ app.route('/api/db/users')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const password = utils.rndSequence();
-                const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
-                const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
+                const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q.courses];
+                const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('При создании пользователя произошла ошибка!');
@@ -326,7 +326,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesLeft, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');

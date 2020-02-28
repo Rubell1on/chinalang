@@ -5,7 +5,8 @@ DataTable.prototype.createNewUser = async function() {
         phone: '',
         email: '',
         skype: '',
-        classesLeft: 0,
+        classesWRussian: 0,
+        classesWNative: 0,
         courses: []
     };
 
@@ -351,7 +352,8 @@ DataTable.prototype.updateData = async function() {
                 new InputField('phone', 'phone', 'Номер телефона', data.phone),
                 new InputField('email', 'email', 'Эл.почта', data.email),
                 new InputField('skype', 'skype', 'Skype', data.skype, false),
-                new InputField('classesLeft', 'classes', 'Кол-во занятий', data.classesLeft),
+                new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
+                new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
                 new ObjectWrapper('courses-wrapper', [
                     new Label('courses-label', 'Перечень курсов'),
                     new DataStrip('courses', data.courses)

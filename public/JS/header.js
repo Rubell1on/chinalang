@@ -15,7 +15,7 @@ async function render() {
         new DropDownList('user-menu', user.username)
     ];
 
-    if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesLeft}</b>`));
+    if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesWRussian}</b>`));
 
     const header = new ObjectWrapper('header-wrapper', children);
     header.prepandRender('');

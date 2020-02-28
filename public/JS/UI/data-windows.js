@@ -510,3 +510,139 @@ class PriceBlock extends CustomWindow {
         super.render(parent);
     }
 }
+
+class StripMenu extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+
+        this.children = children;
+    }
+
+    render(parent) {
+        this.html = `<div class="menu-strip ${this.className}"></div>`;
+
+        super.render(parent);
+
+        return this;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+}
+
+class StripSeparator extends CustomWindow {
+    constructor(className, text = '') {
+        super(className);
+
+        this._textValue = text;
+    }
+
+    setText(value) {
+        if (this.object) {
+            this._textObject.text(value);
+        } else {
+            this._textValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        this.html = 
+            `<div class="strip-separator ${this.className}">
+                <!-- <div class="icon">
+                    <img src="../../public/IMG/dashboard/users.png" alt="" srcset="">
+                </div> -->
+                <div class="text">${this._textValue}</div>
+            </div>`;
+
+        super.render(parent);
+
+        this._textObject = this.object.find('.text');
+
+        return this;
+    }
+}
+
+class StripButton extends CustomWindow {
+    constructor(className, text = '', image = '') {
+        super(className, text);
+        
+        this._textValue = text;
+        this._imageValue = image;
+    }
+
+    setText(value) {
+        if (this.object) {
+            this._textObject.text(value);
+        } else {
+            this._textValue = value;
+        }
+
+        return this;
+    }
+
+    setImage(value) {
+        if (this.object) {
+            this._imageObject.attr('src', value);
+        } else {
+            this._imageValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        const imgTemp = 
+            `<div class="icon">
+                <img src="${this._imageValue}" alt="" srcset="">
+            </div>`;
+
+        this.html = 
+            `<div class="strip-button ${this.className}">
+                ${this._imageValue ? imgTemp : ''}
+                <div class="text">${this._textValue}</div>
+            </div>`;
+
+        super.render(parent);
+
+        this._textObject = this.object.find('.text');
+        this._imageObject = this.object.find('.icon > img');
+
+        return this;
+    }
+}
+
+class StripImage extends CustomWindow {
+    constructor(className) {
+        super(className)
+    }
+
+    setImage(value) {
+        if (this.object) {
+            this._imageObject.attr('src', value);
+        } else {
+            this._imageValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        this.html = 
+            `<div class="strip-image strip-logo ${this.className}">
+                <img src="../../public/IMG/header/chinalang.png" alt="" srcset="">
+            </div>`;
+
+        super.render(parent);
+
+        this._imageObject = this.object.find('img');
+    }
+}
