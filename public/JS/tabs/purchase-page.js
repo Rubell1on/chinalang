@@ -1,6 +1,4 @@
-async function renderPage() {
-    renderPageLoader();
-
+async function renderGoodsTable() {
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/prices?apiKey=${apiKey}`)
         .catch(e => {
@@ -47,6 +45,23 @@ async function renderPage() {
             tableWrapper.renderChildren(() => {});
         });
     }
+}
+
+async function renderPage() {
+    renderPageLoader();
+    renderGoodsTable();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
 }
 
 renderPage();
