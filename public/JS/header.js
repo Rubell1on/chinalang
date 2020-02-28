@@ -1,21 +1,21 @@
-async function render() {
+async function renderHeader(user) {
     // const username = localStorage.getItem('username');
 
     const apiKey = auth.get('apiKey');
-    const response = await request.get('/api/db/userData', { apiKey })
-        .catch(e => {
-            console.error(e);
-            notificationController.error(e.error.responseText);
-        });
+    // const response = await request.get('/api/db/userData', { apiKey })
+    //     .catch(e => {
+    //         console.error(e);
+    //         notificationController.error(e.error.responseText);
+    //     });
 
-    const user = response.response[0];
+    // const user = response.response[0];
 
     const children = [
         new Button('menu-button', '≡'),
         new DropDownList('user-menu', user.username)
     ];
 
-    if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesWRussian}</b>`));
+    // if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesWRussian}</b>`));
 
     const header = new ObjectWrapper('header-wrapper', children);
     header.prepandRender('');
@@ -270,4 +270,4 @@ async function render() {
     });
 }
 
-render();
+// renderHeader();

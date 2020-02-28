@@ -66,9 +66,7 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
     });
 }
 
-async function renderPage() {
-    renderPageLoader();
-
+async function renderCoursesTable() {
     const controls = [
         new Label('courses-label', 'Список курсов'),
         new SearchLine('courses-search')
@@ -83,3 +81,21 @@ async function renderPage() {
 }
 
 renderPage();
+
+async function renderPage() {
+    renderPageLoader();
+    renderCoursesTable();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
+}
+

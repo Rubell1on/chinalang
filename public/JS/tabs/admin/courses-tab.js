@@ -281,9 +281,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     });
 }
 
-async function renderPage() {
-    renderPageLoader();
-
+async function renderCoursesTable() {
     const controls = [
         new Label('courses-label', 'Список курсов'),
         new Button('add-new-course'),
@@ -301,6 +299,23 @@ async function renderPage() {
     addCourse.object.click(async () => coursesTable.createNewCourse());
     coursesTable.updateCoursesData([]);
     coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
+}
+
+async function renderPage() {
+    renderPageLoader();
+    renderCoursesTable();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
 }
 
 renderPage();

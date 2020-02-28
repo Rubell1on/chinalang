@@ -8,9 +8,9 @@ const data = ['apiKey', 'role'].reduce((acc, key) => {
     return acc;
 }, {});
 
-renderControls();
+// renderControls();
 
-async function renderControls() {
+async function renderControls(user) {
     const parent = 'controls';
     const logo = new StripImage('chinalang-logo')
         .setImage('../../public/IMG/header/chinalang.png')
@@ -22,25 +22,27 @@ async function renderControls() {
         // new StripButton('classes-w-russian', 'Осталось занятий с русским преподавателем')
     ]);
 
-    const apiKey = auth.get('apiKey');
-    const res = await request.get(`/api/db/userData?apiKey=${apiKey}`)
-        .catch(e => {
-            console.log(e);
-            notificationController.error(e.error.responseText);
-        });
-    if (res.status === 'success') {
-        const user = res.response[0];
+    if (auth.get('role') === 'student') {
+        // const apiKey = auth.get('apiKey');
+        // const res = await request.get(`/api/db/userData?apiKey=${apiKey}`)
+        //     .catch(e => {
+        //         console.log(e);
+        //         notificationController.error(e.error.responseText);
+        //     });
+        // if (res.status === 'success') {
+            // const user = res.response[0];
 
-        const classesData = new StripMenu('classes-data', [
-            new StripSeparator('classes-left', 'Баланс занятий'),
-            new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
-            new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
-            new Button('buy-classes', 'Пополнить')
-        ])
-        .render(parent)
-        .renderChildren(child => {
-            if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
-        });
+            const classesData = new StripMenu('classes-data', [
+                new StripSeparator('classes-left', 'Баланс занятий'),
+                new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
+                new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
+                new Button('buy-classes', 'Пополнить')
+            ])
+            .render(parent)
+            .renderChildren(child => {
+                if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
+            });
+        // }
     }
 
     let children = {

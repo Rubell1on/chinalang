@@ -5,6 +5,7 @@
 
 .window > .content-window > .purchase-table > .purchase-table-data-wrapper {
     width: fit-content;
+    overflow-x: hidden;
     margin: 0 auto;
     height: 100%;
 }

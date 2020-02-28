@@ -435,9 +435,7 @@ DataTable.prototype.updateData = async function() {
     });
 }
 
-async function renderPage() {
-    renderPageLoader()
-
+async function renderUsersTable() {
     const controls = [
         new Label('users-label', 'Список пользователей'),
         new Button('add-new-user'),
@@ -460,6 +458,23 @@ async function renderPage() {
         strip.text = strip.data.username;
         strip.onDataChange.addListener(async () => await userWindow.updateData());
     });
+}
+
+async function renderPage() {
+    renderPageLoader();
+    renderUsersTable();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
 }
 
 renderPage();

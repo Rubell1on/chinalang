@@ -110,9 +110,7 @@ DataTable.prototype.createNewFile = async function(data = {}) {
     });
 }
 
-async function renderPage() {
-    renderPageLoader();
-
+async function renderFilesTable() {
     const controls = [
         new Label('files-label', 'Список файлов'),
         new Button('add-new-file'),
@@ -130,6 +128,23 @@ async function renderPage() {
     addCourse.object.click(async () => filesTable.createNewFile());
     filesTable.updateFilesData([]);
     filesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await filesTable.updateFilesData([]));
+}
+
+async function renderPage() {
+    renderPageLoader();
+    renderFilesTable();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
 }
 
 renderPage();

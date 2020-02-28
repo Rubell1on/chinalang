@@ -1,9 +1,5 @@
-DataTable.prototype.renderCoursePage = function() {
-    
-}
-
-async function renderPage() {
-    renderPageLoader();
+async function renderCoursePage() {
+    // renderPageLoader();
 
     const query = location.getQuery();
     const apiKey = auth.get('apiKey');
@@ -73,4 +69,21 @@ async function renderPage() {
     // coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
-renderPage();
+ renderPage();
+
+async function renderPage() {
+    renderPageLoader();
+    renderCoursePage();
+
+    const apiKey = auth.get('apiKey');
+    const response = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+    const user = response.response[0];
+
+    renderHeader(user);
+    renderControls(user);
+}
