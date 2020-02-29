@@ -51,7 +51,7 @@ module.exports = {
 
     obj2strArr: function (object) {
         return Object.entries(object).reduce((acc, curr) => {
-            acc.push(`${curr[0]} = '${curr[1]}'`);
+            acc.push(`${curr[0]} = ${typeof curr[1] === 'object' ? `'${JSON.stringify(curr[1])}'` : `'${curr[1]}'`}`);
             return acc;
         }, []);
     },

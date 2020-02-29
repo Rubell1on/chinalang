@@ -326,7 +326,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink, users.courses FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
