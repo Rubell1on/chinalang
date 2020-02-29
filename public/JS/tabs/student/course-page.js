@@ -1,8 +1,10 @@
-async function renderCoursePage() {
+async function renderCoursePage(userData) {
     // renderPageLoader();
 
     const query = location.getQuery();
     const apiKey = auth.get('apiKey');
+
+    const userCourseData = userData.courses.find(c => c.id === query.id);
 
     const res = await request.get(`/api/db/courses?id=${query.id}&apiKey=${apiKey}`)
         .catch(e => {
@@ -36,26 +38,32 @@ async function renderCoursePage() {
                                 const strip = new DataStrip(c.name.decrease(), c);
                                 strip.parent = object;
                                 strip.render(object.object);
-                                strip.text.text(c.name);
-                                strip.object.click(() => {
-                                    const classesWindow = new DataWindow('class-window', [], [
-                                        new DataTable('class-table', [], [
-                                            new Label('class-label', c.name),
-                                            new ObjectWrapper('class-description-wrapper', [
-                                                new Label('class-description-label', 'Описание урока'),
-                                                new Text('class-description-text', c.description)
+                                const classData = userCourseData && userCourseData.classes ? userCourseData.classes.find(c => c.id === strip.data.id) : undefined;
+                                if (classData) {
+                                    strip.text.text(c.name);
+                                    strip.object.click(() => {
+                                        const classesWindow = new DataWindow('class-window', [], [
+                                            new DataTable('class-table', [], [
+                                                new Label('class-label', c.name),
+                                                new ObjectWrapper('class-description-wrapper', [
+                                                    new Label('class-description-label', 'Описание урока'),
+                                                    new Text('class-description-text', c.description)
+                                                ])
                                             ])
-                                        ])
-                                    ]);
-                                    classesWindow.render('');
-                                    classesWindow.renderChildren(table => {
-                                        table.renderChildren(child => {
-                                            if (child.isTypeOf('objectWrapper')) {
-                                                child.renderChildren(() => {});
-                                            }
-                                        });
-                                    })
-                                });
+                                        ]);
+                                        classesWindow.render('');
+                                        classesWindow.renderChildren(table => {
+                                            table.renderChildren(child => {
+                                                if (child.isTypeOf('objectWrapper')) {
+                                                    child.renderChildren(() => {});
+                                                }
+                                            });
+                                        })
+                                    });
+                                } else {
+                                    strip.object.css('opacity', 0.7);
+                                    strip.text.text('Закрыто');
+                                }
                             });
 
                             child.children = strips;
@@ -73,17 +81,15 @@ async function renderCoursePage() {
 
 async function renderPage() {
     renderPageLoader();
-    renderCoursePage();
+    const response = await auth.getUserData();
 
-    const apiKey = auth.get('apiKey');
-    const response = await request.get('/api/db/userData', { apiKey })
-        .catch(e => {
-            console.error(e);
-            notificationController.error(e.error.responseText);
-        });
+    if (response) {
+        const user = response;
+        renderHeader(user);
+        renderControls(user);
 
-    const user = response.response[0];
-
-    renderHeader(user);
-    renderControls(user);
+        renderCoursePage(user);
+    } else {
+        location.reload();
+    }
 }

@@ -1,6 +1,5 @@
 DataTable.prototype.updateCoursesData = async function(source) {
     const userCourses = source.courses;
-    // console.log(user);
     this.removeChildren();
     const searchingValue = this.controls[1].input.val();
     const apiKey = auth.get('apiKey');
@@ -120,8 +119,6 @@ CheckboxButton.prototype.click = function(course, userCourses) {
             if (userCourses[i].id === course.id) {
                 userCourses.splice(i, 1);
                 this.enabled = false;
-                // this.object.css('background', '#3cb371');
-                // this.object.text('Подписаться');
                 return -1;
             }
         }
@@ -135,8 +132,6 @@ CheckboxButton.prototype.click = function(course, userCourses) {
 
         if (flag) {
             userCourses.push({id: course.id, classes: []});
-            // this.object.css('background', '#FB2267');
-            // this.object.text('Отписаться');
             this.enabled = true;
             return 1;
         }
