@@ -1,8 +1,14 @@
 .main-block {
+    box-sizing: border-box;
     overflow: hidden;
     min-height: 300px;
     width: 100%;
     background: #529AE4;
+    padding-top: 30px;
+    padding-left: 20px;
+    background-image: url('../../IMG/header/background_cropped.png');
+    background-size: cover;
+    background-position: bottom;
 }
 
 .main-block > div {
@@ -10,12 +16,11 @@
 }
 
 .main-left-part {
-    padding-left: 10px;
-    padding-right: 10px;
+    /* padding-left: 10px;
+    padding-right: 10px; */
     box-sizing: border-box;
     width: 65%;
     /* height: 100%; */
-    margin-top: calc(150px - 124.5px);
 }
 
 .main-left-part > div {
@@ -26,6 +31,7 @@
     font-weight: bold;
     font-size: 35px;
     margin-bottom: 30px;
+    letter-spacing: 0.3px;
 }
 
 .main-info {
@@ -40,7 +46,34 @@
 .get-free-lesson {
     margin-left: auto;
     margin-right: auto;
-    margin-top: calc(150px - 50px);
+    /* margin-top: calc(150px - 50px); */
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (min-width: 1280px) {
+    .main-block {
+        height: 476px;
+    }
+
+    .get-free-lesson {
+        font-size: 34px;
+        padding: 19px 54px;
+        border-radius: 10px;
+        position: relative;
+        top: calc(50% - 65px);
+        transform: translate(-24px, -50%);
+    }
+
+    .main-text {
+        font-size: 65px;
+        margin-bottom: 54px;
+    }
+
+    .main-info {
+        font-size: 30px;
+    }
 }
 
 @media (max-width: 700px) {

@@ -1,13 +1,6 @@
-body {
-    zoom: 2.35;
-}
-
 .wrapper, .header {
-    width: 100%;
-}
-
-.overlay-window {
-    zoom: 0.5;
+    /* width: 100%; */
+    /* width: 1280px; */
 }
 
 .quick-start-window {
@@ -71,16 +64,20 @@ body {
     margin: 0 auto;
 }
 
+@media (min-width: 1280px) {
+    .wrapper, .header {
+        width: 1280px;
+    }
+
+    .header {
+        height: 110px;
+        padding: 0px 17px;
+        box-sizing: border-box;
+    }
+}
+
 @media (max-width: 700px) {
     .quick-start-window {
         width: 90%;
-    }
-
-    body {
-        zoom: 1;
-    }
-
-    .overlay-window {
-        zoom: 1;
     }
 }
