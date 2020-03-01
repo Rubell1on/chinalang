@@ -1,0 +1,59 @@
+@media (min-width: 1280px) {
+    .about-project > .header-wrapper {
+        background: #f1f1f1;
+        height: 140px;
+        margin-bottom: 70px;
+    }
+    
+    .header-wrapper > h2 {
+        text-align: center;
+        font-size: 52px;
+        color: #24466B;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .info-block {
+        height: 920px;
+        background-image: url('../../IMG/about-project/kruglyashi.png');
+        background-size: cover;
+        background-position: top;
+    }
+
+    .info-block > div {
+        background: white;
+        position: absolute;
+        box-shadow: 0 2px 4px grey;
+    }
+
+    .left-text {
+        width: 718px;
+        height: 658px;
+        transform: translate(76px, 154px);
+    }
+
+    .left-text > .top {
+        font-size: 35px;
+        color: #529AE4;
+        font-weight: bold;
+        letter-spacing: -0.9px;
+    }
+
+    .left-text:nth-child(2n+1) {
+        font-size: 34px;
+        color: #656565;
+        letter-spacing: -0.5px;
+        box-sizing: border-box;
+        padding: 20px 25px;
+    }
+
+    .left-text > .top {
+        margin-bottom: 35px;
+    }
+
+    .left-text > .middle {
+        margin-bottom: 40px;
+    }
+
+}
