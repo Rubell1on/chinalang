@@ -1,7 +1,8 @@
 .main-block {
     box-sizing: border-box;
     overflow: hidden;
-    min-height: 300px;
+    /* min-height: 300px; */
+    height: 300px;
     width: 100%;
     background: #529AE4;
     padding-top: 30px;
