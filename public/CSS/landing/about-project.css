@@ -17,6 +17,7 @@
     background-image: url('../../IMG/about-project/kruglyashi.png');
     background-size: cover;
     background-position: top;
+    margin: 0 auto;
 }
 
 .info-block > div {
@@ -106,6 +107,7 @@
 
 @media (min-width: 768px) {
     .info-block {
+        width: 768px;
         box-sizing: border-box;
         padding: 0px 20px;
     }
@@ -141,6 +143,7 @@
     }
 
     .info-block {
+        width: 1280px;
         height: 942px;
         background-size: cover;
         background-position: top;
