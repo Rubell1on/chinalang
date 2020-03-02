@@ -4,6 +4,7 @@
 
 .infographic-wrapper {
     margin-bottom: 79px;
+    width: 95%;
 }
 
 .how-it-works > .get-free-lesson {
@@ -80,12 +81,12 @@
 
 .text-img-infographic:nth-child(odd) .text-side > .info > div {
     text-align: right;
-    padding-left: 50px;
+    /* padding-left: 50px; */
 }
 
 .text-img-infographic:nth-child(even) .text-side > .info > div {
     text-align: left;
-    padding-right: 112px;
+    /* padding-right: 112px; */
 }
 
 .text-img-infographic > .text-side:nth-child(even) {

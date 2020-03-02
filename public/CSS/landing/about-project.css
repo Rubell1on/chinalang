@@ -29,7 +29,7 @@
 
     .left-text {
         width: 718px;
-        height: 658px;
+        height: 662px;
         transform: translate(76px, 154px);
     }
 
@@ -38,22 +38,46 @@
         color: #529AE4;
         font-weight: bold;
         letter-spacing: -0.9px;
-    }
-
-    .left-text:nth-child(2n+1) {
-        font-size: 34px;
-        color: #656565;
-        letter-spacing: -0.5px;
-        box-sizing: border-box;
-        padding: 20px 25px;
-    }
-
-    .left-text > .top {
         margin-bottom: 35px;
     }
 
-    .left-text > .middle {
-        margin-bottom: 40px;
+    .left-text {
+        box-sizing: border-box;
+        padding: 20px 25px;
+        z-index: 2;
     }
 
+    .right-text {
+        position: absolute;
+        width: 460px;
+        height: 360px;
+        transform: translate(790px, 380px);
+        z-index: 1;
+        box-sizing: border-box;
+        /* padding: 40px 20px; */
+        padding-left: 40px;
+        padding-top: 60px;
+    }
+
+    .right-text > .top {
+        color: #73CBB0;
+        font-size: 35px;
+        font-weight: bold;
+        letter-spacing: -0.9px;
+        margin-bottom: 20px;
+    }
+
+    .info-block > div > .middle, .bottom {
+        margin-bottom: 40px;
+        font-size: 34px;
+        color: #656565;
+        letter-spacing: -0.5px;
+    }
+
+    .about-project > .get-free-lesson {
+        margin-left: unset;
+        left: 218px;
+        top: 10px;
+        margin-right: unset;
+    }
 }
