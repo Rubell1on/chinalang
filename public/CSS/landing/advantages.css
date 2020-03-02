@@ -1,3 +1,8 @@
+.advantages-background {
+    width: 100%;
+    background: #f1f1f1;
+}
+
 .advantages-block {
     word-break: break-word;
     display: flex;
@@ -7,6 +12,7 @@
     width: 100%;
     background: #F1F1F1;
     padding: 15px;
+    margin: 0 auto;
     /* padding-top: calc(110px - 85px); */
 }
 
@@ -75,11 +81,16 @@
     }
 }
 
-
+@media (min-width: 768px) {
+    .advantages-block {
+        width: 768px;
+    }
+}
 
 @media (min-width: 1280px) {
     .advantages-block {
         height: 370px;
+        width: 1280px;
         padding: unset;
         padding-bottom: 15px;
         padding-left: 42px;

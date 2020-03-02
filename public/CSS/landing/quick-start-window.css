@@ -3,6 +3,10 @@
     /* width: 1280px; */
 }
 
+.wrapper {
+    width: 100%;
+}
+
 .quick-start-window {
     position: absolute;
     height: 1px;
@@ -65,7 +69,7 @@
 }
 
 @media (min-width: 1280px) {
-    .wrapper, .header {
+    .header {
         width: 1280px;
     }
 

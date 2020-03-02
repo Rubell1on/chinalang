@@ -1,7 +1,12 @@
+.main-block-background {
+    background: #529AE4;
+}
+
 .main-block {
     box-sizing: border-box;
     overflow: hidden;
     /* min-height: 300px; */
+    margin: 0 auto;
     height: 300px;
     width: 100%;
     background: #529AE4;
@@ -83,6 +88,9 @@
 }
 
 @media (min-width: 768px) {
+    .main-block {
+        width: 768px;
+    }
     .main-right-part > .get-free-lesson {
         transform: translateY(-120%);
     }
@@ -91,6 +99,7 @@
 @media (min-width: 1280px) {
     .main-block {
         height: 476px;
+        width: 1280px;
     }
 
     .main-right-part > .get-free-lesson {
