@@ -1,3 +1,8 @@
+.footer-background {
+    width: 100%;
+    background: #f1f1f1;
+}
+
 .footer {
     width: 100%;
     height: 506px;
@@ -5,6 +10,7 @@
     padding: 45px 45px;
     padding-bottom: 0px;
     box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .footer > .top {
@@ -123,6 +129,7 @@
 
 @media (min-width: 768px) {
     .footer {
+        width: 768px;
         height: unset;
         padding-bottom: 20px;
     }
@@ -236,7 +243,7 @@
 
 @media (min-width: 1280px) {
     .footer {
-        width: 100%;
+        width: 1280px;
         height: 506px;
         background: #f1f1f1;
         padding: 45px 45px;

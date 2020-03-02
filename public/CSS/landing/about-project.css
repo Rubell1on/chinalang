@@ -1,3 +1,10 @@
+.about-project-background {
+    width: 100%;
+    background-image: url('../../IMG/about-project/kruglyashi.png');
+    background-size: cover;
+    background-position: top;
+}
+
 .about-project > .header-wrapper {
     background: #f1f1f1;
     height: 70px;
@@ -14,9 +21,9 @@
 
 .info-block {
     height: 475px;
-    background-image: url('../../IMG/about-project/kruglyashi.png');
+    /* background-image: url('../../IMG/about-project/kruglyashi.png');
     background-size: cover;
-    background-position: top;
+    background-position: top; */
     margin: 0 auto;
 }
 
@@ -74,9 +81,14 @@
         margin-bottom: 20px;
     }
 
+    .about-project > .get-free-lesson {
+        transform: translate(0, 0);
+    }
+
     .info-block {
         box-sizing: border-box;
         padding: 0px 20px;
+        padding-bottom: 56px;
         height: unset;
     }
 
@@ -136,6 +148,10 @@
     .about-project > .header-wrapper {
         height: 140px;
         margin-bottom: 70px;
+    }
+
+    .about-project > .get-free-lesson {
+        transform: translate(128px, -50%);
     }
     
     .header-wrapper > h2 {
