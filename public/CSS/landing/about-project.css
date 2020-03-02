@@ -74,9 +74,15 @@
     letter-spacing: -0.5px;
 }
 
-
+.about-project > #bottom.get-free-lesson {
+    margin-bottom: unset;
+}
 
 @media (max-width: 768px) {
+    .about-project {
+        padding-bottom: 50px;
+    }
+
     .header-wrapper {
         margin-bottom: 20px;
     }
@@ -145,6 +151,9 @@
 }
 
 @media (min-width: 1280px) {
+    .about-project {
+        padding-bottom: 190px;
+    }
     .about-project > .header-wrapper {
         height: 140px;
         margin-bottom: 70px;
@@ -160,7 +169,7 @@
 
     .info-block {
         width: 1280px;
-        height: 942px;
+        height: 894px;
         background-size: cover;
         background-position: top;
     }
@@ -208,10 +217,8 @@
         font-size: 34px;
     }
 
-    .about-project > .get-free-lesson {
-        margin-left: unset;
-        left: 218px;
-        top: 10px;
-        margin-right: unset;
+    .about-project > #bottom.get-free-lesson {
+        transform: translate(-230px);
+        margin-bottom: unset;
     }
 }
