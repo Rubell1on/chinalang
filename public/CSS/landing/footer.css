@@ -121,6 +121,246 @@
     margin-top: 100px;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 768px) {
+    .footer {
+        height: unset;
+        padding-bottom: 20px;
+    }
 
+    .footer > .top {
+        height: 80px;
+    }
+
+    .footer > .top > .logo {
+        height: 40px;
+    }
+
+    .footer > .top > .social-networks {
+        display: flex;
+        direction: ltr;
+        flex-flow: column;
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .footer > .top > .social-networks > div {
+        height: 50%;
+        width: 100%;
+    }
+
+    .footer > .top > .social-networks > .text {
+        font-size: 20px;
+        line-height: 40px;
+    }
+
+    .footer > .top > .social-networks > .wrapper > a {
+        height: 40px;
+        width: 40px;
+        margin-right: 10px;
+    }
+
+    .footer > .top > .social-networks > .wrapper > a:last-child {
+        margin-right: unset;
+    }
+
+    .footer > .top > .social-networks > .wrapper > .vk-link {
+        width: 58px;
+        height: 32px;
+    }
+
+    .footer > .middle > div, a {
+        font-size: 20px;
+    }
+
+    .footer > .middle > div:last-child {
+        font-size: 18px;
+        margin-top: 50px;
+    }
+}
+@media (max-width: 768px) {
+    .footer {
+        height: unset;
+        padding-bottom: 20px;
+    }
+
+    .footer > .top {
+        height: 80px;
+    }
+
+    .footer > .top > .logo {
+        height: 40px;
+    }
+
+    .footer > .top > .social-networks {
+        display: flex;
+        direction: ltr;
+        flex-flow: column;
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .footer > .top > .social-networks > div {
+        height: 50%;
+        width: 100%;
+    }
+
+    .footer > .top > .social-networks > .text {
+        font-size: 20px;
+        line-height: 40px;
+    }
+
+    .footer > .top > .social-networks > .wrapper > a {
+        height: 40px;
+        width: 40px;
+        margin-right: 10px;
+    }
+
+    .footer > .top > .social-networks > .wrapper > a:last-child {
+        margin-right: unset;
+    }
+
+    .footer > .top > .social-networks > .wrapper > .vk-link {
+        width: 58px;
+        height: 32px;
+    }
+
+    .footer > .middle > div, a {
+        font-size: 20px;
+    }
+
+    .footer > .middle > div:last-child {
+        font-size: 18px;
+        margin-top: 50px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .footer {
+        width: 100%;
+        height: 506px;
+        background: #f1f1f1;
+        padding: 45px 45px;
+        padding-bottom: 0px;
+        box-sizing: border-box;
+    }
+    
+    .footer > .top {
+        height: 60px;
+        margin-bottom: 40px;
+    }
+    
+    .footer > .top > div {
+        width: unset;
+        float: left;
+        height: 100%;
+    }
+    
+    .footer > .top > .logo {
+        padding: 2px 0px;
+        margin-left: unset;
+        height: 100%;
+    }
+    
+    .footer > .top > .logo > img {
+        height: 100%;
+    }
+    
+    .footer > .top > .social-networks {
+        float: right;
+        height: 100%;
+        /* width: 50%; */
+        display: block;
+        text-align: left;
+        font-weight: inherit;
+    }
+    
+    .footer > .top > .social-networks > div {
+        width: unset;
+        height: 100%;
+        float: left;
+    }
+    
+    .footer > .top > .social-networks > .text {
+        font-size: 34px;
+        color: #656565;
+        letter-spacing: -0.5px;
+        line-height: 60px;
+        margin-right: 20px;
+    }
+    
+    .footer > .top > .social-networks > .wrapper {
+        margin: unset;
+    }
+    
+    .footer > .top > .social-networks > .wrapper > a {
+        display: block;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 55px;
+        width: 55px;
+        box-sizing: border-box;
+        float: left;
+        margin-right: 16px;
+    }
+    
+    .footer > .top > .social-networks > .wrapper > a:last-child {
+        margin-right: unset;
+    }
+    
+    .wrapper > .facebook-link {
+        background-image: url('../../IMG/footer/fb.png');
+        background-size: cover;
+    }
+    
+    .wrapper > a.instagram-link {
+        background-image: url('../../IMG/footer/insta.png');
+        background-size: cover;
+        margin-right: 8px;
+    }
+    
+    .wrapper > a.vk-link {
+        background-image: url('../../IMG/footer/vk1.png');
+        background-size: cover;
+        width: 80px;
+        height: 42px;
+    }
+    
+    .wrapper > .printerest-link {
+        background-image: url('../../IMG/footer/printerest.png');
+        background-size: cover;
+    }
+    
+    .wrapper > .telegram-link {
+        background-image: url('../../IMG/footer/telega.png');
+        background-size: cover;
+    }
+    
+    .footer > .middle {
+        width: fit-content;
+    }
+    
+    .footer > .middle > div:first-child {
+        margin-bottom: 40px;
+    }
+    
+    .footer > .middle > div, a {
+        font-size: 34px;
+        color: #656565;
+        letter-spacing: -0.5px;
+    }
+    
+    .footer > .middle > a {
+        display: block;
+        text-decoration: none;
+    }
+    
+    .footer > .middle > a:hover {
+        text-decoration: underline;
+    } 
+    
+    .footer > .middle > div:last-child {
+        font-size: 30px;
+        margin-top: 100px;
+    }
 }

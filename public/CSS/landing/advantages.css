@@ -69,6 +69,14 @@
     width: 25%;
 }
 
+@media (max-width: 768px) {
+    .advantage {
+        width: 50%;
+    }
+}
+
+
+
 @media (min-width: 1280px) {
     .advantages-block {
         height: 370px;
@@ -89,11 +97,5 @@
 
     .info-graphic-img {
         width: 62%;
-    }
-}
-
-@media (max-width: 700px) {
-    .advantage {
-        width: 50%;
     }
 }

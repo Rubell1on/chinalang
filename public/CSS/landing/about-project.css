@@ -1,22 +1,147 @@
+.about-project > .header-wrapper {
+    background: #f1f1f1;
+    height: 70px;
+}
+
+.header-wrapper > h2 {
+    text-align: center;
+    font-size: 30px;
+    color: #24466B;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.info-block {
+    height: 475px;
+    background-image: url('../../IMG/about-project/kruglyashi.png');
+    background-size: cover;
+    background-position: top;
+}
+
+.info-block > div {
+    background: white;
+    position: absolute;
+    box-shadow: 0 2px 4px grey;
+}
+
+.info-block > .left-text > .top {
+    font-size: 20px;
+    color: #529AE4;
+    font-weight: bold;
+    letter-spacing: -0.9px;
+    margin-bottom: 15px;
+}
+
+.left-text {
+    box-sizing: border-box;
+    padding: 20px 25px;
+    z-index: 2;
+}
+
+.right-text {
+    position: absolute;
+    width: 276px;
+    height: 216px;
+    transform: translate(474px, 380px);
+    z-index: 1;
+    box-sizing: border-box;
+    /* padding: 40px 20px; */
+    padding-left: 40px;
+    padding-top: 60px;
+}
+
+.right-text > .top {
+    color: #73CBB0;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: -0.9px;
+    margin-bottom: 20px;
+}
+
+.info-block > div > .middle, .bottom {
+    margin-bottom: 15px;
+    font-size: 17px;
+    color: #656565;
+    letter-spacing: -0.5px;
+}
+
+
+
+@media (max-width: 768px) {
+    .header-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .info-block {
+        box-sizing: border-box;
+        padding: 0px 20px;
+        height: unset;
+    }
+
+    .info-block > .left-text {
+        position: relative;
+        width: 100%;
+        height: unset;
+        margin: 0 auto;
+    }
+
+    .info-block > .right-text {
+        /* transform: translate(20px, -52px); */
+        transform: translate(0, 0);
+        position: relative;
+        margin-top: -50px;
+        margin-left: 20px;
+    }
+
+    /* .about-project > .get-free-lesson {
+        display: none;
+    } */
+
+    .wrapper > .about-project > #bottom.get-free-lesson {
+        transform: unset;
+        margin-top: 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .info-block {
+        box-sizing: border-box;
+        padding: 0px 20px;
+    }
+
+    .info-block > .left-text {
+        width: 430px;
+        /* height: 397px; */
+        height: unset;
+        transform: translate(45px, 60px);
+    }
+
+    .right-text {
+        position: absolute;
+        width: 276px;
+        height: 216px;
+        transform: translate(445px, 135px);
+        z-index: 1;
+        box-sizing: border-box;
+        /* padding: 40px 20px; */
+        padding-left: 40px;
+        padding-top: 40px;
+    }
+}
+
 @media (min-width: 1280px) {
     .about-project > .header-wrapper {
-        background: #f1f1f1;
         height: 140px;
         margin-bottom: 70px;
     }
     
     .header-wrapper > h2 {
-        text-align: center;
         font-size: 52px;
-        color: #24466B;
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
     }
 
     .info-block {
         height: 920px;
-        background-image: url('../../IMG/about-project/kruglyashi.png');
         background-size: cover;
         background-position: top;
     }
@@ -27,13 +152,13 @@
         box-shadow: 0 2px 4px grey;
     }
 
-    .left-text {
+    .info-block > .left-text {
         width: 718px;
         height: 662px;
         transform: translate(76px, 154px);
     }
 
-    .left-text > .top {
+    .info-block > .left-text > .top {
         font-size: 35px;
         color: #529AE4;
         font-weight: bold;
@@ -42,9 +167,7 @@
     }
 
     .left-text {
-        box-sizing: border-box;
         padding: 20px 25px;
-        z-index: 2;
     }
 
     .right-text {
@@ -52,26 +175,18 @@
         width: 460px;
         height: 360px;
         transform: translate(790px, 380px);
-        z-index: 1;
-        box-sizing: border-box;
-        /* padding: 40px 20px; */
         padding-left: 40px;
         padding-top: 60px;
     }
 
     .right-text > .top {
-        color: #73CBB0;
         font-size: 35px;
-        font-weight: bold;
-        letter-spacing: -0.9px;
         margin-bottom: 20px;
     }
 
     .info-block > div > .middle, .bottom {
         margin-bottom: 40px;
         font-size: 34px;
-        color: #656565;
-        letter-spacing: -0.5px;
     }
 
     .about-project > .get-free-lesson {
