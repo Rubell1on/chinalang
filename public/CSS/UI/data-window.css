@@ -20,11 +20,11 @@
 .data-wrapper > .data {
     box-sizing: border-box;
     height: 50px;
-    background: gray;
+    background: #656565;
     border-radius: 10px;
     margin-bottom: 5px;
     transition: background 200ms ease;
-    padding-left: 10px;
+    padding: 10px;
     cursor: pointer;
 }
 
@@ -68,4 +68,11 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+}
+
+@media (min-width: 1000px) {
+    .data-wrapper > .data {
+        height: 64px;
+        margin-bottom: 10px;
+    }
 }

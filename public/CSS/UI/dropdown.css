@@ -1,8 +1,7 @@
 .dropdown {
     overflow: hidden;
     box-sizing: border-box;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0px 10px;
     /* margin-right: 5px; */
     cursor: pointer;
     transition: background 200ms ease;
@@ -15,7 +14,7 @@
 }
 
 .dropdown:hover > .dropdown-text {
-    /* color: #529AE4; */
+    /* line-height: 40px; */
 }
 
 .dropdown:hover > .dropdown-img > img {
@@ -25,6 +24,8 @@
 .dropdown > div {
     float: left;
     height: 100%;
+    padding: 5px 0px;
+    box-sizing: border-box;
 }
 
 /* .dropdown > .dropdown-img-wrapper > div {
@@ -35,12 +36,16 @@
 .dropdown > .dropdown-img-wrapper > .arrow-img {
     float: left;
     height: 100%;
+    width: 10px;
 }
 
 .dropdown-text {
-    line-height: 50px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    /* line-height: 50px; */
     color: white;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: bold;
     margin-right: 5px;
     transition: color 200ms ease;
@@ -86,6 +91,8 @@
 }
 
 .arrow-img > img {
-    height: 25%;
-    margin-top: calc(25px - 6.25px);
+    position: relative;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-75%);
 }

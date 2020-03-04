@@ -331,7 +331,9 @@ class DropDownList extends CustomWindow {
 
         this.html = 
             `<div class="dropdown ${className}">
-                <div class="dropdown-text">${text}</div>
+                <div class="dropdown-text-wrapper">
+                    <div class="dropdown-text">${text}</div>
+                </div>
                 <div class="dropdown-img-wrapper">
                     <div class="dropdown-img">
                         <img src="../../../public/IMG/dashboard/default_user.png" alt="" srcset="">

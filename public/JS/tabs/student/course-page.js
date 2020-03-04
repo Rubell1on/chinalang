@@ -15,7 +15,9 @@ async function renderCoursePage(userData) {
     if (res.status === 'success') {
         const courseData = res.response[0];    
         const children = [
-            new Label('course-name', courseData.name),
+            new ObjectWrapper('course-name-wrapper', [
+                new Label('course-name', courseData.name)
+            ]),
             new ObjectWrapper('description-wrapper', [
                 new Label('description-label', 'Описание курса'),
                 new Text('course-description', courseData.description)
@@ -41,6 +43,7 @@ async function renderCoursePage(userData) {
                                 const classData = userCourseData && userCourseData.classes ? userCourseData.classes.find(c => c.id === strip.data.id) : undefined;
                                 if (classData) {
                                     strip.text.text(c.name);
+                                    strip.object.css('background', '#84BC57')
                                     strip.object.click(() => {
                                         const classesWindow = new DataWindow('class-window', [], [
                                             new DataTable('class-table', [], [
@@ -61,13 +64,15 @@ async function renderCoursePage(userData) {
                                         })
                                     });
                                 } else {
-                                    strip.object.css('opacity', 0.7);
+                                    // strip.object.css('opacity', 0.7);
                                     strip.text.text('Закрыто');
                                 }
                             });
 
                             child.children = strips;
                         }
+                    } else if (child.className === 'courses-name-wrapper') {
+                        child.renderChildren(() => {});
                     }
                 });
             }      

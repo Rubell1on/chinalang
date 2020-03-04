@@ -51,3 +51,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+@media (min-width: 1000px) {
+    /* .data-strip > .text-wrapper {
+        font-size: 22px;
+    } */
+
+    .data-strip > .text-wrapper > .text {
+        font-size: 22px;
+    }
+}

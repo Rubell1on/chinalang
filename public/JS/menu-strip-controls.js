@@ -12,9 +12,9 @@ const data = ['apiKey', 'role'].reduce((acc, key) => {
 
 async function renderControls(user) {
     const parent = 'controls';
-    const logo = new StripImage('chinalang-logo')
-        .setImage('../../public/IMG/header/chinalang.png')
-        .render(parent);
+    // const logo = new StripImage('chinalang-logo')
+    //     .setImage('../../public/IMG/header/chinalang.png')
+    //     .render(parent);
 
     const userData = new StripMenu('userdata', [
         new StripSeparator('userdata-separator', 'Пользователь'),
@@ -22,34 +22,27 @@ async function renderControls(user) {
         // new StripButton('classes-w-russian', 'Осталось занятий с русским преподавателем')
     ]);
 
-    if (auth.get('role') === 'student') {
-        // const apiKey = auth.get('apiKey');
-        // const res = await request.get(`/api/db/userData?apiKey=${apiKey}`)
-        //     .catch(e => {
-        //         console.log(e);
-        //         notificationController.error(e.error.responseText);
-        //     });
-        // if (res.status === 'success') {
-            // const user = res.response[0];
-
-            const classesData = new StripMenu('classes-data', [
-                new StripSeparator('classes-left', 'Баланс занятий'),
-                new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
-                new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
-                new Button('buy-classes', 'Пополнить')
-            ])
-            .render(parent)
-            .renderChildren(child => {
-                if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
-            });
-        // }
-    }
+    // if (auth.get('role') === 'student') {
+    //     const classesData = new StripMenu('classes-data', [
+    //         new StripSeparator('classes-left', 'Баланс занятий'),
+    //         new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
+    //         new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
+    //         new Button('buy-classes', 'Пополнить')
+    //     ])
+    //     .render(parent)
+    //     .renderChildren(child => {
+    //         if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
+    //     });
+    // }
 
     let children = {
         student: [
-            new StripSeparator('tabs-separator', 'Вкладки'),
+            new StripSeparator('tabs-separator', 'Личный кабинет'),
+            new StripButton('main-tab', 'Главная', '../../public/IMG/dashboard/course.png'),
+            new StripButton('profile-tab', 'Мой профиль', '../../public/IMG/dashboard/course.png'),
             new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
-            new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png')
+            new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
+            new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/history.png')
         ],
         admin: [
             new StripSeparator('tabs-separator', 'Вкладки'),

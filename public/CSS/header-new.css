@@ -3,8 +3,10 @@
     position: absolute;
     height: 50px;
     width: 100%;
-    /* background: #f1f1f1; */
-    background: #529AE4;
+    background: #f1f1f1;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    /* background: #529AE4; */
 }
 
 .header-wrapper > .menu-button {
@@ -26,13 +28,63 @@
     transform: translateY(-50%);
 }
 
+.header-wrapper > .strip-logo {
+    float: left;
+    width: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    background: unset;
+}
+
 .header-wrapper > .menu-button:hover {
     background: #24466B;
     color: white;
 }
 
-.header-wrapper > .user-menu {
+.header-wrapper > .header-controls > .user-menu {
     float: right;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.header-wrapper > .header-controls > .user-menu > .dropdown-text-wrapper > .dropdown-text {
+    color: #529AE4;
+    line-height: 40px;
+}
+
+.header-wrapper > .header-controls > div {
+    margin-right: 5px;
+}
+
+.header-wrapper > .header-controls > div:last-child {
+    margin-right: 0px;
+}
+
+.header-wrapper > .header-controls > .user-menu:hover {
+    background: #529AE4;
+}
+
+.header-wrapper > .header-controls > .user-menu:hover > .dropdown-text-wrapper > .dropdown-text {
+    color: white;
+}
+
+.header-wrapper > .header-controls {
+    display: flex;
+    width: fit-content;
+    float: right;
+    height: 100%;
+}
+
+.header-wrapper > .header-controls > .contacts {
+    height: min-content;
+    display: block;
+    padding: 5px 10px;
+    font-size: 15px;
+    background: #7D7D7D;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .user-menu-background {
@@ -48,7 +100,6 @@
     right: 5px;
     top: calc(50px + 5px);
     transform: none;
-
 }
 
 .overlay-window.user-menu > div > div {
@@ -139,8 +190,31 @@
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
     .header-wrapper > .menu-button {
         display: block;
+    }
+}
+
+@media (min-width: 1000px) {
+    .header-wrapper {
+        position: relative;
+        width: 1000px;
+        margin: 0 auto;
+        height: 70px;
+        padding: 10px 10px;
+    }
+
+    .header-wrapper > .chinalang-logo {
+        min-height: 100%;
+    }
+
+    .header-wrapper > .header-controls > .user-menu {
+        height: 100%;
+    }
+
+    .header-wrapper > .header-controls > .contacts {
+        padding: 10px 15px;
+        font-size: 18px;
     }
 }
