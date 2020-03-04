@@ -1,0 +1,31 @@
+.info-block {
+    background: #6ECFB0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+}
+
+.info-block > div {
+    text-align: left;
+    color: white;
+    font-size: 24px;
+}
+
+.info-block > .greetings-label {
+    font-weight: bold;
+    font-size: 34px;
+    color: #5E6564;
+    margin-bottom: 14px;
+}
+
+.info-block > .current-class-label {
+    color: #707372;
+}
+
+.content-window {
+    padding: 0px;
+}
+
+.data-wrapper.main-table-data-wrapper {
+    padding: 0px;
+}

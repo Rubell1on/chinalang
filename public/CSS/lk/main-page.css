@@ -1,0 +1,38 @@
+.content-window {
+    background: none;
+}
+.weekly-word-block {
+    /* background: white; */
+    /* border-radius: 10px; */
+    /* box-sizing: border-box; */
+    /* padding: 15px; */
+}
+
+.weekly-word-block > .weekly-label-wrapper {
+    background: #FE2569;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: white;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.weekly-word-block > .weekly-label-wrapper > .label {
+    margin-bottom: 0px;
+    font-size: 22px;
+}
+
+ .weekly-word-block > .weekly-text {
+    background: white;
+    padding: 15px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+ }
+
+.main-table-data-wrapper > div {
+    margin-bottom: 10px;
+}
+
+.main-table-data-wrapper > div:last-child {
+    margin-bottom: 0px;
+}

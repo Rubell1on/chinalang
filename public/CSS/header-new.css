@@ -217,4 +217,12 @@
         padding: 10px 15px;
         font-size: 18px;
     }
+
+    .overlay-window.user-menu {
+        left: calc(50% + 266px);
+        top: 70px;
+        padding: 10px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+    }
 }

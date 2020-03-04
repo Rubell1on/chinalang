@@ -88,4 +88,16 @@
     .courses-table-data-wrapper > .course-name-wrapper > .label {
         font-size: 24px;
     }
+
+    .courses-table-data-wrapper > .description-wrapper > .label {
+        font-size: 18px;
+    }
+    
+    .courses-table-data-wrapper > .classes-wrapper > .label {
+        font-size: 18px;
+    }
+
+    .course-description {
+        font-size: 20px;
+    }
 }

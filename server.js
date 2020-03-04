@@ -180,6 +180,10 @@ app.route('/api/db/prices')
         }
     })
 
+app.get('/profile', (req, res) => {
+    res.render('./dashboard/profile');
+})
+
 app.get('/dashboard/:section', async (req, res) => {
     const path = './dashboard/admin';
     const section = req.params.section;

@@ -60,6 +60,7 @@ async function renderControls(user) {
 
         if (data.role === 'student') {
             $(`.${className} .main-tab`).click(() => location.href = `${location.origin}/lk/main`);
+            $(`.${className} .profile-tab`).click(() => location.href = `${location.origin}/profile`);
             $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/lk/courses`);
             $(`.${className} .history-tab`).css('opacity', '0.5');
         } else {
