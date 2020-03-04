@@ -10,6 +10,11 @@ String.prototype.decrease = function() {
     return this.replace(/[ .,&?*$;@\(\)]/g, '');
 }
 
+Array.prototype.peekBack = function() {
+    const len = this.length;
+    return len ? this[len - 1] : undefined;
+}
+
 location.getQuery = function() {
     return this.search.substr(1).split('&').reduce((acc, curr) => {
         const temp = curr.split('=');

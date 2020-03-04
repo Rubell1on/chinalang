@@ -6,7 +6,7 @@ async function renderMain(user) {
     let userClass;
 
     if (courses.length) {
-        const currCourse = courses[courses.length-1];
+        const currCourse = courses.peekBack();
 
         const apiKey = auth.get('apiKey');
         const res = await request.get(`/api/db/courses?apiKey=${apiKey}&id=${currCourse.id}`)
@@ -17,8 +17,7 @@ async function renderMain(user) {
         
         if (res.status === 'success') {
             userCourse = res.response[0];
-            const classesCount = currCourse.classes.length-1;
-            userClass = userCourse.classes[classesCount];
+            userClass = userCourse.classes.peekBack();
         }
     }
 
