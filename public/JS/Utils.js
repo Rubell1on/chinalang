@@ -10,9 +10,9 @@ String.prototype.decrease = function() {
     return this.replace(/[ .,&?*$;@\(\)]/g, '');
 }
 
-Array.prototype.peekBack = function() {
-    const len = this.length;
-    return len ? this[len - 1] : undefined;
+function peekBack (array) {
+    const len = array.length;
+    return len ? array[len - 1] : undefined;
 }
 
 location.getQuery = function() {

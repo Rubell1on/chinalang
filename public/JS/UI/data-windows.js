@@ -327,6 +327,7 @@ class FileInput extends CustomWindow {
 class DropDownList extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'dropDownList';
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
 
         this.html = 
@@ -360,6 +361,7 @@ class DropDownList extends CustomWindow {
 class PageLoader extends CustomWindow {
     constructor(className, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'pageLoader';
         
         this.children = children;
         this.html = 
@@ -394,6 +396,7 @@ class PageLoader extends CustomWindow {
 class Image extends CustomWindow {
     constructor(className, src = '') {
         super(className);
+        this[Symbol.toStringTag] = 'image';
 
         this.html = `<img class="image-widget ${this.className}" src=${src}>`
     }
@@ -410,6 +413,7 @@ class Image extends CustomWindow {
 class Text extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'text';
 
         this.html = `<div class="text-widget ${this.className}">${text}</div>`;
     }
@@ -516,6 +520,7 @@ class PriceBlock extends CustomWindow {
 class StripMenu extends CustomWindow {
     constructor(className, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'stripMenu';
 
         this.children = children;
     }
@@ -542,6 +547,7 @@ class StripMenu extends CustomWindow {
 class StripSeparator extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'stripSeparator';
 
         this._textValue = text;
     }
@@ -576,6 +582,7 @@ class StripSeparator extends CustomWindow {
 class StripButton extends CustomWindow {
     constructor(className, text = '', image = '') {
         super(className, text);
+        this[Symbol.toStringTag] = 'stripButton';
         
         this._textValue = text;
         this._imageValue = image;
@@ -624,7 +631,8 @@ class StripButton extends CustomWindow {
 
 class StripImage extends CustomWindow {
     constructor(className) {
-        super(className)
+        super(className);
+        this[Symbol.toStringTag] = 'stripImage';
     }
 
     setImage(value) {

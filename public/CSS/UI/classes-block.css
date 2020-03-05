@@ -1,0 +1,36 @@
+.classes-data {
+    height: unset;
+    background: white;
+    float: left;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.menu-strip.classes-data > .strip-button > .text {
+    margin: 0px 10px;
+    padding: 0px;
+    color: #529AE4;
+}
+
+.menu-strip.classes-data > .w-native {
+    margin-bottom: 10px;
+}
+
+.menu-strip.classes-data > .strip-separator > .text {
+    color: #529AE4;
+    margin-bottom: 10px;
+}
+
+.menu-strip.classes-data > .buy-classes {
+    font-size: 20px;
+}
+
+@media (min-width: 1000px) {
+    .menu-strip.classes-data > .strip-button > .text {
+        font-size: 18px;
+    }
+    
+    .menu-strip.classes-data > .strip-separator > .text {
+        font-size: 22px;
+    }
+}

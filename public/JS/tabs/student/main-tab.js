@@ -6,7 +6,7 @@ async function renderMain(user) {
     let userClass;
 
     if (courses.length) {
-        const currCourse = courses.peekBack();
+        const currCourse = peekBack(courses);
 
         const apiKey = auth.get('apiKey');
         const res = await request.get(`/api/db/courses?apiKey=${apiKey}&id=${currCourse.id}`)
@@ -17,7 +17,7 @@ async function renderMain(user) {
         
         if (res.status === 'success') {
             userCourse = res.response[0];
-            userClass = userCourse.classes.peekBack();
+            userClass = peekBack(userCourse.classes);
         }
     }
 
@@ -31,25 +31,57 @@ async function renderMain(user) {
     ]);
 
     page.children.push(infoBlock);
-
-    // const calendar = new ObjectWrapper('calendar-block', [
-    //     new ObjectWrapper('daysWrapper')
+    
+    // const classesData = new StripMenu('classes-data', [
+    //     new StripSeparator('classes-left', 'Баланс занятий'),
+    //     new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
+    //     new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
+    //     new Button('buy-classes', 'Пополнить')
     // ])
 
-    const weeklyWord = new ObjectWrapper('weekly-word-block', [
-        new ObjectWrapper('weekly-label-wrapper', [
-            new Label('weekly-label', 'Слово недели')
-        ]),
-        new Text('weekly-text', '你好<br>Привет')
-    ]);
+    // page.children.push(classesData);
 
-    page.children.push(weeklyWord);
+    // const weeklyWord = new ObjectWrapper('weekly-word-block', [
+    //     new ObjectWrapper('weekly-label-wrapper', [
+    //         new Label('weekly-label', 'Слово недели')
+    //     ]),
+    //     new Text('weekly-text', '你好<br>Привет')
+    // ]);
+
+    const content = new ObjectWrapper('content-block-wrapper', [
+        new StripMenu('classes-data', [
+            new StripSeparator('classes-left', 'Баланс занятий'),
+            new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
+            new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
+            new Button('buy-classes', 'Пополнить')
+        ]),
+        new ObjectWrapper('weekly-word-block', [
+            new ObjectWrapper('weekly-label-wrapper', [
+                new Label('weekly-label', 'Слово недели')
+            ]),
+            new Text('weekly-text', '你好<br>Привет')
+        ])
+    ])
+
+    page.children.push(content);
     
     page.render('content-window');
-    page.renderChildren(child => {
-        child.renderChildren(child => {
-            if (child.isTypeOf('objectWrapper'))
-                child.renderChildren(() => {});
+    page.renderChildren(block => {
+        block.renderChildren(blockChild => {
+            switch (blockChild.getType()) {
+                case '[object objectWrapper]':
+                    blockChild.renderChildren(child => {
+                        if (child.isTypeOf('objectWrapper')) child.renderChildren(() => {});
+                    });
+
+                    break;
+                
+                case '[object stripMenu]':
+                    blockChild.renderChildren(child => {
+                        if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
+                        });
+                    break;
+            }
         });
     });
     
