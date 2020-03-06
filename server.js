@@ -11,6 +11,7 @@ const dbSettings = envVars.getDBSettings();
 const db = mysql.createConnection(dbSettings).promise();
 const keysManager = require('./public/JS/apiKeyManager').ApiKey;
 const apiKeyManager = new keysManager(db);
+const moment = require('moment-timezone');
 
 const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
@@ -184,6 +185,10 @@ app.get('/profile', (req, res) => {
     res.render('./dashboard/profile');
 })
 
+app.get('/history', (req, res) => {
+    res.render('./dashboard/history');
+});
+
 app.get('/dashboard/:section', async (req, res) => {
     const path = './dashboard/admin';
     const section = req.params.section;
@@ -240,18 +245,19 @@ app.route('/api/db/users')
         if (data.length) {
             const q = req.query;
 
-            if (data[0].role === roles.admin) {
+            if (data[0].role !== roles.student) {
                 let rows = [];
                 const value = q.searchingValue;
+                const roleTemplate = q && q.role ? `role='${q.role}'` : '' ;
 
                 if (value === '') {
-                    rows = await db.query('SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users')
+                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users ${q && q.role ? `WHERE ${roleTemplate}` : ''}`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
-                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
+                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -733,6 +739,73 @@ app.get('/api/verify', async (req, res) => {
     if (list.length) res.status(200).send(list);
     else res.status(404).send('Не валидный apiKey');
 })
+
+app.route('/api/db/history')
+    .get(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            let tail = `WHERE ${data[0].role === roles.student ? 'studentId' : 'teacherId'} = '${data[0].id}'`;
+
+            const rows = await db.query('SELECT `student`.username as studentName, `teacher`.username as teacherName, history.status, history.date, history.change, balance FROM history RIGHT JOIN users as `student` ON studentId = `student`.id RIGHT JOIN users as `teacher` ON teacherId = `teacher`.id ' + tail)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+
+            res.status(200).json(rows[0]);
+        } 
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            if (data[0].role !== roles.student) {
+                const rows = await db.query(`SELECT * FROM users WHERE username='${q.data.username}' AND email='${q.data.email}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+                
+                let userData = undefined;
+                if (rows[0] && rows[0][0]) {
+                    userData = rows[0][0];
+                } else res.status(400).send();
+
+                const teacherType = {
+                    teacher: 'classesWRussian',
+                    nativeTeacher: 'classesWNative'
+                };
+
+                const key = teacherType[data[0].role];
+                const currDate = moment().format();
+                const classesLeft = userData[key] - 1;        
+
+                if (userData[key] > 0) {
+                    await db.query(`INSERT INTO history(studentId, teacherId, history.status, history.date, history.change, balance) VALUES('${userData.id}', '${data[0].id}', '${q.status}', '${currDate}', -1, ${classesLeft})`) 
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+
+                    await db.query(`UPDATE users SET ${key}='${classesLeft}' WHERE id=${userData.id}`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+
+                    res.status(201).send('Добавлена запись в историю занятий!');
+                } else res.status(400).send('Недостаточное колличество занятий');
+            }
+        }
+    })
+    .put(async (req, res) => {
+
+    })
+    // .delete(async (req, res) => {
+
+    // })
 
 app.get('/test', (req, res) => {
     console.log();

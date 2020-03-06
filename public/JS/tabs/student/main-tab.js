@@ -23,44 +23,15 @@ async function renderMain(user) {
 
     const temp = Object.keys(userCourse === undefined ? {} : userCourse);
 
-    const infoBlock = new ObjectWrapper('info-block', [
-        new Label('greetings-label', `你好, ${user.username}`),
-        new Label('current-course-label', temp.length ? `Текущий курс: ${userCourse.name}` : 'Вы пока не подписаны на курсы'),
-        new Label('next-meeting-label', temp.length ? 'Следующее занятие<br><b>01.03.2020</b>' : ''),
-        new Label('current-class-label', userClass && userClass.name ? userClass.name : 'По поводу уроков напишите вашему преподавателю'),
-    ]);
-
+    const infoBlock = createInfoBlock();
     page.children.push(infoBlock);
-    
-    // const classesData = new StripMenu('classes-data', [
-    //     new StripSeparator('classes-left', 'Баланс занятий'),
-    //     new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
-    //     new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
-    //     new Button('buy-classes', 'Пополнить')
-    // ])
 
-    // page.children.push(classesData);
-
-    // const weeklyWord = new ObjectWrapper('weekly-word-block', [
-    //     new ObjectWrapper('weekly-label-wrapper', [
-    //         new Label('weekly-label', 'Слово недели')
-    //     ]),
-    //     new Text('weekly-text', '你好<br>Привет')
-    // ]);
+    const balanceBlock = createBalanceBlock();
+    const weeklyWordBlock = createWeeklyWordBlock();
 
     const content = new ObjectWrapper('content-block-wrapper', [
-        new StripMenu('classes-data', [
-            new StripSeparator('classes-left', 'Баланс занятий'),
-            new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
-            new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
-            new Button('buy-classes', 'Пополнить')
-        ]),
-        new ObjectWrapper('weekly-word-block', [
-            new ObjectWrapper('weekly-label-wrapper', [
-                new Label('weekly-label', 'Слово недели')
-            ]),
-            new Text('weekly-text', '你好<br>Привет')
-        ])
+        balanceBlock,
+        weeklyWordBlock
     ])
 
     page.children.push(content);
@@ -85,6 +56,32 @@ async function renderMain(user) {
         });
     });
     
+    function createInfoBlock() {
+        return new ObjectWrapper('info-block', [
+            new Label('greetings-label', `你好, ${user.username}`),
+            new Label('current-course-label', temp.length ? `Текущий курс: ${userCourse.name}` : 'Вы пока не подписаны на курсы'),
+            new Label('next-meeting-label', temp.length ? 'Следующее занятие<br><b>01.03.2020</b>' : ''),
+            new Label('current-class-label', userClass && userClass.name ? userClass.name : 'По поводу уроков напишите вашему преподавателю'),
+        ]);
+    }
+
+    function createBalanceBlock() {
+        return new StripMenu('classes-data', [
+            new StripSeparator('classes-left', 'Баланс занятий'),
+            new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
+            new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
+            new Button('buy-classes', 'Пополнить')
+        ]);
+    }
+
+    function createWeeklyWordBlock() {
+        return new ObjectWrapper('weekly-word-block', [
+            new ObjectWrapper('weekly-label-wrapper', [
+                new Label('weekly-label', 'Слово недели')
+            ]),
+            new Text('weekly-text', '你好<br>Привет')
+        ]);
+    }
 }
 
 async function renderPage() {

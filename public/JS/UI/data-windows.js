@@ -656,3 +656,95 @@ class StripImage extends CustomWindow {
         this._imageObject = this.object.find('img');
     }
 }
+
+class Table extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'table';
+
+        this.children = children;
+        this.html = `<table class="table-wrapper ${this.className}"><tbody></tbody></table>`;
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.body = this.object.find('tbody');
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.body);
+                callback(child);
+            });
+        }
+    }
+}
+
+class TableRow extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'tableRow';
+
+        this.children = children;
+        this.html = `<tr class="table-row ${this.className}"></tr>`;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+}
+
+
+class TableCell extends CustomWindow {
+    constructor(className, text = '') {
+        super(className);
+        this[Symbol.toStringTag] = 'tableCell';
+
+        this.html = `<td class="table-cell ${this.className}">${text}</td>`;
+    }
+}
+
+class Select extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'select';
+
+        this.html = `<select class="select ${this.className}"></select>`;
+        this.children = children;
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.children.forEach(c => {
+            if (c && c.getType ? true : false) {
+              c.render(this.object);  
+            } else {
+                this.object.append(`<option value=${c.value}>${c.text}</option>`);
+            }
+        })
+    }
+
+    getSelected() {
+        return this.object.val();
+    }
+}
+
+class SelectOptions extends CustomWindow {
+    constructor(className, data = {}) {
+        super(className);
+        this[Symbol.toStringTag] = 'selectOptions';
+        
+        this.data = data;
+        this.html = `<option class="option ${this.className}" value="${this.data && this.data.value ? this.data.value : ''}>${this.data && this.data.text ? this.data.text : ''}</option>`;
+    }
+}

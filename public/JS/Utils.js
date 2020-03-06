@@ -69,3 +69,5 @@ class Enum {
         return this.object;
     }
 }
+
+const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');

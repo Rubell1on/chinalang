@@ -34,6 +34,14 @@ async function renderControls(user) {
     //         if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
     //     });
     // }
+    const template = [
+        new StripSeparator('tabs-separator', 'Личный кабинет'),
+        new StripButton('users-tab', 'Пользователи', '../../public/IMG/dashboard/users.png'),
+        new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
+        new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
+        new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
+        new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/blog.png')
+    ];
 
     let children = {
         student: [
@@ -44,14 +52,9 @@ async function renderControls(user) {
             new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
             new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/history.png')
         ],
-        admin: [
-            new StripSeparator('tabs-separator', 'Вкладки'),
-            new StripButton('users-tab', 'Пользователи', '../../public/IMG/dashboard/users.png'),
-            new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
-            new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
-            new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/blog.png'),
-            new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png')
-        ]
+        admin: template,
+        teacher: template,
+        nativeTeacher: template
     };
 
     const stripMenu = new StripMenu('page-tabs', children[data.role])
@@ -62,14 +65,17 @@ async function renderControls(user) {
             $(`.${className} .main-tab`).click(() => location.href = `${location.origin}/lk/main`);
             $(`.${className} .profile-tab`).click(() => location.href = `${location.origin}/profile`);
             $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/lk/courses`);
-            $(`.${className} .history-tab`).css('opacity', '0.5');
+            // $(`.${className} .history-tab`).css('opacity', '0.5');
+            $(`.${className} .blog-tab`).css('opacity', '0.5');
         } else {
             $(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users`);
             $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses`);
             $(`.${className} .files-tab`).click(() => location.href = `${location.origin}/dashboard/files`);
             $(`.${className} .blog-tab`).css('opacity', '0.5');
             // .click(() => location.href = `${location.origin}/dashboard/blog`);
-            $(`.${className} .history-tab`).css('opacity', '0.5');
+            // $(`.${className} .history-tab`).css('opacity', '0.5');
             // .click(() => location.href = `${location.origin}/dashboard/hystory`);
         }
+
+        $(`.${className} .history-tab`).click(() => location.href = `${location.origin}/history`);
 }

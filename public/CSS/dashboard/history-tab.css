@@ -1,0 +1,41 @@
+.content-window {
+    overflow: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table > tbody > .table-row:nth-child(even) {
+    background: #f1f1f1;
+}
+
+.history-table > tbody > .table-row:nth-child(even) > .table-cell {
+    border-right: #f1f1f1;
+}
+
+.data-strip > div.history-strip-controls {
+    /* display: flex; */
+    float: right;
+    height: 100%;
+}
+
+.data-strip > div.history-strip-controls > div, select {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 10px;
+}
+
+.data-strip > div.history-strip-controls > div, select:last-child {
+    margin-right: 0px;
+}
+
+.history-strip-controls > .button-big {
+    line-height: 20px;
+    font-size: 18px;
+    padding: 10px 10px;
+    float: right;
+}
+
