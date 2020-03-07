@@ -46,7 +46,7 @@
 }
 
 .data-strip > div.history-strip-controls {
-    /* display: flex; */
+    display: flex;
     float: right;
     height: 100%;
 }
@@ -58,14 +58,17 @@
     margin-right: 10px;
 }
 
+.data-strip > div.history-strip-controls > select {
+    width: 100px;
+}
+
 .data-strip > div.history-strip-controls > div, select:last-child {
     margin-right: 0px;
 }
 
 .history-strip-controls > .button-big {
-    line-height: 20px;
+    line-height: 24px;
     font-size: 18px;
     padding: 10px 10px;
     float: right;
 }
-

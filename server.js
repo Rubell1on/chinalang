@@ -292,7 +292,7 @@ app.route('/api/db/users')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === roles.admin) {
+            if (data[0].role !== roles.student) {
                 const template = utils.obj2strArr(diffs).join(', ');
                 const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
                     .catch(e => {
@@ -778,12 +778,19 @@ app.route('/api/db/history')
                     nativeTeacher: 'classesWNative'
                 };
 
-                const key = teacherType[data[0].role];
+                const subtractionValues = {
+                    occured: -1,
+                    canceled: 0,
+                    missed: -1
+                }
+
+                const key = data[0].role === roles.admin ? teacherType[q.teacherType] : teacherType[data[0].role];
                 const currDate = moment().format();
-                const classesLeft = userData[key] - 1;        
+                const subtrahend = subtractionValues[q.status];
+                const classesLeft = userData[key] + subtrahend;        
 
                 if (userData[key] > 0) {
-                    await db.query(`INSERT INTO history(studentId, teacherId, history.status, history.date, history.change, balance) VALUES('${userData.id}', '${data[0].id}', '${q.status}', '${currDate}', -1, ${classesLeft})`) 
+                    await db.query(`INSERT INTO history(studentId, teacherId, history.status, history.date, history.change, balance) VALUES('${userData.id}', '${data[0].id}', '${q.status}', '${currDate}', ${subtractionValues[q.status]}, ${classesLeft})`) 
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('Ошибка сервера!');

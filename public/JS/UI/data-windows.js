@@ -725,11 +725,13 @@ class Select extends CustomWindow {
     render(parent) {
         super.render(parent);
 
-        this.children.forEach(c => {
+        this.children.forEach((c, i) => {
             if (c && c.getType ? true : false) {
-              c.render(this.object);  
+                c.render(this.object);
+                c.parent = this;  
             } else {
-                this.object.append(`<option value=${c.value}>${c.text}</option>`);
+                const option = new SelectOption(`${c.value}-${i}`, c);
+                option.render(this.object);
             }
         })
     }
@@ -739,12 +741,12 @@ class Select extends CustomWindow {
     }
 }
 
-class SelectOptions extends CustomWindow {
+class SelectOption extends CustomWindow {
     constructor(className, data = {}) {
         super(className);
-        this[Symbol.toStringTag] = 'selectOptions';
+        this[Symbol.toStringTag] = 'selectOption';
         
         this.data = data;
-        this.html = `<option class="option ${this.className}" value="${this.data && this.data.value ? this.data.value : ''}>${this.data && this.data.text ? this.data.text : ''}</option>`;
+        this.html = `<option class="option ${this.className}" value="${this.data && this.data.value ? this.data.value : ''}">${this.data && this.data.text ? this.data.text : ''}</option>`;
     }
 }

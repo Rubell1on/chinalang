@@ -316,11 +316,18 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
                 break;
             
             case '[object objectWrapper]':
-                const strip = curr.children.find(c => c.isTypeOf('dataStrip'));
-                if (strip && strip.compareData) {
-                    const key = strip.className;
-                    const value = strip.compareData;
-                    if (value !== strip.data) acc[key] = value;
+                if (curr.className === 'role-wrapper') {
+                    const select = curr.children.find(c => c.isTypeOf('select'));
+                    const key = select.className;
+                    const value = select.getSelected();
+                    acc[key] = value;
+                } else {
+                    const strip = curr.children.find(c => c.isTypeOf('dataStrip'));
+                    if (strip && strip.compareData) {
+                        const key = strip.className;
+                        const value = strip.compareData;
+                        if (value !== strip.data) acc[key] = value;
+                    }
                 }
 
                 break;
@@ -331,7 +338,15 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
 }
 
 DataTable.prototype.updateData = async function() {
+    const roleObject = [
+        { value: 'admin', text: 'администратор' },
+        { value: 'teacher', text: 'русскоязычный преподаватель' },
+        { value: 'nativeTeacher', text: 'носитель языка' },
+        { value: 'student', text: 'студент' }
+    ];
+
     this.removeChildren();
+    const role = auth.get('role');
     const searchingValue = this.controls[2].input.val();
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
@@ -345,23 +360,47 @@ DataTable.prototype.updateData = async function() {
         strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const data = strip.data;
-            const children = [
-                new Label('userdata-lable', 'Редактирование данных пользователя'),
-                new InputField('username', 'username', 'Имя пользователя', data.username),
-                new InputField('role', 'role', 'Роль', data.role),
-                new InputField('phone', 'phone', 'Номер телефона', data.phone),
-                new InputField('email', 'email', 'Эл.почта', data.email),
-                new InputField('skype', 'skype', 'Skype', data.skype, false),
-                new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
-                new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
-                new ObjectWrapper('courses-wrapper', [
-                    new Label('courses-label', 'Перечень курсов'),
-                    new DataStrip('courses', data.courses)
-                ]),
-                new Button('submit', 'Применить')
-            ];
 
-            const dataWindow = new DataWindow('user-data-window', strip.data, children);
+            const template = {
+                base: [
+                    new Label('userdata-lable', 'Редактирование данных пользователя'),
+                    new InputField('username', 'username', 'Имя пользователя', data.username),
+                    // new InputField('role', 'role', 'Роль', data.role),
+                    new ObjectWrapper('role-wrapper', [
+                        new Label('role-label', 'Роль'),
+                        new Select('role', roleObject)
+                    ]),
+                    new InputField('phone', 'phone', 'Номер телефона', data.phone),
+                    new InputField('email', 'email', 'Эл.почта', data.email),
+                    new InputField('skype', 'skype', 'Skype', data.skype, false),
+                ],
+                foot: [
+                    new ObjectWrapper('courses-wrapper', [
+                        new Label('courses-label', 'Перечень курсов'),
+                        new DataStrip('courses', data.courses)
+                    ]),
+                    new Button('submit', 'Применить')
+                ]
+            }
+
+            const templates = {
+                admin: [
+                    ...template.base,
+                    new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
+                    new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
+                    ...template.foot
+                ],
+                teacher: [
+                    ...template.base,
+                    ...template.foot
+                ],
+                nativeTeacher: [
+                    ...template.base,
+                    ...template.foot
+                ]
+            }
+
+            const dataWindow = new DataWindow('user-data-window', strip.data, templates[role]);
             dataWindow.render('');
             dataWindow.renderChildren(child => {
                 switch(child.getType()) {
@@ -393,7 +432,7 @@ DataTable.prototype.updateData = async function() {
                                                 windowChild.object.text('Подтвердить выбор');
                                                 windowChild.object.click(() => {
                                                     dataWindow.children
-                                                        .find(c => c.isTypeOf('objectWrapper')).children
+                                                        .find(c => c.isTypeOf('objectWrapper') && c.className === 'courses-wrapper').children
                                                         .find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(userCourses);
                                                     coursesWindow.destroy();
                                                 });
@@ -402,6 +441,9 @@ DataTable.prototype.updateData = async function() {
                                         }
                                     })
                                 })
+                            } else if (c.isTypeOf('select')) {
+                                c.object.val(c.parent.parent.data.role);
+                                if (role !== roles.admin) c.object.attr('disabled', true);
                             }
                         })
                         break;

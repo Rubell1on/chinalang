@@ -1,7 +1,16 @@
 const status = {
-    occured: 'состоялось',
-    canceled: 'отменено',
-    missed: 'пропущено'
+    occured: {
+        text: 'состоялось',
+        subtractValue: -1
+    },
+    canceled: { 
+        text: 'отменено',
+        subtractValue: 0
+    },
+    missed: { 
+        text: 'пропущено',
+        subtractValue: -1
+    }
 }
 
 async function renderHistory(user) {
@@ -16,17 +25,7 @@ async function renderHistory(user) {
         const role = auth.get('role');
         const data = res.response;
 
-        if (role !== roles.student) {
-            // const addHistory = new ObjectWrapper('add-history-wrapper', [
-            //     new ObjectWrapper('add-history-label-wrapper', [
-            //         new Label('add-history-label', 'Добавить историю занятий')
-            //     ]),
-
-            // ]);
-
-            // pageWrapper.children.push(addHistory);
-            await renderUsersTable();
-        }
+        if (role !== roles.student) await renderUsersTable();
 
         const table = createHistoryTable(data, role);
 
@@ -74,7 +73,7 @@ async function renderHistory(user) {
             const date = moment.tz(el.date, timeZone).format('YYYY-MM-DD HH:mm');
             
             let stripChildren = [
-                new TableCell('status', status[el.status]),
+                new TableCell('status', status[el.status].text),
                 new TableCell('date', date),
                 new TableCell('change', el.change),
                 new TableCell('balance', el.balance)
@@ -137,17 +136,27 @@ DataTable.prototype.updateData = async function() {
     const res = await request.get(`/api/db/users?apiKey=${apiKey}&role=${roles.student}`, { searchingValue });
     const data = res.response;
     const options = Object.entries(status).reduce((acc, el, i) => {
-        acc[i] = {value: el[0], text: el[1]};
+        const data = { value: el[0], text: el[1].text, subtractValue: el[1].subtractValue}
+        const option = new SelectOption(`${el[0]}`, data);
+
+        acc[i] = option;
 
         return acc;
     }, []);
     
-    this.children = data.map(row => new DataStrip(row.username, row, [
-        new ObjectWrapper('history-strip-controls', [
-            new Select('role-select', options), 
+    this.children = data.map(row => {
+        const template = [
+            new Select('status-select', options), 
             new Button('add-history', 'Отметить')
+        ];
+
+        if (auth.get('role') === roles.admin) template.unshift(new Select('role-select', [{ value: 'teacher', text: 'Рускоговорящий преподаватель' }, { value: 'nativeTeacher', text: 'Носитель языка' }]));
+
+        return new DataStrip(row.username, row, [
+            new ObjectWrapper('history-strip-controls', template)
         ])
-    ]), []);
+    }, []);
+
     this.renderChildren(strip => {
         strip.text.text(strip.data.username);
         const coursesStr = strip.data.courses;
@@ -163,11 +172,16 @@ DataTable.prototype.updateData = async function() {
                         const confirmWindow = new YesNoWindow('confirm-history', 'Вы уверены?', 'Добавить запись в историю?')
                         confirmWindow.render('');
                         confirmWindow.yes.click(async () => {
-                            const select = wrapper.children.find(c => c.isTypeOf('select'));
-                            const value = select.getSelected();
                             const data = wrapper.parent.data;
+                            const historyRecord = { data };
+                            const status = wrapper.children.find(c => c.isTypeOf('select') && c.className === 'status-select');
+                            historyRecord.status = status.getSelected();
+                            if (auth.get('role') === roles.admin) {
+                                const teacherType = wrapper.children.find(c => c.isTypeOf('select') && c.className === 'role-select');
+                                historyRecord.teacherType = teacherType.getSelected();
+                            }
                             const apiKey = auth.get('apiKey');
-                            const res = await request.post(`/api/db/history?apiKey=${apiKey}`, JSON.stringify({data, status: value}))
+                            const res = await request.post(`/api/db/history?apiKey=${apiKey}`, JSON.stringify(historyRecord))
                                 .catch(e => {
                                     console.error(e);
                                     notificationController.error(e.error.responseText);

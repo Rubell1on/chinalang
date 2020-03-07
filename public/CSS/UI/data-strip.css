@@ -1,11 +1,13 @@
 .data-strip {
+    display: flex;
+    justify-content: space-between;
     box-sizing: border-box;
     height: 50px;
     background: gray;
     border-radius: 10px;
     margin-bottom: 5px;
     transition: background 200ms ease;
-    padding-left: 10px;
+    padding: 10px;
     cursor: pointer;
 }
 
@@ -38,7 +40,7 @@
 
 .data-strip > .text-wrapper {
     height: 100%;
-    width: 45%;
+    width: -webkit-fill-available;
 }
 
 .data-strip > .text-wrapper > .text {
@@ -53,9 +55,9 @@
 }
 
 @media (min-width: 1000px) {
-    /* .data-strip > .text-wrapper {
-        font-size: 22px;
-    } */
+    .data-strip {
+        height: 64px;
+    }
 
     .data-strip > .text-wrapper > .text {
         font-size: 22px;
