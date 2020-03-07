@@ -36,6 +36,7 @@ async function renderControls(user) {
     // }
     const template = [
         new StripSeparator('tabs-separator', 'Личный кабинет'),
+        new StripButton('profile-tab', 'Мой профиль', '../../public/IMG/dashboard/course.png'),
         new StripButton('users-tab', 'Пользователи', '../../public/IMG/dashboard/users.png'),
         new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
         new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
@@ -68,6 +69,7 @@ async function renderControls(user) {
             // $(`.${className} .history-tab`).css('opacity', '0.5');
             $(`.${className} .blog-tab`).css('opacity', '0.5');
         } else {
+            $(`.${className} .profile-tab`).click(() => location.href = `${location.origin}/profile`);
             $(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users`);
             $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses`);
             $(`.${className} .files-tab`).click(() => location.href = `${location.origin}/dashboard/files`);
