@@ -41,6 +41,7 @@
 .data-strip > .text-wrapper {
     height: 100%;
     width: -webkit-fill-available;
+    width: -moz-available;
 }
 
 .data-strip > .text-wrapper > .text {
