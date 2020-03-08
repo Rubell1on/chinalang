@@ -1,4 +1,5 @@
 async function renderMain(user) {
+    const apiKey = auth.get('apiKey');
     const page = new DataTable('main-table');
     const courses = user.courses;
 
@@ -7,8 +8,6 @@ async function renderMain(user) {
 
     if (courses.length) {
         const currCourse = peekBack(courses);
-
-        const apiKey = auth.get('apiKey');
         const res = await request.get(`/api/db/courses?apiKey=${apiKey}&id=${currCourse.id}`)
             .catch(e => {
                 console.error(e);
@@ -29,6 +28,12 @@ async function renderMain(user) {
     const balanceBlock = createBalanceBlock();
     const weeklyWordBlock = createWeeklyWordBlock();
 
+    const weeklyResponse = await request.get(`/api/db/blog?apiKey=${apiKey}`)
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
     const content = new ObjectWrapper('content-block-wrapper', [
         balanceBlock,
         weeklyWordBlock
@@ -42,7 +47,14 @@ async function renderMain(user) {
             switch (blockChild.getType()) {
                 case '[object objectWrapper]':
                     blockChild.renderChildren(child => {
-                        if (child.isTypeOf('objectWrapper')) child.renderChildren(() => {});
+                        if (child.isTypeOf('text')) {
+                            if (weeklyResponse.status === 'success') {
+                                const data = weeklyResponse.response.length ? weeklyResponse.response[0].description : ''
+                                child.object.html(data);
+                                blockChild.object.append('<script src="../../../public/JS/image-loader.js"></script>');
+                            }
+                        }
+                        else child.renderChildren(() => {});
                     });
 
                     break;

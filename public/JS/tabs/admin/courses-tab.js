@@ -182,7 +182,10 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
 DataStrip.prototype.createNewClass = async function(data = {}) {
     const keys = Object.keys(data);
 
-    const controls = [new Button('add-file-link', 'Ссылка на файл')];
+    const controls = [
+        new Button('add-file-link', 'Файл'),
+        new Button('add-image-link', 'Картинка')
+    ];
 
     const children = [
         new Label('course-window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
@@ -196,7 +199,17 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     lessonWindow.renderChildren(c => {
         if (c.isTypeOf('textArea')) {
             c.renderControls();
-            c.controls[0].object.click(() => {
+            const addFile = c.controls.find(c => c.className === 'add-file-link')
+            addFile.object.click(() => {
+                createFileSelect('document');
+            });
+
+            const addImage = c.controls.find(c => c.className === 'add-image-link')
+            addImage.object.click(() => {
+                createFileSelect('image');
+            });
+
+            function createFileSelect(docType) {
                 const controls = [
                     new Label('files-label', 'Список файлов'),
                     new SearchLine('files-search')
@@ -217,9 +230,9 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
                 });
             
                 const addCourse = filesTable.controls.find(c => c.isTypeOf('button'));
-                filesTable.updateFilesData([]);
-                filesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await filesTable.updateFilesData([]));
-            });
+                filesTable.updateFilesData(docType);
+                filesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await filesTable.updateFilesData(docType));
+            }
         }
     });
     const nameField = lessonWindow.children[1];
@@ -320,15 +333,15 @@ async function renderPage() {
 
 renderPage();
 
-DataTable.prototype.updateFilesData = async function() {
+DataTable.prototype.updateFilesData = async function(type = 'document') {
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const apiKey = auth.get('apiKey');
-    const res = await request.get(`/api/db/files?apiKey=${apiKey}`, { searchingValue });
+    const res = await request.get(`/api/db/files?apiKey=${apiKey}&type=${type}`, { searchingValue });
 
     if (res.status === 'success') {
         const data = res.response;
-        this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('add-file')]), []);
+        this.children = data.map(row => new DataStrip(row.name.decrease(), row, [new CheckboxButton('add-file')]), []);
 
         this.renderChildren(wChildren => {
             switch(wChildren.getType()) {
@@ -340,7 +353,11 @@ DataTable.prototype.updateFilesData = async function() {
                             this.setTextArea(e => {
                                 const area = e.input;
                                 const temp = area.val();
-                                area.val(temp.concat(`<a href="${wChildren.data.link}">${wChildren.data.name}</a>`));
+                                const fileType = {
+                                    document: `<a href="/api/download?path=${wChildren.data.link}&type=document" target="_blank">${wChildren.data.name}</a>`,
+                                    image: `<img class="disk-image" path="${wChildren.data.link}">`
+                                }
+                                area.val(temp.concat(fileType[type]));
                             });
                             this.parent.destroy();
                         });

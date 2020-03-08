@@ -61,7 +61,8 @@ async function renderCoursePage(userData) {
                                                     child.renderChildren(() => {});
                                                 }
                                             });
-                                        })
+                                        });
+                                        classesWindow.object.append('<script src="../../../public/JS/image-loader.js"></script>');
                                     });
                                 } else {
                                     // strip.object.css('opacity', 0.7);

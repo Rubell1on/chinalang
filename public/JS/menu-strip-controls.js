@@ -60,24 +60,35 @@ async function renderControls(user) {
 
     const stripMenu = new StripMenu('page-tabs', children[data.role])
         .render(parent)
-        .renderChildren(() => {});
+        .renderChildren(c => {
+            switch(c.className) {
+                case 'main-tab':
+                    c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/main`);
+                    break;
 
-        if (data.role === 'student') {
-            $(`.${className} .main-tab`).click(() => location.href = `${location.origin}/lk/main`);
-            $(`.${className} .profile-tab`).click(() => location.href = `${location.origin}/profile`);
-            $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/lk/courses`);
-            // $(`.${className} .history-tab`).css('opacity', '0.5');
-            $(`.${className} .blog-tab`).css('opacity', '0.5');
-        } else {
-            $(`.${className} .profile-tab`).click(() => location.href = `${location.origin}/profile`);
-            $(`.${className} .users-tab`).click(() => location.href = `${location.origin}/dashboard/users`);
-            $(`.${className} .courses-tab`).click(() => location.href = `${location.origin}/dashboard/courses`);
-            $(`.${className} .files-tab`).click(() => location.href = `${location.origin}/dashboard/files`);
-            $(`.${className} .blog-tab`).css('opacity', '0.5');
-            // .click(() => location.href = `${location.origin}/dashboard/blog`);
-            // $(`.${className} .history-tab`).css('opacity', '0.5');
-            // .click(() => location.href = `${location.origin}/dashboard/hystory`);
-        }
+                case 'profile-tab':
+                    c.object.click(() => location.href = `${location.origin}/profile`);
+                    break;
 
-        $(`.${className} .history-tab`).click(() => location.href = `${location.origin}/history`);
+                case 'users-tab':
+                    c.object.click(() => location.href = `${location.origin}/dashboard/users`);
+                    break;
+
+                case 'courses-tab':
+                    c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/courses`);
+                    break;
+                    
+                case 'files-tab':
+                    c.object.click(() => location.href = `${location.origin}/dashboard/files`);
+                    break;
+
+                case 'blog-tab':
+                    c.object.click(() => location.href = `${location.origin}/blog`);
+                    break;
+
+                case 'history-tab':
+                    c.object.click(() => location.href = `${location.origin}/history`);
+                    break;
+            }
+        });
 }

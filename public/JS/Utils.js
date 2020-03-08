@@ -7,7 +7,7 @@ String.prototype.toNumber = function() {
 }
 
 String.prototype.decrease = function() {
-    return this.replace(/[ .,&?*$;@\(\)]/g, '');
+    return this.replace(/[ .,&?*$;#@\(\)]/g, '');
 }
 
 function peekBack (array) {

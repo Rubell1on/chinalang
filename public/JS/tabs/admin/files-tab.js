@@ -64,7 +64,14 @@ DataTable.prototype.createNewFile = async function(data = {}) {
     submit.text('Создать');
     submit.css('opacity', '0.5');
     const fileInput = fileWindow.children[2];
-    fileInput.input.attr('accept', '.pdf, .doc, .rar, .zip, .txt');
+    const types = {
+        document: ['.pdf', '.doc', '.rar', '.zip', '.txt'],
+        image: ['.jpg', '.png', '.tiff', '.bmp', '.gif']
+    }
+
+    const accept = Object.entries(types).map(e => e[1].join(', ')).join(', ');
+
+    fileInput.input.attr('accept', accept);
     fileInput.input.change(function() {
         const fileName = this.files[0].name;
         nameField.input.val(fileName);
@@ -72,9 +79,11 @@ DataTable.prototype.createNewFile = async function(data = {}) {
         submit.click(async function() {
             const name = nameField.input.val();
             const file = fileInput.input[0].files[0];
+            const type = file.type.split('/')[1];
+            const fileType = Object.entries(types).filter(e => e[1].join(', ').includes(type))[0][0];
             const fileInfo = {
                 name: name.isEmpty() ? file.name : name,
-                type: 'document'
+                type: fileType
             }
             const apiKey = auth.get('apiKey');
             const res = await request.put(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
