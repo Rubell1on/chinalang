@@ -16,7 +16,7 @@ async function renderMain(user) {
         
         if (res.status === 'success') {
             userCourse = res.response[0];
-            userClass = peekBack(userCourse.classes);
+            userClass = userCourse.classes.find(c => c.id === peekBack(currCourse.classes).id);
         }
     }
 
