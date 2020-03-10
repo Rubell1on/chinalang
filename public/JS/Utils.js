@@ -7,7 +7,12 @@ String.prototype.toNumber = function() {
 }
 
 String.prototype.decrease = function() {
-    return this.replace(/[ .,&?*$;@\(\)]/g, '');
+    return this.replace(/[ .,&?*$;#@\(\)]/g, '');
+}
+
+function peekBack (array) {
+    const len = array.length;
+    return len ? array[len - 1] : undefined;
 }
 
 location.getQuery = function() {
@@ -48,3 +53,21 @@ function renderPageLoader() {
     
     $(window).on('load', () => setTimeout(() => pageLoader.hide(self => self.destroy()), 500));
 }
+
+class Enum {
+    constructor() {
+        this.object = {};
+        this.startFrom = 1;
+        let startValue = 0;
+
+        if (arguments.length > startValue) {
+            for (let i = startValue, value = this.startFrom; i < arguments.length; i++, value++) {
+                this.object[arguments[i]] = arguments[i];
+            }
+        }
+
+        return this.object;
+    }
+}
+
+const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');

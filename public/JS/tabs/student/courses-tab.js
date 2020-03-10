@@ -1,4 +1,9 @@
-DataTable.prototype.updateCoursesData = async function(userCourses) {
+DataTable.prototype.updateCoursesData = async function(source) {
+    const colors = {
+        subscribe: 'rgb(132, 188, 87)',
+        unsubscribe: '#FB2267'
+    }
+    const userCourses = source.courses;
     this.removeChildren();
     const searchingValue = this.controls[1].input.val();
     const apiKey = auth.get('apiKey');
@@ -23,10 +28,20 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
 
                 if (userCourses == false) {
                     wChildren.renderChildren(s => {
-                        s.object.css('background', '#3cb371');
+                        s.object.css('background', colors.subscribe);
                         s.object.text('Подписаться');
-                        s.object.click(e => {
-                            // s.click(wChildren.data, userCourses);
+                        s.object.click(async e => {
+                            const result = s.click(wChildren.data, userCourses);
+                            await submitCoursesData(source, {courses: userCourses}, () => {
+                                if (s.enabled) {
+                                    s.object.css('background', colors.unsubscribe);
+                                    s.object.text('Отписаться');
+                                } else {
+                                    s.object.css('background', colors.subscribe);
+                                    s.object.text('Подписаться');
+                                }
+                            });
+
                             e.stopPropagation();
                         });
                     });
@@ -39,11 +54,20 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                         if (userCourses[i].id === id) {
                             wChildren.renderChildren(s => {
                                 s.enabled = true;
-                                s.object.css('background', '#FB2267');
+                                s.object.css('background', colors.unsubscribe);
                                 s.object.text('Отписаться');
-                                s.object.click(e => {
-                                    // s.click(wChildren.data, userCourses);
+                                s.object.click(async e => {
                                     e.stopPropagation();
+                                    const result = s.click(wChildren.data, userCourses);
+                                    await submitCoursesData(source, {courses: userCourses}, () => {
+                                        if (s.enabled) {
+                                            s.object.css('background', colors.unsubscribe);
+                                            s.object.text('Отписаться');
+                                        } else {
+                                            s.object.css('background', colors.subscribe);
+                                            s.object.text('Подписаться');
+                                        }
+                                    });
                                 });
                             });
                             flag = false;
@@ -52,11 +76,21 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
                     }
         
                     if (flag) wChildren.renderChildren(s => {
-                        s.object.css('background', '#3cb371');
-                        s.object.text('Подписать');
-                        s.object.click(e => {
-                            s.click(wChildren.data, userCourses);
+                        s.object.css('background', colors.subscribe);
+                        s.object.text('Подписаться');
+                        s.object.click(async e => {
                             e.stopPropagation();
+                            const result = s.click(wChildren.data, userCourses);
+                            await submitCoursesData(source, {courses: userCourses}, () => {
+                                if (s.enabled) {
+                                    s.object.css('background', colors.unsubscribe);
+                                    s.object.text('Отписаться');
+                                } else {
+                                    s.object.css('background', colors.subscribe);
+                                    s.object.text('Подписаться');
+                                }
+                            });
+
                         });
                     });
                 }
@@ -66,9 +100,49 @@ DataTable.prototype.updateCoursesData = async function(userCourses) {
     });
 }
 
-async function renderPage() {
-    renderPageLoader();
+async function submitCoursesData(sources, difference, callback) {
+    const apiKey = auth.get('apiKey');
+    notificationController.process('Данные отправлены на сервер!');
+     const res = await request.put(`/api/db/userData?apiKey=${apiKey}`, JSON.stringify({sources, difference}))
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        })
+    
+    if (res.status === 'success') {
+        notificationController.success(res.response);
+        callback();
+    }
+}
 
+CheckboxButton.prototype.click = function(course, userCourses) {
+    let flag = true;
+
+    if (this.enabled) {
+        for (let i = 0; i < userCourses.length; i++) {
+            if (userCourses[i].id === course.id) {
+                userCourses.splice(i, 1);
+                this.enabled = false;
+                return -1;
+            }
+        }
+    } else {
+        for (let i = 0; i < userCourses.length; i++) {
+            if (userCourses[i].id === course.id) {
+                flag = false;
+                break;
+            }
+        }
+
+        if (flag) {
+            userCourses.push({id: course.id, classes: []});
+            this.enabled = true;
+            return 1;
+        }
+    }
+}
+
+async function renderCoursesTable(user) {
     const controls = [
         new Label('courses-label', 'Список курсов'),
         new SearchLine('courses-search')
@@ -78,8 +152,24 @@ async function renderPage() {
     coursesTable.wrapperClass = 'courses-wrapper';
     coursesTable.render('content-window');
     coursesTable.renderControls();
-    coursesTable.updateCoursesData([]);
+    coursesTable.updateCoursesData(user);
     coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
 renderPage();
+
+async function renderPage() {
+    renderPageLoader();
+    const response = await auth.getUserData();
+
+    if (response) {
+        const user = response;
+        renderHeader(user);
+        renderControls(user);
+
+        renderCoursesTable(user);
+    } else {
+        location.reload();
+    }
+}
+

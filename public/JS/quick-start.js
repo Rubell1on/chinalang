@@ -66,6 +66,10 @@ $('.login').click(() => {
     });
 });
 
+$('.contacts').click(async() => {
+    await createFeedbackWindow();
+})
+
 
 class QuickStartWindow extends SingleCustomWindow {
     constructor() {

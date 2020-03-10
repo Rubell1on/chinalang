@@ -1,0 +1,74 @@
+.content-window {
+    overflow: auto;
+    background: none;
+    padding: 0;
+}
+
+.content-window > div {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.content-window > div:last-child {
+    margin-bottom: 0px;
+}
+
+.data-window.users {
+    height: unset;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table > tbody > .table-row {
+    height: 40px;
+}
+
+.history-table > tbody > .table-row > .table-cell:first-child {
+    padding-left: 10px;
+}
+
+.history-table-header {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.history-table > tbody > .table-row:nth-child(even) {
+    background: #f1f1f1;
+}
+
+.history-table > tbody > .table-row:nth-child(even) > .table-cell {
+    border-right: #f1f1f1;
+}
+
+.data-strip > div.history-strip-controls {
+    display: flex;
+    float: right;
+    height: 100%;
+}
+
+.data-strip > div.history-strip-controls > div, select {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 10px;
+}
+
+.data-strip > div.history-strip-controls > select {
+    width: 100px;
+}
+
+.data-strip > div.history-strip-controls > div, select:last-child {
+    margin-right: 0px;
+}
+
+.history-strip-controls > .button-big {
+    line-height: 24px;
+    font-size: 18px;
+    padding: 10px 10px;
+    float: right;
+}

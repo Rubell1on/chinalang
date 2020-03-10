@@ -6,19 +6,19 @@
 
 .courses-search {
     background: white;
-    width: calc(100% - 35px);
+    width: calc(100% - 49px);
     float: left;
     border-radius: 5px;
 }
 
 .add-new-course {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     float: left;
     margin-right: 5px;
     font-weight: bold;
-    line-height: 30px;
+    line-height: 44px;
     background: #3cb371;
 }
 
@@ -27,11 +27,11 @@
 }
 
 .data-wrapper > .objects-wrapper > .data > .subscribe {
+    flex-shrink: 0;
     width: 30px;
     height: 30px;
-    line-height: 18px;
+    line-height: 19px;
     float: right;
-    margin-right: 10px;
     padding: 6px;
     font-size: 22px;
     position: relative;
@@ -48,7 +48,6 @@
     height: 30px;
     line-height: 18px;
     float: right;
-    margin-right: 10px;
     padding: 6px;
     font-size: 22px;
     position: relative;
@@ -66,7 +65,6 @@
     height: 30px;
     line-height: 18px;
     float: right;
-    margin-right: 10px;
     padding: 6px;
     font-size: 22px;
     position: relative;
@@ -79,9 +77,10 @@
 }
 
 .data-wrapper > .objects-wrapper > .data > .add-new-class {
+    flex-shrink: 0;
     width: 30px;
     height: 30px;
-    line-height: 18px;
+    line-height: 19px;
     /* float: right; */
     margin-right: 10px;
     padding: 6px;
@@ -123,18 +122,30 @@
 }
 
 .inputs > .course-window-label {
+    text-align: left;
+    margin-left: 5px;
     font-weight: bold;
-    font-size: 20px;
+    margin-bottom: 20px;
+    font-size: 26px;
 }
 
 /*  */
 
-.text-field-controls > .add-file-link {
+/* .text-field-controls {
+} */
+
+.text-field-controls > div {
     font-size: 18px;
     padding: 5px 8px;
     background: #3cb371;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
+    float: left;
+    margin-right: 1px;
+}
+
+.text-field-controls > div:last-child {
+    margin-right: 0;
 }
 
 .lesson-description > textarea[type="text"] {
@@ -179,4 +190,20 @@
 
 .inputs > div > textarea {
     height: 310px;
+}
+
+.courses-table-controls-wrapper > .courses-label {
+    text-align: left;
+    margin-left: 5px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+
+@media (min-width: 1000px) {
+    .data.user.data-strip > div.button-big {
+        width: 40px;
+        height: 40px;
+        line-height: 27px;
+    }
 }

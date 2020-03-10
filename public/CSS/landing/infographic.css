@@ -1,3 +1,17 @@
+.how-it-works > h2 {
+    margin-bottom: 30px;
+}
+
+.infographic-wrapper {
+    margin-bottom: 79px;
+    width: 95%;
+}
+
+.how-it-works > .get-free-lesson {
+    top: 0;
+    transform: none;
+}
+
 .text-img-infographic {
     /* overflow: hidden; */
     box-sizing: border-box;
@@ -27,6 +41,7 @@
     font-weight: bold;
     font-size: 25px;
     color: #529AE4;
+    letter-spacing: -0.9px;
 }
 
 .img-side {
@@ -39,21 +54,42 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 100%;
+    height: 100%;
 }
+
+.text-img-infographic:nth-child(even) .img-side > img {
+    right: 0px;
+} 
 
 .text-img-infographic > .text-side > .title {
     position: relative;
     width: 100%;
-    height: 50%;
+    height: 37%;
     text-align: right;
 }
 
 .text-img-infographic > .text-side > .info {
     position: relative;
     width: 100%;
-    height: 50%;
+    height: 63%;
     text-align: right;
+}
+
+.text-img-infographic > .text-side > .info > div {
+    /* line-height: 33px; */
+    color: #24466B;
+    letter-spacing: -0.7px;
+    font-size: 17px;
+}
+
+.text-img-infographic:nth-child(odd) .text-side > .info > div {
+    text-align: right;
+    /* padding-left: 50px; */
+}
+
+.text-img-infographic:nth-child(even) .text-side > .info > div {
+    text-align: left;
+    /* padding-right: 112px; */
 }
 
 .text-img-infographic > .text-side:nth-child(even) {
@@ -70,9 +106,60 @@
     text-align: left;
 }
 
-@media (max-width: 700px) {
+.text-img-infographic:nth-child(odd) > .text-side {
+    width: 51%;
+} 
+
+.text-img-infographic:nth-child(even) .img-side {
+    width: 43%;
+} 
+
+@media (max-width: 768px) {
+    .infographic-wrapper {
+        width: 100%;
+    }
+
     .text-img-infographic {
         padding-left: 10px;
         padding-right: 10px;
+    }
+
+    .img-side > img {
+        width: 100%;
+        height: unset;
+    }
+}
+
+@media (min-width: 768px) {
+    .infographic-wrapper {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .text-side {
+        padding-right: 54px;
+    }
+
+    .text-img-infographic > .text-side:nth-child(even) {
+        padding-left: 54px;
+        padding-right: 0px;
+    }
+
+    .text-side > .title > div {
+        font-size: 38px;
+    }
+
+    .text-img-infographic {
+        height: 367px;
+    }
+
+    .text-img-infographic > .text-side > .info > div {
+        font-size: 28px;
+    }
+
+    .infographic-wrapper {
+        margin-bottom: 79px;
+        transform: translateX(64px);
     }
 }

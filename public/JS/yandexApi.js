@@ -63,14 +63,14 @@ module.exports = class yandexApi {
         });
     }
 
-    getDowndloadLink(filePath) {
+    getDowndloadLink(filePath, fields = []) {
         return new Promise((resolve, reject) => {
             request.get({
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `OAuth ${this.TOKEN}`   
                 },
-                url: `https://cloud-api.yandex.net/v1/disk/resources/download?path=${filePath}`
+                url: `https://cloud-api.yandex.net/v1/disk/resources/download?path=${filePath}${fields.length ? `&fields=${fields.join(',')}` : ''}`
             }, (err, res, body) => {
                 if (err) reject(err);
                 else resolve({res, body: JSON.parse(body)});
@@ -152,5 +152,11 @@ module.exports = class yandexApi {
                 else resolve({res, body: JSON.parse(body)});
             });
         });
+    }
+
+    async initFolder(path) {
+        await this.createFolder(path);
+        const response = await this.getUploadLink(`${path}/temp.tmp`, true);
+        await this.putData(response.body.href, Buffer.from('temp'));
     }
 }

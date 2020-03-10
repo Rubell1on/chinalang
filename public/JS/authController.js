@@ -3,6 +3,17 @@ class AuthController {
         this.keys = keys;
     }
 
+    async getUserData() {
+        const apiKey = this.get('apiKey');
+        const res = await request.get('/api/db/userData', { apiKey })
+        .catch(e => {
+            console.error(e);
+            notificationController.error(e.error.responseText);
+        });
+
+        if (res.status === 'success') return res.response[0];
+    }
+
     setData(object) {
         for (let i in object) {
             localStorage.setItem(i, object[i]);

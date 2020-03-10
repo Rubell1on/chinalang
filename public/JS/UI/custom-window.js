@@ -54,6 +54,10 @@ class SingleCustomWindow {
     getType() {
         return this.toString();
     }
+
+    isClassOf(className) {
+        return this.className === className ? true : false;
+    }
 }
 
 class CustomWindow {
@@ -101,5 +105,9 @@ class CustomWindow {
 
     getType() {
         return this.toString();
+    }
+
+    isClassOf(className) {
+        return this.className === className ? true : false;
     }
 }

@@ -11,6 +11,7 @@ const dbSettings = envVars.getDBSettings();
 const db = mysql.createConnection(dbSettings).promise();
 const keysManager = require('./public/JS/apiKeyManager').ApiKey;
 const apiKeyManager = new keysManager(db);
+const moment = require('moment-timezone');
 
 const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
@@ -113,7 +114,7 @@ app.post('/free', async (req, res) => {
     if (count === 0) {
         const password = utils.rndSequence();
         const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
@@ -180,6 +181,18 @@ app.route('/api/db/prices')
         }
     })
 
+app.get('/profile', (req, res) => {
+    res.render('./dashboard/profile');
+})
+
+app.get('/history', (req, res) => {
+    res.render('./dashboard/history');
+});
+
+app.get('/blog', (req, res) => {
+    res.render('./dashboard/blog');
+});
+
 app.get('/dashboard/:section', async (req, res) => {
     const path = './dashboard/admin';
     const section = req.params.section;
@@ -220,9 +233,9 @@ app.get('/lk/:section', (req, res) => {
             }
             break;
 
-        case 'history':
-            res.render(`${path}/history`);
-            break;
+        // case 'history':
+        //     res.render(`${path}/history`);
+        //     break;
 
         default:
             res.status(404).send('Запрашиваемая страница не найдена!');
@@ -236,18 +249,19 @@ app.route('/api/db/users')
         if (data.length) {
             const q = req.query;
 
-            if (data[0].role === roles.admin) {
+            if (data[0].role !== roles.student) {
                 let rows = [];
                 const value = q.searchingValue;
+                const roleTemplate = q && q.role ? `role='${q.role}'` : '' ;
 
                 if (value === '') {
-                    rows = await db.query('SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users')
+                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users ${q && q.role ? `WHERE ${roleTemplate}` : ''}`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
-                    rows = await db.query(`SELECT username, role, phone, email, skype, classesLeft, courses, photoLink FROM users WHERE username REGEXP '${value}' OR role REGEXP '${value}' OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesLeft REGEXP '${value}'`)
+                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -282,7 +296,7 @@ app.route('/api/db/users')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === roles.admin) {
+            if (data[0].role !== roles.student) {
                 const template = utils.obj2strArr(diffs).join(', ');
                 const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
                     .catch(e => {
@@ -305,8 +319,8 @@ app.route('/api/db/users')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const password = utils.rndSequence();
-                const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesLeft, q.courses];
-                const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesLeft, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', data)
+                const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q.courses];
+                const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('При создании пользователя произошла ошибка!');
@@ -326,7 +340,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesLeft, users.photoLink FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink, users.courses FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
@@ -549,7 +563,7 @@ app.route('/api/db/class')
                 await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
                     .catch(e => {
                         console.error(e);
-                        res.status(500).send('При удалении урока произошла ошибка!');
+                        res.status(500).send('При обновлении урока произошла ошибка!');
                     });
 
                 res.status(200).send('Урок успешно обновлен!');
@@ -585,22 +599,29 @@ app.route('/api/db/class')
 
 app.route('/api/db/files')
     .get(async (req, res) => {
-        const data = await apiKeyManager.getUser(req.query.apiKey);
+        const q = req.query;
+        const data = await apiKeyManager.getUser(q.apiKey);
 
         if (data.length) {
-            const value = req.query.searchingValue;
+            const value = q.searchingValue;
+            const type = q && q.type ? `type='${q.type}'` : '';
 
             let rows;
-            if (!value) rows = await db.query('SELECT * FROM files')
+            if (!value) {
+                rows = await db.query(`SELECT * FROM files ${type ? `WHERE ${type}` : ''}`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
-            else rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}'`)
+            }
+            else {
+                const typeTemplate = q && q.type ? `AND ${type}` : `or type REGEXP '${value}'` ;
+                rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}' ${typeTemplate}`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
+            }
 
             res.status(200).send(rows[0]);
         } else {
@@ -613,9 +634,10 @@ app.route('/api/db/files')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const q = req.body;
+                const types = ['document', 'image'];
 
-                if (q.type === 'document') {
-                    const data = await db.query(`INSERT INTO files(name, link) VALUE('${q.name}', '${q.path}')`)
+                if (types.includes(q.type)) {
+                    const data = await db.query(`INSERT INTO files(name, link, type) VALUE('${q.name}', '${q.path}', '${q.type}')`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -677,40 +699,30 @@ app.route('/api/db/files')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const q = req.body;
-                const root = 'chinalang';
-                const docs = 'documents';
-                const photos = 'photos';
+
+                const routes = {
+                    root: 'chinalang',
+                    document: 'documents',
+                    photo: 'photos',
+                    image: 'images'
+                };
+
+                const type = routes[q.type];
 
                 const filesList = await yandexDisk.getList();
                 const tree = utils.getDirTree(filesList.body.items);
 
-                if (tree.find(root) === null) {
-                    await yandexDisk.createFolder(root);
-                    const response = await yandexDisk.getUploadLink(`${root}/temp.tmp`);
-                    await yandexDisk.putData(response.body.href, Buffer.from('temp'));
+                if (tree.find(routes.root) === null) {
+                    yandexDisk.initFolder(routes.root);
                 }
 
-                if (q.type === 'document') {
-                    if (tree.find(docs) === null) {
-                        const path = `${root}/${docs}`;
-                        await yandexDisk.createFolder(path);
-                        const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`);
-                        await yandexDisk.putData(response.body.href, Buffer.from('temp'));
-                    }
-                }
-
-                if (q.type === 'photo') {
-                    if (tree.find(photos) === null) {
-                        const path = `${root}/${photos}`;
-                        await yandexDisk.createFolder(path);
-                        const response = await yandexDisk.getUploadLink(`${path}/temp.tmp`, true);
-                        await yandexDisk.putData(response.body.href, Buffer.from('temp'));
-                    }
+                if (tree.find(type) === null) {
+                    const path = `${routes.root}/${type}`;
+                    await yandexDisk.initFolder(path);
                 }
 
                 const name = utils.translate(q.name);
-                const filePath = `${root}/${q.type === 'document' ? docs : photos}/${name}`;
-
+                const filePath = `${routes.root}/${type}/${name}`;
                 const link = await yandexDisk.getUploadLink(filePath);
                 
                 res.status(200).json({data: link.body, path: filePath});
@@ -730,10 +742,217 @@ app.get('/api/verify', async (req, res) => {
     else res.status(404).send('Не валидный apiKey');
 })
 
-app.get('/test', (req, res) => {
-    console.log();
+app.route('/api/db/history')
+    .get(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            let tail = `WHERE ${data[0].role === roles.student ? 'studentId' : 'teacherId'} = '${data[0].id}'`;
+
+            const rows = await db.query('SELECT `student`.username as studentName, `teacher`.username as teacherName, history.status, history.date, history.change, balance FROM history RIGHT JOIN users as `student` ON studentId = `student`.id RIGHT JOIN users as `teacher` ON teacherId = `teacher`.id ' + tail)
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+
+            res.status(200).json(rows[0]);
+        } 
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            if (data[0].role !== roles.student) {
+                const rows = await db.query(`SELECT * FROM users WHERE username='${q.data.username}' AND email='${q.data.email}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+                
+                let userData = undefined;
+                if (rows[0] && rows[0][0]) {
+                    userData = rows[0][0];
+                } else res.status(400).send();
+
+                const teacherType = {
+                    teacher: 'classesWRussian',
+                    nativeTeacher: 'classesWNative'
+                };
+
+                const subtractionValues = {
+                    occured: -1,
+                    canceled: 0,
+                    missed: -1
+                }
+
+                const key = data[0].role === roles.admin ? teacherType[q.teacherType] : teacherType[data[0].role];
+                const currDate = moment().format();
+                const subtrahend = subtractionValues[q.status];
+                const classesLeft = userData[key] + subtrahend;        
+
+                if (userData[key] > 0) {
+                    await db.query(`INSERT INTO history(studentId, teacherId, history.status, history.date, history.change, balance) VALUES('${userData.id}', '${data[0].id}', '${q.status}', '${currDate}', ${subtractionValues[q.status]}, ${classesLeft})`) 
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+
+                    await db.query(`UPDATE users SET ${key}='${classesLeft}' WHERE id=${userData.id}`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+
+                    res.status(201).send('Добавлена запись в историю занятий!');
+                } else res.status(400).send('Недостаточное колличество занятий');
+            }
+        }
+    })
+    .put(async (req, res) => {
+
+    })
+    // .delete(async (req, res) => {
+
+    // })
+
+app.route('/api/db/blog')
+    .get(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+        let rows = undefined;
+
+        if (data.length) {
+            rows = await db.query('SELECT * FROM blog')
+                .catch(e => {
+                    console.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+
+            res.status(200).json(rows[0]);
+        } else {
+            res.status(401).end();
+        }
+    })
+    .post(async (req, res) => {
+        const q = req.body;
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+        let rows = undefined;
+
+        if (data.length) {
+            if (data[0].role !== roles.student) {
+                rows = await db.query(`INSERT INTO blog(name, description) VALUE('${q.name}', '${q.description}')`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+
+                res.status(201).send('В блог добавлена новая запись!');
+            } else {
+                res.status(403).end();
+            }
+        } else {
+            res.status(401).end();
+        }
+    })
+    .put(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            if (data[0].role === roles.admin) {
+                const { data, source } = req.body;
+
+                const template = utils.obj2strArr(data).join(', ');
+                await db.query(`UPDATE blog SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('При удалении записи произошла ошибка!');
+                    });
+
+                res.status(200).send('Запись успешно обновлен!');
+            } else {
+                res.status(403).end();
+            }
+        } else {
+            res.status(401).end();
+        }
+    })
+    .delete(async (req, res) => {
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+
+        if (data.length) {
+            if (data[0].role !== roles.student) {
+                await db.query(`DELETE FROM blog WHERE id='${req.body.id}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+                res.status(204).send('Файл удален!');
+            } else {
+                res.status(403).end();
+            }
+        } else {
+            res.status(401).end();
+        }
+    })
+
+app.get('/api/download', async (req, res) => {
+    const q = req.query;
+    const path = q.path;
+    const data = await yandexDisk.getDowndloadLink(path);
+    const file = await yandexDisk.getData(data.body.href);
+    
+    switch(q.type) {
+        case 'document':
+            const fileName = q.path.split('/').find(e => /\.\w*/.test(e));
+            res.set({
+                'Content-Disposition': `attachment; filename="${fileName}"`,
+            }).status(200).send(file.body);
+            break;
+
+        case 'image':
+            console.log()
+            const encodedData = Base64.encode(file.body);
+            res.status(200).send(encodedData);
+            break;
+    }
 })
 
-app.post('/test', async (req, res) => {
-    console.log();
+app.post('/contact', async (req, res) => {
+    const q = req.body;
+
+    const messageType = {
+        feedback: 'Обратная связь',
+        callback: 'Заказать звонок',
+        collab: 'Вопросы сотрудничества',
+        another: 'Обратная связь (другое)'
+    }
+
+    const email = 'catchyclickstudio@gmail.com';
+
+    const toChinalang = new gAPI.messageBuilder(
+        {
+            name: 'chinaLang', 
+            email
+        }, 
+        email, 
+        messageType[q.type], 
+        `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
+        ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}`
+    ).build();
+
+    await gmailClient.sendMessage(toChinalang);
+
+    const toUser = new gAPI.messageBuilder(
+        {
+            name: 'chinaLang', 
+            email
+        }, 
+        q.email, 
+        'Благодарим за обратную связь!', 
+        `Уважаемый, ${q.username}!
+        <br>Ваше сообщение было получено! В ближайшее время с вами свяжутся сотрудники chinalang!`
+    ).build();
+
+    await gmailClient.sendMessage(toUser);
+    res.status(201).send('Ваше сообщение отправлено!');
 })

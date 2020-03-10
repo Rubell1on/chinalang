@@ -1,12 +1,10 @@
-DataTable.prototype.renderCoursePage = function() {
-    
-}
-
-async function renderPage() {
-    renderPageLoader();
+async function renderCoursePage(userData) {
+    // renderPageLoader();
 
     const query = location.getQuery();
     const apiKey = auth.get('apiKey');
+
+    const userCourseData = userData.courses.find(c => c.id === query.id);
 
     const res = await request.get(`/api/db/courses?id=${query.id}&apiKey=${apiKey}`)
         .catch(e => {
@@ -17,7 +15,9 @@ async function renderPage() {
     if (res.status === 'success') {
         const courseData = res.response[0];    
         const children = [
-            new Label('course-name', courseData.name),
+            new ObjectWrapper('course-name-wrapper', [
+                new Label('course-name', courseData.name)
+            ]),
             new ObjectWrapper('description-wrapper', [
                 new Label('description-label', 'Описание курса'),
                 new Text('course-description', courseData.description)
@@ -40,30 +40,40 @@ async function renderPage() {
                                 const strip = new DataStrip(c.name.decrease(), c);
                                 strip.parent = object;
                                 strip.render(object.object);
-                                strip.text.text(c.name);
-                                strip.object.click(() => {
-                                    const classesWindow = new DataWindow('class-window', [], [
-                                        new DataTable('class-table', [], [
-                                            new Label('class-label', c.name),
-                                            new ObjectWrapper('class-description-wrapper', [
-                                                new Label('class-description-label', 'Описание урока'),
-                                                new Text('class-description-text', c.description)
+                                const classData = userCourseData && userCourseData.classes ? userCourseData.classes.find(c => c.id === strip.data.id) : undefined;
+                                if (classData) {
+                                    strip.text.text(c.name);
+                                    strip.object.css('background', '#84BC57')
+                                    strip.object.click(() => {
+                                        const classesWindow = new DataWindow('class-window', [], [
+                                            new DataTable('class-table', [], [
+                                                new Label('class-label', c.name),
+                                                new ObjectWrapper('class-description-wrapper', [
+                                                    new Label('class-description-label', 'Описание урока'),
+                                                    new Text('class-description-text', c.description)
+                                                ])
                                             ])
-                                        ])
-                                    ]);
-                                    classesWindow.render('');
-                                    classesWindow.renderChildren(table => {
-                                        table.renderChildren(child => {
-                                            if (child.isTypeOf('objectWrapper')) {
-                                                child.renderChildren(() => {});
-                                            }
+                                        ]);
+                                        classesWindow.render('');
+                                        classesWindow.renderChildren(table => {
+                                            table.renderChildren(child => {
+                                                if (child.isTypeOf('objectWrapper')) {
+                                                    child.renderChildren(() => {});
+                                                }
+                                            });
                                         });
-                                    })
-                                });
+                                        classesWindow.object.append('<script src="../../../public/JS/image-loader.js"></script>');
+                                    });
+                                } else {
+                                    // strip.object.css('opacity', 0.7);
+                                    strip.text.text('Закрыто');
+                                }
                             });
 
                             child.children = strips;
                         }
+                    } else if (child.className === 'courses-name-wrapper') {
+                        child.renderChildren(() => {});
                     }
                 });
             }      
@@ -73,4 +83,19 @@ async function renderPage() {
     // coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
-renderPage();
+ renderPage();
+
+async function renderPage() {
+    renderPageLoader();
+    const response = await auth.getUserData();
+
+    if (response) {
+        const user = response;
+        renderHeader(user);
+        renderControls(user);
+
+        renderCoursePage(user);
+    } else {
+        location.reload();
+    }
+}

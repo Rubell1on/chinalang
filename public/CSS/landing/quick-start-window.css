@@ -1,7 +1,16 @@
+.wrapper, .header {
+    /* width: 100%; */
+    /* width: 1280px; */
+}
+
+.wrapper {
+    width: 100%;
+}
+
 .quick-start-window {
     position: absolute;
     height: 1px;
-    min-height: 300px;
+    min-height: 320px;
 }
 
 .quick-start-window > .info, .inputs {
@@ -39,13 +48,16 @@
 
 .login-window-label {
     font-weight: bold;
-    font-size: 20px;
-    text-align: center;
+    font-size: 26px;
+    /* text-align: center; */
+    margin-left: 5px;
+    margin-bottom: 30px;
 }
 
 .login-window-background .login-window {
     height: unset;
     min-height: unset;
+    width: 300px;
 }
 
 .login-window > .inputs {
@@ -54,6 +66,37 @@
 
 .login-submit {
     margin: 0 auto;
+}
+
+.contacts-window-background > .contacts-window {
+    max-width: 400px;
+}
+
+.contacts-window-background > .contacts-window > .inputs {
+    width: 100%;
+}
+
+.contact-fields .message-type-label {
+    text-align: left;
+    padding-left: 5px;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.message-type {
+    margin-bottom: 5px;
+}
+
+@media (min-width: 1280px) {
+    .header {
+        width: 1280px;
+    }
+
+    .header {
+        height: 110px;
+        padding: 0px 17px;
+        box-sizing: border-box;
+    }
 }
 
 @media (max-width: 700px) {

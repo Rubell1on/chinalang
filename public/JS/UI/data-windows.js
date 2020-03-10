@@ -135,14 +135,14 @@ class DataWindow extends SingleCustomWindow {
 }
 
 class InputField extends CustomWindow {
-    constructor(className, id = 'username', label = 'Имя', value = '', required = true) {
+    constructor(className, id = 'username', label = 'Имя', value = '', required = true, readonly = false) {
         super(className);
         this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
             `<div class="text-field ${this.className}">` +
                 `<label for="${id}">${label}</label>` +
-                `<input type="text" id="${id}" ${required ? 'required' : ''} value="${value}">` +
+                `<input type="text" id="${id}" ${required ? 'required' : ''} ${readonly ? 'readonly' : ''} value="${value}">` +
             '</div>';
     }
 
@@ -198,6 +198,7 @@ class TextArea extends InputField {
 
         this.input = this.object.find('textarea');
         this.controlsObject = this.object.find('.text-field-controls');
+        this.label = this.object.find('label');
     }
 }
 
@@ -327,11 +328,14 @@ class FileInput extends CustomWindow {
 class DropDownList extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'dropDownList';
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
 
         this.html = 
             `<div class="dropdown ${className}">
-                <div class="dropdown-text">${text}</div>
+                <div class="dropdown-text-wrapper">
+                    <div class="dropdown-text">${text}</div>
+                </div>
                 <div class="dropdown-img-wrapper">
                     <div class="dropdown-img">
                         <img src="../../../public/IMG/dashboard/default_user.png" alt="" srcset="">
@@ -358,6 +362,7 @@ class DropDownList extends CustomWindow {
 class PageLoader extends CustomWindow {
     constructor(className, children = []) {
         super(className);
+        this[Symbol.toStringTag] = 'pageLoader';
         
         this.children = children;
         this.html = 
@@ -392,6 +397,7 @@ class PageLoader extends CustomWindow {
 class Image extends CustomWindow {
     constructor(className, src = '') {
         super(className);
+        this[Symbol.toStringTag] = 'image';
 
         this.html = `<img class="image-widget ${this.className}" src=${src}>`
     }
@@ -408,6 +414,7 @@ class Image extends CustomWindow {
 class Text extends CustomWindow {
     constructor(className, text = '') {
         super(className);
+        this[Symbol.toStringTag] = 'text';
 
         this.html = `<div class="text-widget ${this.className}">${text}</div>`;
     }
@@ -508,5 +515,239 @@ class PriceBlock extends CustomWindow {
         `;
 
         super.render(parent);
+    }
+}
+
+class StripMenu extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'stripMenu';
+
+        this.children = children;
+    }
+
+    render(parent) {
+        this.html = `<div class="menu-strip ${this.className}"></div>`;
+
+        super.render(parent);
+
+        return this;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+}
+
+class StripSeparator extends CustomWindow {
+    constructor(className, text = '') {
+        super(className);
+        this[Symbol.toStringTag] = 'stripSeparator';
+
+        this._textValue = text;
+    }
+
+    setText(value) {
+        if (this.object) {
+            this._textObject.text(value);
+        } else {
+            this._textValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        this.html = 
+            `<div class="strip-separator ${this.className}">
+                <!-- <div class="icon">
+                    <img src="../../public/IMG/dashboard/users.png" alt="" srcset="">
+                </div> -->
+                <div class="text">${this._textValue}</div>
+            </div>`;
+
+        super.render(parent);
+
+        this._textObject = this.object.find('.text');
+
+        return this;
+    }
+}
+
+class StripButton extends CustomWindow {
+    constructor(className, text = '', image = '') {
+        super(className, text);
+        this[Symbol.toStringTag] = 'stripButton';
+        
+        this._textValue = text;
+        this._imageValue = image;
+    }
+
+    setText(value) {
+        if (this.object) {
+            this._textObject.text(value);
+        } else {
+            this._textValue = value;
+        }
+
+        return this;
+    }
+
+    setImage(value) {
+        if (this.object) {
+            this._imageObject.attr('src', value);
+        } else {
+            this._imageValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        const imgTemp = 
+            `<div class="icon">
+                <img src="${this._imageValue}" alt="" srcset="">
+            </div>`;
+
+        this.html = 
+            `<div class="strip-button ${this.className}">
+                ${this._imageValue ? imgTemp : ''}
+                <div class="text">${this._textValue}</div>
+            </div>`;
+
+        super.render(parent);
+
+        this._textObject = this.object.find('.text');
+        this._imageObject = this.object.find('.icon > img');
+
+        return this;
+    }
+}
+
+class StripImage extends CustomWindow {
+    constructor(className) {
+        super(className);
+        this[Symbol.toStringTag] = 'stripImage';
+    }
+
+    setImage(value) {
+        if (this.object) {
+            this._imageObject.attr('src', value);
+        } else {
+            this._imageValue = value;
+        }
+
+        return this;
+    }
+
+    render(parent) {
+        this.html = 
+            `<div class="strip-image strip-logo ${this.className}">
+                <img src="${this._imageValue}" alt="" srcset="">
+            </div>`;
+
+        super.render(parent);
+
+        this._imageObject = this.object.find('img');
+    }
+}
+
+class Table extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'table';
+
+        this.children = children;
+        this.html = `<table class="table-wrapper ${this.className}"><tbody></tbody></table>`;
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.body = this.object.find('tbody');
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.body);
+                callback(child);
+            });
+        }
+    }
+}
+
+class TableRow extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'tableRow';
+
+        this.children = children;
+        this.html = `<tr class="table-row ${this.className}"></tr>`;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+}
+
+
+class TableCell extends CustomWindow {
+    constructor(className, text = '') {
+        super(className);
+        this[Symbol.toStringTag] = 'tableCell';
+
+        this.html = `<td class="table-cell ${this.className}">${text}</td>`;
+    }
+}
+
+class Select extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'select';
+
+        this.html = `<select class="select ${this.className}"></select>`;
+        this.children = children;
+    }
+
+    render(parent) {
+        super.render(parent);
+
+        this.children.forEach((c, i) => {
+            if (c && c.getType ? true : false) {
+                c.render(this.object);
+                c.parent = this;  
+            } else {
+                const option = new SelectOption(`${c.value}-${i}`, c);
+                option.render(this.object);
+            }
+        })
+    }
+
+    getSelected() {
+        return this.object.val();
+    }
+}
+
+class SelectOption extends CustomWindow {
+    constructor(className, data = {}) {
+        super(className);
+        this[Symbol.toStringTag] = 'selectOption';
+        
+        this.data = data;
+        this.html = `<option class="option ${this.className}" value="${this.data && this.data.value ? this.data.value : ''}">${this.data && this.data.text ? this.data.text : ''}</option>`;
     }
 }

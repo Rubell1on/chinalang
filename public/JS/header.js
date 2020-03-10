@@ -1,21 +1,17 @@
-async function render() {
-    // const username = localStorage.getItem('username');
-
+async function renderHeader(user) {
     const apiKey = auth.get('apiKey');
-    const response = await request.get('/api/db/userData', { apiKey })
-        .catch(e => {
-            console.error(e);
-            notificationController.error(e.error.responseText);
-        });
-
-    const user = response.response[0];
 
     const children = [
         new Button('menu-button', '≡'),
-        new DropDownList('user-menu', user.username)
+        new ObjectWrapper('chinalang-logo-wrapper', [
+            new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
+            new StripImage('chinalang-icon').setImage('../../public/IMG/header/triangle_logo.png'),
+        ]),
+        new ObjectWrapper('header-controls', [
+            new DropDownList('user-menu', user.username),
+            new Button('contacts', 'Контакты')
+        ])
     ];
-
-    if (auth.get('role') === 'student') children.push(new Button('classes-left', `Баланс: <b>${user.classesLeft}</b>`));
 
     const header = new ObjectWrapper('header-wrapper', children);
     header.prepandRender('');
@@ -30,244 +26,107 @@ async function render() {
                     $('.controls').animate({'left': `${value}px`}, 200);                 
                 });
                 break;
-            
-            case 'classes-left':
-                child.object.click(() => location.href = `${location.origin}/purchase`);
+
+            case 'chinalang-logo-wrapper':
+                child.renderChildren(() => {});
                 break;
 
-            case 'user-menu':
-                // const photo = auth.get('photo');
-                child.image.attr('src', user && user.photo ? `data:image/*;base64,${user.photo}` : child.defaultImg);
-                child.object.click(() => {
-                    const children = [
-                        new Button('user-settings', 'Настройки'),
-                        new Button('exit-button', 'Выход')
-                    ];
-
-                    const window = new DataWindow('user-menu', [], children);
-                    window.render('');
-                    window.renderChildren(button => {
-                        if (button.className === 'exit-button') {
-                            button.object.click(() => auth.logOut());
-                        } else {
-                            button.object.click(async () => {
-                                // const apiKey = auth.get('apiKey');
-                                const res = await request.get('/api/db/userData', { apiKey })
-                                    .catch(e => {
-                                        console.log(e);
-                                        notificationController.error(e.error.responseText);
-                                    });
-
-                                if (res.status === 'success') {
-                                    const data = res.response[0];
-                                    const newData = {};
-
-                                    const leftTableChildren = [
-                                        new InputField('username-field', 'username', 'Имя пользователя',data.username),
-                                        new InputField('phone-field', 'phone', 'Телефон', data.phone),
-                                        new InputField('email-field', 'email', 'Эл.почта', data.email),
-                                        new InputField('skype-field', 'skype', 'Skype', data.skype, false),
-                                        new InputField('old-password-field', 'old-password', 'Старый пароль'),
-                                        new InputField('new-password-field', 'new-password', 'Новый пароль'),
-                                        new InputField('confirm-new-password-field', 'confirm-password', 'Подтвердите новый пароль')
-                                    ];
-    
-                                    const rightTableChildren = [
-                                        new Label('photo-label', 'Фото'),
-                                        new FileInput('photo-field'),
-                                        new Button('change-photo', 'Загрузить фото'),
-                                        new Button('delete-photo', 'Удалить фото')
-                                    ];
-    
-                                    const children = [
-                                        new Label('user-profile-label', 'Изменить данные пользователя'),
-                                        new ObjectWrapper('user-profile-tables',[
-                                            new DataTable('user-data-fields', [], leftTableChildren),
-                                            new DataTable('user-photo-field', [], rightTableChildren),
-                                        ]),
-                                        new Button('submit-user-data', 'Сохранить изменения')
-                                    ];
-    
-                                    const userProfile = new DataWindow('user-profile', [], children);
-                                    userProfile.render('');
-                                    userProfile.renderChildren(child => {
-                                        switch(child.getType()) {
-                                            case '[object objectWrapper]':
-                                                child.renderChildren(table =>{
-                                                    if (table.className === 'user-data-field') {
-                                                        table.renderChildren(() => {
-        
-                                                        });
-                                                    } else {
-                                                        table.renderChildren(child => {
-                                                            switch(child.className) {
-                                                                case 'change-photo':
-                                                                    child.object.click(async () => {
-                                                                        const fileInput = table.children.find(c => c.isTypeOf('fileInput'));
-                                                                        const file = fileInput.input[0].files[0];
-                                                                        const fileType = file.name.match(/\.\w*/)[0];
-
-                                                                        const fileInfo = {
-                                                                            name: `${data.username}_photo${fileType}`,
-                                                                            type: 'photo'
-                                                                        }
-
-                                                                        notificationController.process('Данные отправлены на сервер! Ожидаю ответ');
-                                                                        const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
-                                                                            .catch(e => {
-                                                                                notificationController.error(e.error.responseText);
-                                                                                console.error(e);
-                                                                            });
-
-                                                                            if (res.status === 'success') {
-                                                                                const responseData = res.response;
-                                                                                const response = await request.put(responseData.data.href, file, false)
-                                                                                    .catch(e => {
-                                                                                        console.error(e);
-                                                                                        notificationController.error(e.error.responseText);
-                                                                                    });
-                                                                                    
-                                                                                if (response.status === 'success') {
-                                                                                    fileInfo.path = responseData.path;
-                                                                                    fileInfo.data = data;
-                                                                                    const res = await request.post('/api/db/files', JSON.stringify(fileInfo))
-                                                                                        .catch((e, status) => {
-                                                                                            console.error({e, status});
-                                                                                            notificationController.error(e.error.responseText);
-                                                                                        });
-
-                                                                                    if (res.status) {
-                                                                                        notificationController.success(res.response);
-                                                                                        window.destroy();
-                                                                                        await self.updateFilesData();
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                    });
-
-                                                                    break;
-
-                                                                case 'delete-photo':
-                                                                    child.object.click(async () => {
-                                                                        notificationController.process('Отправлен запрос на удаление фото!');
-                                                                        const res = await request.delete('/api/db/files', JSON.stringify({ type: 'photo', id: user.id, name: user.username, link: user.photoLink }))
-                                                                            .catch(e => {
-                                                                                console.error(e);
-                                                                                notificationController.error(e.error.responseText);
-                                                                            });
-                                                                        
-                                                                        if (res.status === 'nocontent') {
-                                                                            notificationController.success('Фото успешно удалено!')
-                                                                        }
-                                                                    });
-
-                                                                    break;
-
-                                                                case 'photo-field':
-                                                                    child.input.attr('accept', 'image/jpeg, image/png, image/jpg');
-                                                                    break;
-                                                            }
-                                                        });
-                                                    }
-                                                });
-
-                                                break;
-                                            case '[object button]':
-                                                child.object.click(() => {
-                                                    const wrapper = userProfile.children.find(c => c.isTypeOf('objectWrapper'));
-                                                    const tables = wrapper.children.filter(c => c.isTypeOf('dataTable'));
-
-                                                    if (tables) {
-                                                        tables.forEach(async t => {
-                                                            if (t.className === 'user-data-fields') {
-                                                                const passwordClasses = [
-                                                                    'old-password-field',
-                                                                    'new-password-field',
-                                                                    'confirm-new-password-field'
-                                                                ]
-
-                                                                const fields = t.children.filter(c => c.isTypeOf('inputField') && !passwordClasses.includes(c.className));
-                                                                const passwordFields = t.children.filter(c => c.isTypeOf('inputField') && passwordClasses.includes(c.className));
-
-                                                                for (let i in fields) {
-                                                                    const field = fields[i];
-                                                                    const key = field.className.match(/^\w*/);
-                                                                    const value = field.input.val();
-
-                                                                    if (field.input.attr('required')) 
-                                                                    {
-                                                                        if (!value.isEmpty()) {
-                                                                            newData[key] = value;
-                                                                        } else {
-                                                                            field.input.focus();
-                                                                            break;
-                                                                        }
-                                                                    } else {
-                                                                        newData[key] = value;
-                                                                    }
-                                                                }
-
-                                                                const pData = passwordFields.reduce((acc, curr) => {
-                                                                    acc.push({class: curr, value: curr.input.val()});
-
-                                                                    return acc;
-                                                                },[]);
-
-                                                                const old = pData[0].value;
-                                                                const newP = pData[1].value;
-                                                                const confirm = pData[2].value;
-
-                                                                let flag = true;
-
-                                                                if (!old.isEmpty() && !newP.isEmpty() && !confirm.isEmpty()) {
-                                                                    if (newP === confirm) {
-                                                                        flag = true;
-                                                                        newData['old-password'] = old;
-                                                                        newData['password'] = newP;
-                                                                    } else {
-                                                                        flag = false;
-                                                                    }
-                                                                } else if (old.isEmpty() && newP.isEmpty() && confirm.isEmpty()) {
-                                                                    flag = true;
-                                                                } else if (old.isEmpty() || newP.isEmpty() || confirm.isEmpty()) {
-                                                                    flag = false;
-                                                                    pData.forEach(p => p.class.input.focus());
-                                                                }
-
-                                                                if (flag) { 
-                                                                    const difference =  diff(data, newData);
-                                                                    if (Object.keys(difference).length) {
-                                                                        const string = JSON.stringify({difference, source: data});
-                                                                        const apiKey = auth.get('apiKey');
-                                                                        notificationController.process('Данные отправляются на сервер!');
-                                                                        const res = await request.put(`/api/db/userData?apiKey=${apiKey}`, string)
-                                                                            .catch(e => {
-                                                                                console.error(e);
-                                                                                notificationController.error(e.error.responseText);
-                                                                            });
-                                                                        if (res.status === 'success') notificationController.success(res.response);
-                                                                        userProfile.destroy();
-                                                                    }
-                                                                }
-
-                                                            } else {
-
-                                                            }
-                                                        });
-                                                    }
-                                                });
-
-                                                break;
-                                        }
-                                    });
+            case 'header-controls':
+                child.renderChildren(child => {
+                    if (child.className === 'user-menu') {
+                        // const photo = auth.get('photo');
+                        child.image.attr('src', user && user.photo ? `data:image/*;base64,${user.photo}` : child.defaultImg);
+                        child.object.click(() => {
+                            const window = new DataWindow('user-menu', [], [new Button('exit-button', 'Выход')]);
+                            window.render('');
+                            window.renderChildren(button => {
+                                if (button.className === 'exit-button') {
+                                    button.object.click(() => auth.logOut());
                                 }
-                            });
-                        }
-                    }); 
-                });
+                            }); 
+                        });
+                    } else if (child.className === 'contacts') {
+                        child.object.click(async () => {
+                            // const window = new DataWindow('user-menu', [], [
+                            //     new Button('feedback-button', 'Обратная связь'),
+                            //     new Button('callback-button', 'Заказать звонок'),
+                            //     new Button('collab-button', 'Вопросы сотрудничеста')
+                            // ]);
+                            // window.render('');
+                            // window.renderChildren(button => {
+                            //     if (button.className === 'exit-button') {
+                            //         button.object.click(() => auth.logOut());
+                            //     }
+                            // }); 
+                            const data = auth.getData();
+                            await createFeedbackWindow(data);
+                        })
+                    }
+                })
                 break;
         }
     });
 }
 
-render();
+async function createFeedbackWindow(data = {}) {
+    const window = new DataWindow('contacts-window', [], [
+        new Label('contacts-label', 'Связаться с нами'),
+        new ObjectWrapper('contact-fields', [
+            new InputField('username', 'username', 'Имя пользователя', data && data.username ? data.username : '', true, data && data.username ? true : false),
+            new InputField('email', 'email', 'Эл. почта', data && data.email ? data.email : '', true, data && data.email ? true : false),
+            new Label('message-type-label', 'Тема сообщения'),
+            new Select('message-type', [
+                { value: 'feedback', text: 'Обратная связь' },
+                { value: 'callback', text: 'Заказать звонок' },
+                { value: 'collab', text: 'Вопросы сотрудничеста' },
+                { value: 'another', text: 'Другое' }
+            ]),
+            new TextArea('message-text'),
+            new Button('submit', 'Отправить')
+        ])
+    ])
+
+    window.render('');
+    window.renderChildren(child => {
+        if (child.isTypeOf('objectWrapper')) child.renderChildren(wrapperChild => {
+            if (wrapperChild.isTypeOf('textArea')) wrapperChild.label.text('Текст сообщения')
+            else if (wrapperChild.isTypeOf('button')) wrapperChild.object.click(async e => {
+                e.stopPropagation();
+                const wrapper = window.children.find(c => c.isTypeOf('objectWrapper')).children;
+                let flag = true;
+                const data = {};
+
+                for (child in wrapper) {
+                    const c = wrapper[child];
+                    if (['username', 'email'].includes(c.className)) {
+                        const value = c.input.val();
+                            if (c.input.attr('required')) {
+                                if (value.isEmpty()) {
+                                    flag = false;
+                                    c.input.focus();
+                                    notificationController.error('Необходимо заполнить выделенные поля!')
+                                    break;
+                                }
+                            }
+
+                            data[c.className] = value;
+                    } else if (c.isClassOf('message-type')) data['type'] = c.getSelected();
+                    else if (c.isClassOf('message-text')) data['text'] = c.input.val();
+                }
+
+                if (flag) {
+                    const res = await request.post(`${location.origin}/contact`, JSON.stringify(data))
+                        .catch(e => {
+                            console.error(e);
+                            notificationController.error(e.error.responseText);
+                        })
+                    
+                    if (res.status === 'success') {
+                        notificationController.success(res.response);
+                        window.destroy();
+                    }
+                }
+            })
+        });
+    })
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="../../../public/IMG/header/triangle_w_back.png" type="image/png">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="/public/CSS/dashboard/dashboard.css">
+    <link rel="stylesheet" href="/public/CSS/UI/text-field.css">
+    <link rel="stylesheet" href="/public/CSS/UI/button.css">
+    <link rel="stylesheet" href="/public/CSS/UI/overlay-window.css">
+    <link rel="stylesheet" href="/public/CSS/UI/search-line.css">
+    <link rel="stylesheet" href="/public/CSS/UI/data-window.css">
+    <link rel="stylesheet" href="/public/CSS/UI/data-strip.css">
+    <link rel="stylesheet" href="/public/CSS/lk/courses-tab.css">
+    <link rel="stylesheet" href="/public/CSS/UI/notification.css">
+    <link rel="stylesheet" href="/public/CSS/UI/label.css">
+    <link rel="stylesheet" href="/public/CSS/UI/text-area.css">
+    <link rel="stylesheet" href="/public/CSS/UI/yes-no-window.css">
+    <link rel="stylesheet" href="/public/CSS/UI/page-loader.css">
+    <link rel="stylesheet" href="/public/CSS/dashboard/profile.css">
+
+    <script src="../../../public/JS/jquery-3.4.1.js"></script>
+    <script src="../../../public/JS/Utils.js"></script>
+    <script src="../../../public/JS/request.js"></script>
+    <script src="../../../public/JS/UI/custom-window.js"></script>
+    <script src="../../../public/JS/UI/notification-window.js"></script>
+    <script src="../../../public/JS/UI/data-windows.js"></script>
+    <script src="../../../public/JS/authController.js"></script>
+</head>
+<body>
+    <%- include('../blocks/header-controls.ejs') %>
+    <div class="wrapper">
+        <div class="controls">
+            <%- include('../blocks/menu-strip.ejs') %>
+        </div>
+        <div class="window">
+            <div class="content-window">
+            </div>
+        </div>
+    </div>
+    <script src="../../../public/JS/Event.js"></script>
+    <script src="../../../public/JS/tabs/user-profile.js"></script>
+</body>
+</html>

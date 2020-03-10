@@ -1,6 +1,7 @@
 .how-it-works {
     width: 100%;
     height: 100%;
+    padding-top: 47px;
 }
 
 .how-it-works > h2 {
@@ -12,5 +13,11 @@
 
 #bottom {
     margin-top: 0px;
-    margin-bottom: 20px;
+    margin-bottom: 56px;
+}
+
+@media (min-width: 1280px) {
+    .how-it-works > h2 {
+        font-size: 52px;
+    }
 }

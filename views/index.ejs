@@ -13,22 +13,19 @@
     <link rel="stylesheet" href="./public/CSS/landing/howItWorks.css">
     <link rel="stylesheet" href="./public/CSS/landing/infographic.css">
     <link rel="stylesheet" href="./public/CSS/landing/footer.css">
+    <link rel="stylesheet" href="./public/CSS/landing/about-project.css">
     <link rel="stylesheet" href="./public/CSS/landing/quick-start-window.css">
     <link rel="stylesheet" href="./public/CSS/UI/notification.css">
     <link rel="stylesheet" href="./public/CSS/UI/text-field.css">
     <link rel="stylesheet" href="./public/CSS/UI/overlay-window.css">
+    <link rel="stylesheet" href="/public/CSS/UI/select.css">
+    <link rel="stylesheet" href="/public/CSS/UI/text-area.css">
+    <link rel="stylesheet" href="/public/CSS/UI/label.css">
     <title>chinaLang - Главная</title>
 </head>
 <body>
     <div class="header">
         <div class="logo">
-            <!-- <div class="logo-text">
-                <div class="logo-left-part">china</div>
-                <div class="logo-right-part">lang</div>
-            </div>
-            <div class="logo-image">
-                <img src="" alt="">
-            </div> -->
             <img src="../public/IMG/header/chinalang_label.png" alt="" class="logo-label">
             <img src="../public/IMG/header/triangle_logo.png" alt="" class="logo-img">
         </div>
@@ -47,45 +44,57 @@
         </div>
     </div>
     <div class="wrapper">
-        <div class="main-block">
-            <div class="main-left-part">
-                <div class="main-text">Китайский язык из любого уголка земли</div>
-                <div class="main-info">Удобное обучение онлайн</div>
-                <div class="main-info">Новые современные методики</div>
-                <div class="main-info">Профессиональные учителя из России и Китая</div>
-            </div>
-            <div class="main-right-part">
-                <div class="button-big get-free-lesson">Бесплатный урок</div>
+        <div class="main-block-background">
+            <div class="main-block">
+                <div class="main-left-part">
+                    <div class="main-text">Китайский язык из любого уголка земли</div>
+                    <div class="main-info">Удобное обучение онлайн</div>
+                    <div class="main-info">Новые современные методики</div>
+                    <div class="main-info">Профессиональные учителя из России и Китая</div>
+                </div>
+                <div class="main-right-part">
+                    <div class="button-big get-free-lesson">Бесплатный урок</div>
+                </div>
             </div>
         </div>
-        <div class="advantages-block">
-            <div class="info-graphic advantage">
-                <div class="info-graphic-img">
-                    <img src="public/IMG/advantages/1.png" alt="" srcset="">
+        <div class="advantages-background">
+            <div class="advantages-block">
+                <div class="info-graphic advantage">
+                    <div class="info-graphic-img">
+                        <img src="public/IMG/advantages/1.png" alt="" srcset="">
+                    </div>
+                    <div class="info-graphic-wrapper">
+                        <div class="info-graphic-label">Актуальность</div>
+                        <div class="info-graphic-extra">Разработанные по последним тенденциям программы обучения</div>
+                    </div>
                 </div>
-                <div class="info-graphic-label">Актуальность</div>
-                <div class="info-graphic-extra">Разработанные по последним тенденциям программы обучения</div>
-            </div>
-            <div class="info-graphic advantage">
-                <div class="info-graphic-img">
-                    <img src="public/IMG/advantages/2.png" alt="" srcset="">
+                <div class="info-graphic advantage">
+                    <div class="info-graphic-img">
+                        <img src="public/IMG/advantages/2.png" alt="" srcset="">
+                    </div>
+                    <div class="info-graphic-wrapper">
+                        <div class="info-graphic-label">Качество</div>
+                        <div class="info-graphic-extra">Профессиональные преподаватели из России и Китая</div>
+                    </div>
                 </div>
-                <div class="info-graphic-label">Качество</div>
-                <div class="info-graphic-extra">Профессиональные преподаватели из России и Китая</div>
-            </div>
-            <div class="info-graphic advantage">
-                <div class="info-graphic-img">
-                    <img src="public/IMG/advantages/3.png" alt="" srcset="">
+                <div class="info-graphic advantage">
+                    <div class="info-graphic-img">
+                        <img src="public/IMG/advantages/3.png" alt="" srcset="">
+                    </div>
+                    <div class="info-graphic-wrapper">
+                        <div class="info-graphic-label">Гибкость</div>
+                        <div class="info-graphic-extra">Любое место и время, удобное именно для вас</div>
+                    </div>
                 </div>
-                <div class="info-graphic-label">Гибкость</div>
-                <div class="info-graphic-extra">Любое место и время, удобное именно для вас</div>
-            </div>
-            <div class="info-graphic advantage">
-                <div class="info-graphic-img">
-                    <img src="public/IMG/advantages/4.png" alt="" srcset="">
+                <div class="info-graphic advantage">
+                    <div class="info-graphic-img">
+                        <img src="public/IMG/advantages/4.png" alt="" srcset="">
+                    </div>
+                    <div class="info-graphic-wrapper">
+                        <div class="info-graphic-label">Доступность</div>
+                        <div class="info-graphic-extra">Цена за 1 занятие от 990 рублей</div>
+                    </div>
                 </div>
-                <div class="info-graphic-label">Доступность</div>
-                <div class="info-graphic-extra">Цена за 1 занятие от 990 рублей</div>
             </div>
         </div>
         <div class="block how-it-works">
@@ -94,10 +103,10 @@
                 <div class="text-img-infographic">
                     <div class="text-side">
                         <div class="title">
-                            <div>1. Запишись на бесплатный урок</div>
+                            <div>1. Запишитесь на бесплатный урок</div>
                         </div>
                         <div class="info">
-                            <div>Подберем индивидуальный курс, соответствующий уровню знаний и вашим целям. расскажем о процессе обучения в нашей школе и выберем вам преподвателя.</div>
+                            <div>Подберем индивидуальный курс,<br>соответствующий уровню знаний и вашим<br>целям. расскажем о процессе обучения в<br>нашей школе и выберем вам преподвателя.</div>
                         </div>
                     </div>
                     <div class="img-side">
@@ -113,7 +122,7 @@
                             <div>2. Составьте свое расписание</div>
                         </div>
                         <div class="info">
-                            <div>Выберете подходящее для вас время. Неважно: утром, днем или ночью, из дома. на работе или в путешествиии. Учим, когда удобно именно вам</div>
+                            <div>Выберете подходящее для вас время.<br>Неважно: утром, днем или ночью, из дома, на<br>работе или в путешествиии. Учим, когда<br>удобно именно вам</div>
                         </div>
                     </div>
                 </div>
@@ -123,7 +132,7 @@
                             <div>3. Приступайте к занятиям</div>
                         </div>
                         <div class="info">
-                            <div>Устраивайтесь поудобнее у вашего монитора и подключайтесь. Все материалы курса уже ждум вас в личном кабинете.</div>
+                            <div>Устраивайтесь поудобнее у вашего монитора<br>и подключайтесь. Все материалы курса уже<br>ждут вас в личном кабинете.</div>
                         </div>
                     </div>
                     <div class="img-side">
@@ -133,8 +142,58 @@
             </div>
             <div class="button-big get-free-lesson" id="bottom">Бесплатный урок</div>
         </div>
-        <div class="footer">
-
+        <div class="about-project-background">
+            <div class="block about-project">
+                <div class="header-wrapper">
+                    <h2>Почему мы?</h2>
+                </div>
+                <div class="info-block">
+                    <div class="left-text">
+                        <div class="top">С нами вы поймете, что китайский язык проще и доступнее, чем кажется, а онлайн образование станет неотъемлемой частью вашей жизни.</div>
+                        <div class="middle"> Пора забыть про скучные учебники с миллионами страниц и переключиться на современные презентации с интерактивными заданиями.</div>
+                        <div class="bottom">
+                            Хотите понимать китайское кино и <br>переводить популярные песни, принимать участие в тематических разговорных клубах и читать интересные статьи на китайском? Записывайтесть к нам.
+                        </div>
+                    </div>
+                    <div class="right-text">
+                        <div class="top">Наша школа предлагает:</div>
+                        <div class="middle">
+                            Китайский для начинающих<br>
+                            Подготовка к HSK/HSKK<br>
+                            Разбор ЕГЭ/ГИА<br>
+                            Деловой китайский
+                        </div>
+                    </div>
+                </div>
+                <div class="button-big get-free-lesson" id="bottom">Бесплатный урок</div>
+            </div>
+        </div>
+        <div class="footer-background">
+            <div class="footer">
+                <div class="top">
+                    <div class="logo" onclick="location.href=location.origin">
+                        <img src="../public/IMG/header/chinalang_label.png"  alt="" class="logo-label">
+                        <img src="../public/IMG/header/triangle_logo.png"  alt="" class="logo-img">
+                    </div>
+                    <div class="social-networks">
+                        <div class="text">Социальные сети</div>
+                        <div class="wrapper">
+                            <a href="https://www.facebook.com/chinalangofficial/" target="_blank" class="facebook-link" alt="facebook"></a>
+                            <a href="https://instagram.com/chinalang_ru?igshid=r671qs2e180j" target="_blank" class="instagram-link" alt="instagram"></a>
+                            <a href="https://vk.com/chinalang_ru" target="_blank" class="vk-link" alt="vk"></a>
+                            <a href="https://www.pinterest.ru/chinalang/" target="_blank" class="printerest-link" alt="printerest"></a>
+                            <a href="t.me/chinalang_ru" class="telegram-link" alt="telegram"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="middle">
+                    <div>Chinalang</div>
+                    <a href="">О школе</a>
+                    <a href="">Связаться с нами</a>
+                    <a href="">Записаться на бесплатный урок</a>
+                    <div>© Chinalang</div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="/public/JS/jquery-3.4.1.js"></script>
@@ -145,6 +204,7 @@
     <script src="/public/JS/UI/notification-window.js"></script>
     <script src="/public/JS/Event.js"></script>
     <script src="/public/JS/request.js"></script>
+    <script src="/public/JS/header.js"></script>
     <script src="/public/JS/quick-start.js"></script>
 </body>
 </html>
