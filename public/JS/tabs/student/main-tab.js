@@ -69,9 +69,10 @@ async function renderMain(user) {
     });
     
     function createInfoBlock() {
+        const courseLink = `<a href=${`/lk/courses?id=${userCourse.id}`}>${userCourse.name}</a>`;
         return new ObjectWrapper('info-block', [
             new Label('greetings-label', `你好, ${user.username}`),
-            new Label('current-course-label', temp.length ? `Текущий курс: ${userCourse.name}` : 'Вы пока не подписаны на курсы'),
+            new Label('current-course-label', temp.length ? `Текущий курс: ${courseLink}` : 'Вы пока не подписаны на курсы'),
             new Label('next-meeting-label', temp.length ? 'Следующее занятие<br><b>01.03.2020</b>' : ''),
             new Label('current-class-label', userClass && userClass.name ? userClass.name : 'По поводу уроков напишите вашему преподавателю'),
         ]);

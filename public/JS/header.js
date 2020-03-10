@@ -37,11 +37,7 @@ async function renderHeader(user) {
                         // const photo = auth.get('photo');
                         child.image.attr('src', user && user.photo ? `data:image/*;base64,${user.photo}` : child.defaultImg);
                         child.object.click(() => {
-                            const children = [
-                                new Button('exit-button', 'Выход')
-                            ];
-
-                            const window = new DataWindow('user-menu', [], children);
+                            const window = new DataWindow('user-menu', [], [new Button('exit-button', 'Выход')]);
                             window.render('');
                             window.renderChildren(button => {
                                 if (button.className === 'exit-button') {
@@ -49,9 +45,88 @@ async function renderHeader(user) {
                                 }
                             }); 
                         });
+                    } else if (child.className === 'contacts') {
+                        child.object.click(async () => {
+                            // const window = new DataWindow('user-menu', [], [
+                            //     new Button('feedback-button', 'Обратная связь'),
+                            //     new Button('callback-button', 'Заказать звонок'),
+                            //     new Button('collab-button', 'Вопросы сотрудничеста')
+                            // ]);
+                            // window.render('');
+                            // window.renderChildren(button => {
+                            //     if (button.className === 'exit-button') {
+                            //         button.object.click(() => auth.logOut());
+                            //     }
+                            // }); 
+                            const data = auth.getData();
+                            await createFeedbackWindow(data);
+                        })
                     }
                 })
                 break;
         }
     });
+}
+
+async function createFeedbackWindow(data = {}) {
+    const window = new DataWindow('contacts-window', [], [
+        new Label('contacts-label', 'Связаться с нами'),
+        new ObjectWrapper('contact-fields', [
+            new InputField('username', 'username', 'Имя пользователя', data && data.username ? data.username : '', true, data && data.username ? true : false),
+            new InputField('email', 'email', 'Эл. почта', data && data.email ? data.email : '', true, data && data.email ? true : false),
+            new Label('message-type-label', 'Тема сообщения'),
+            new Select('message-type', [
+                { value: 'feedback', text: 'Обратная связь' },
+                { value: 'callback', text: 'Заказать звонок' },
+                { value: 'collab', text: 'Вопросы сотрудничеста' },
+                { value: 'another', text: 'Другое' }
+            ]),
+            new TextArea('message-text'),
+            new Button('submit', 'Отправить')
+        ])
+    ])
+
+    window.render('');
+    window.renderChildren(child => {
+        if (child.isTypeOf('objectWrapper')) child.renderChildren(wrapperChild => {
+            if (wrapperChild.isTypeOf('textArea')) wrapperChild.label.text('Текст сообщения')
+            else if (wrapperChild.isTypeOf('button')) wrapperChild.object.click(async e => {
+                e.stopPropagation();
+                const wrapper = window.children.find(c => c.isTypeOf('objectWrapper')).children;
+                let flag = true;
+                const data = {};
+
+                for (child in wrapper) {
+                    const c = wrapper[child];
+                    if (['username', 'email'].includes(c.className)) {
+                        const value = c.input.val();
+                            if (c.input.attr('required')) {
+                                if (value.isEmpty()) {
+                                    flag = false;
+                                    c.input.focus();
+                                    notificationController.error('Необходимо заполнить выделенные поля!')
+                                    break;
+                                }
+                            }
+
+                            data[c.className] = value;
+                    } else if (c.isClassOf('message-type')) data['type'] = c.getSelected();
+                    else if (c.isClassOf('message-text')) data['text'] = c.input.val();
+                }
+
+                if (flag) {
+                    const res = await request.post(`${location.origin}/contact`, JSON.stringify(data))
+                        .catch(e => {
+                            console.error(e);
+                            notificationController.error(e.error.responseText);
+                        })
+                    
+                    if (res.status === 'success') {
+                        notificationController.success(res.response);
+                        window.destroy();
+                    }
+                }
+            })
+        });
+    })
 }

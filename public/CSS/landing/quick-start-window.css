@@ -68,6 +68,25 @@
     margin: 0 auto;
 }
 
+.contacts-window-background > .contacts-window {
+    max-width: 400px;
+}
+
+.contacts-window-background > .contacts-window > .inputs {
+    width: 100%;
+}
+
+.contact-fields .message-type-label {
+    text-align: left;
+    padding-left: 5px;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.message-type {
+    margin-bottom: 5px;
+}
+
 @media (min-width: 1280px) {
     .header {
         width: 1280px;

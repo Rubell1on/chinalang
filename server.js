@@ -916,3 +916,43 @@ app.get('/api/download', async (req, res) => {
             break;
     }
 })
+
+app.post('/contact', async (req, res) => {
+    const q = req.body;
+
+    const messageType = {
+        feedback: 'Обратная связь',
+        callback: 'Заказать звонок',
+        collab: 'Вопросы сотрудничества',
+        another: 'Обратная связь (другое)'
+    }
+
+    const email = 'catchyclickstudio@gmail.com';
+
+    const toChinalang = new gAPI.messageBuilder(
+        {
+            name: 'chinaLang', 
+            email
+        }, 
+        email, 
+        messageType[q.type], 
+        `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
+        ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}`
+    ).build();
+
+    await gmailClient.sendMessage(toChinalang);
+
+    const toUser = new gAPI.messageBuilder(
+        {
+            name: 'chinaLang', 
+            email
+        }, 
+        q.email, 
+        'Благодарим за обратную связь!', 
+        `Уважаемый, ${q.username}!
+        <br>Ваше сообщение было получено! В ближайшее время с вами свяжутся сотрудники chinalang!`
+    ).build();
+
+    await gmailClient.sendMessage(toUser);
+    res.status(201).send('Ваше сообщение отправлено!');
+})

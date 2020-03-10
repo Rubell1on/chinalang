@@ -135,14 +135,14 @@ class DataWindow extends SingleCustomWindow {
 }
 
 class InputField extends CustomWindow {
-    constructor(className, id = 'username', label = 'Имя', value = '', required = true) {
+    constructor(className, id = 'username', label = 'Имя', value = '', required = true, readonly = false) {
         super(className);
         this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
             `<div class="text-field ${this.className}">` +
                 `<label for="${id}">${label}</label>` +
-                `<input type="text" id="${id}" ${required ? 'required' : ''} value="${value}">` +
+                `<input type="text" id="${id}" ${required ? 'required' : ''} ${readonly ? 'readonly' : ''} value="${value}">` +
             '</div>';
     }
 
@@ -198,6 +198,7 @@ class TextArea extends InputField {
 
         this.input = this.object.find('textarea');
         this.controlsObject = this.object.find('.text-field-controls');
+        this.label = this.object.find('label');
     }
 }
 
