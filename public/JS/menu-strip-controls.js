@@ -8,87 +8,83 @@ const data = ['apiKey', 'role'].reduce((acc, key) => {
     return acc;
 }, {});
 
-// renderControls();
-
 async function renderControls(user) {
     const parent = 'controls';
-    // const logo = new StripImage('chinalang-logo')
-    //     .setImage('../../public/IMG/header/chinalang.png')
-    //     .render(parent);
 
-    const userData = new StripMenu('userdata', [
-        new StripSeparator('userdata-separator', 'Пользователь'),
-        // new StripSeparator('classes-left-separator', 'Баланс '),
-        // new StripButton('classes-w-russian', 'Осталось занятий с русским преподавателем')
-    ]);
-
-    // if (auth.get('role') === 'student') {
-    //     const classesData = new StripMenu('classes-data', [
-    //         new StripSeparator('classes-left', 'Баланс занятий'),
-    //         new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
-    //         new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
-    //         new Button('buy-classes', 'Пополнить')
-    //     ])
-    //     .render(parent)
-    //     .renderChildren(child => {
-    //         if (child.isTypeOf('button')) child.object.click(() => location.href = `${location.origin}/purchase`);
-    //     });
-    // }
-    const template = [
+    const headerTemplate = [
+        new ObjectWrapper('logo-wrapper', [
+            new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
+            new StripImage('chinalang-logo').setImage('../../public/IMG/header/triangle_logo.png')
+        ]),
         new StripSeparator('tabs-separator', 'Личный кабинет'),
+    ];
+
+    const bodyTemplate = [
         new StripButton('profile-tab', 'Мой профиль', '../../public/IMG/dashboard/course.png'),
         new StripButton('users-tab', 'Пользователи', '../../public/IMG/dashboard/users.png'),
         new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
         new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
         new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
         new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/blog.png')
-    ];
+    ]
 
     let children = {
         student: [
-            new StripSeparator('tabs-separator', 'Личный кабинет'),
+            ...headerTemplate,
             new StripButton('main-tab', 'Главная', '../../public/IMG/dashboard/course.png'),
             new StripButton('profile-tab', 'Мой профиль', '../../public/IMG/dashboard/course.png'),
             new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
             new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
-            new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/history.png')
         ],
-        admin: template,
-        teacher: template,
-        nativeTeacher: template
+        admin: [
+            ...headerTemplate,
+            ...bodyTemplate
+        ],
+        teacher: [
+            ...headerTemplate,
+            ...bodyTemplate
+        ],
+        nativeTeacher: [
+            ...headerTemplate,
+            ...bodyTemplate
+        ]
     };
 
     const stripMenu = new StripMenu('page-tabs', children[data.role])
         .render(parent)
         .renderChildren(c => {
-            switch(c.className) {
-                case 'main-tab':
-                    c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/main`);
-                    break;
-
-                case 'profile-tab':
-                    c.object.click(() => location.href = `${location.origin}/profile`);
-                    break;
-
-                case 'users-tab':
-                    c.object.click(() => location.href = `${location.origin}/dashboard/users`);
-                    break;
-
-                case 'courses-tab':
-                    c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/courses`);
-                    break;
-                    
-                case 'files-tab':
-                    c.object.click(() => location.href = `${location.origin}/dashboard/files`);
-                    break;
-
-                case 'blog-tab':
-                    c.object.click(() => location.href = `${location.origin}/blog`);
-                    break;
-
-                case 'history-tab':
-                    c.object.click(() => location.href = `${location.origin}/history`);
-                    break;
+            if (c.isTypeOf('objectWrapper')) {
+                c.renderChildren(() => {});
+            } else {
+                switch(c.className) {
+                    case 'main-tab':
+                        c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/main`);
+                        break;
+    
+                    case 'profile-tab':
+                        c.object.click(() => location.href = `${location.origin}/profile`);
+                        break;
+    
+                    case 'users-tab':
+                        c.object.click(() => location.href = `${location.origin}/dashboard/users`);
+                        break;
+    
+                    case 'courses-tab':
+                        c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/courses`);
+                        break;
+                        
+                    case 'files-tab':
+                        c.object.click(() => location.href = `${location.origin}/dashboard/files`);
+                        break;
+    
+                    case 'blog-tab':
+                        c.object.click(() => location.href = `${location.origin}/blog`);
+                        break;
+    
+                    case 'history-tab':
+                        c.object.click(() => location.href = `${location.origin}/history`);
+                        break;
+                }
             }
         });
 }

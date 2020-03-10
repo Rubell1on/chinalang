@@ -648,7 +648,7 @@ class StripImage extends CustomWindow {
     render(parent) {
         this.html = 
             `<div class="strip-image strip-logo ${this.className}">
-                <img src="../../public/IMG/header/chinalang.png" alt="" srcset="">
+                <img src="${this._imageValue}" alt="" srcset="">
             </div>`;
 
         super.render(parent);

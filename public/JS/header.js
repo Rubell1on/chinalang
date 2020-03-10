@@ -3,7 +3,10 @@ async function renderHeader(user) {
 
     const children = [
         new Button('menu-button', '≡'),
-        new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang.png'),
+        new ObjectWrapper('chinalang-logo-wrapper', [
+            new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
+            new StripImage('chinalang-icon').setImage('../../public/IMG/header/triangle_logo.png'),
+        ]),
         new ObjectWrapper('header-controls', [
             new DropDownList('user-menu', user.username),
             new Button('contacts', 'Контакты')
@@ -22,6 +25,10 @@ async function renderHeader(user) {
                     const value = left < 0 ? 0 : -width;
                     $('.controls').animate({'left': `${value}px`}, 200);                 
                 });
+                break;
+
+            case 'chinalang-logo-wrapper':
+                child.renderChildren(() => {});
                 break;
 
             case 'header-controls':

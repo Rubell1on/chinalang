@@ -1,6 +1,14 @@
 .content-window {
     background: none;
 }
+
+.classes-data {
+    height: initial;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    flex: auto;
+}
 .weekly-word-block {
     /* background: white; */
     /* border-radius: 10px; */
@@ -22,15 +30,23 @@
     font-size: 22px;
 }
 
- .weekly-word-block > .weekly-text {
+.weekly-word-block > .weekly-text {
     background: white;
     padding: 15px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
- }
+    height: 100px;
+}
+
+.data-wrapper.main-table-data-wrapper {
+    overflow-x: hidden;
+    height: inherit;
+}
 
 .main-table-data-wrapper > div {
     margin-bottom: 10px;
+    overflow: auto;
+    height: min-content;
 }
 
 .main-table-data-wrapper > div:last-child {
@@ -39,6 +55,13 @@
 
 .content-block-wrapper {
     display: flex;
+    flex-wrap: wrap;
+    margin: -5px -5px;
+}
+
+
+.content-block-wrapper > div {
+    margin: 5px 5px;
 }
 
 .content-block-wrapper > .weekly-word-block {

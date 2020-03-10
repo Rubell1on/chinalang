@@ -6,12 +6,16 @@
     background: #f1f1f1;
     padding: 5px 10px;
     box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
     /* background: #529AE4; */
 }
 
 .header-wrapper > .menu-button {
     display: none;
     float: left;
+    height: 30px;
+    width: 30px;
     padding: 2px 10px;
     background: white;
     /*  */
@@ -24,7 +28,6 @@
     /*  */
     position: relative;
     top: 50%;
-    left: 10px;
     transform: translateY(-50%);
 }
 
@@ -40,6 +43,17 @@
 .header-wrapper > .menu-button:hover {
     background: #24466B;
     color: white;
+}
+
+.header-wrapper > .chinalang-logo-wrapper {
+    height: 50px;
+    display: flex;
+}
+
+.header-wrapper > .chinalang-logo-wrapper > div {
+    height: 100%;
+    width: initial;
+    background: none;
 }
 
 .header-wrapper > .header-controls > .user-menu {
@@ -194,6 +208,17 @@
     .header-wrapper > .menu-button {
         display: block;
     }
+    
+    .header-wrapper > .chinalang-logo-wrapper {
+        height: 40px;
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {  
+    .header-wrapper > .chinalang-logo-wrapper {
+        height: 40px;
+    }
 }
 
 @media (min-width: 1000px) {
@@ -203,6 +228,10 @@
         margin: 0 auto;
         height: 70px;
         padding: 10px 10px;
+    }
+
+    .header-wrapper > .chinalang-logo-wrapper {
+        height: 50px;
     }
 
     .header-wrapper > .chinalang-logo {
