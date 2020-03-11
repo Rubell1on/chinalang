@@ -144,7 +144,7 @@ CheckboxButton.prototype.click = function(course, userCourses) {
 
 async function renderCoursesTable(user) {
     const controls = [
-        new Label('courses-label', 'Список курсов'),
+        new Label('window-label', 'Список курсов'),
         new SearchLine('courses-search')
     ];
 

@@ -110,7 +110,7 @@ DataTable.prototype.createNewCourse = async function(data = {}) {
     const self = this;
     const keys = Object.keys(data);
     const children = [
-        new Label('course-window-label', keys.length ? 'Редактировать курс' : 'Создать новый курс'),
+        new Label('window-label', keys.length ? 'Редактировать курс' : 'Создать новый курс'),
         new InputField('course-name'),
         new TextArea('course-description'),
         new Button('submit-course')
@@ -188,7 +188,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     ];
 
     const children = [
-        new Label('course-window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
+        new Label('window-label', keys.length ? 'Редактировать урок' : 'Создать новый урок'),
         new InputField('lesson-name'),
         new TextArea('lesson-description', controls),
         new Button('submit-class')
@@ -211,7 +211,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 
             function createFileSelect(docType) {
                 const controls = [
-                    new Label('files-label', 'Список файлов'),
+                    new Label('window-label', 'Список файлов'),
                     new SearchLine('files-search')
                 ];
             
@@ -296,7 +296,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 
 async function renderCoursesTable() {
     const controls = [
-        new Label('courses-label', 'Список курсов'),
+        new Label('window-label', 'Список курсов'),
         new Button('add-new-course'),
         new SearchLine('courses-search')
     ];

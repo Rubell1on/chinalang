@@ -70,7 +70,7 @@ async function renderHeader(user) {
 
 async function createFeedbackWindow(data = {}) {
     const window = new DataWindow('contacts-window', [], [
-        new Label('contacts-label', 'Связаться с нами'),
+        new Label('window-label', 'Связаться с нами'),
         new ObjectWrapper('contact-fields', [
             new InputField('username', 'username', 'Имя пользователя', data && data.username ? data.username : '', true, data && data.username ? true : false),
             new InputField('email', 'email', 'Эл. почта', data && data.email ? data.email : '', true, data && data.email ? true : false),

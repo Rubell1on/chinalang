@@ -31,7 +31,7 @@ async function renderHistory(user) {
 
         const historyWrapper = new ObjectWrapper('history-wrapper', [
             new ObjectWrapper('history-label-wrapper', [
-                new Label('history-label', 'История занятий')
+                new Label('window-label', 'История занятий')
             ]),
             data.length ?  table
                         : new Label('have-no-classes-history', 'На данный момент нет истории занятий')
@@ -111,7 +111,7 @@ renderPage();
 
 async function renderUsersTable() {
     const controls = [
-        new Label('users-label', 'Список пользователей'),
+        new Label('window-label', 'Список пользователей'),
         new SearchLine('users-search')
     ];
 

@@ -49,7 +49,7 @@ DataTable.prototype.updateFilesData = async function() {
 DataTable.prototype.createNewFile = async function(data = {}) {
     const self = this;
     const children = [
-        new Label('file-window-label', 'Создать новый файл'),
+        new Label('window-label', 'Создать новый файл'),
         new InputField('file-name'),
         new FileInput('file-input'),
         new Button('submit-file')
@@ -121,7 +121,7 @@ DataTable.prototype.createNewFile = async function(data = {}) {
 
 async function renderFilesTable() {
     const controls = [
-        new Label('files-label', 'Список файлов'),
+        new Label('window-label', 'Список файлов'),
         new Button('add-new-file'),
         new SearchLine('files-search')
     ];

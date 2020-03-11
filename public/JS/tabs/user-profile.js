@@ -19,7 +19,7 @@ async function renderUserProfile(data) {
     ];
 
     const children = [
-        new Label('user-profile-label', 'Изменить данные пользователя'),
+        new Label('window-label', 'Изменить данные пользователя'),
         new ObjectWrapper('user-profile-tables',[
             new DataTable('user-data-fields', [], leftTableChildren),
             new DataTable('user-photo-field', [], rightTableChildren),

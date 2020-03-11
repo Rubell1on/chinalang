@@ -70,7 +70,7 @@ DataTable.prototype.createNewBlog = async function(data = {}) {
     ];
 
     const children = [
-        new Label('course-window-label', keys.length ? 'Редактировать запись' : 'Добавить запись'),
+        new Label('window-label', keys.length ? 'Редактировать запись' : 'Добавить запись'),
         new InputField('lesson-name'),
         new TextArea('lesson-description', controls),
         new Button('submit-class')
@@ -93,7 +93,7 @@ DataTable.prototype.createNewBlog = async function(data = {}) {
 
             function createFileSelect(docType) {
                 const controls = [
-                    new Label('files-label', 'Список файлов'),
+                    new Label('window-label', 'Список файлов'),
                     new SearchLine('files-search')
                 ];
             
@@ -178,7 +178,7 @@ DataTable.prototype.createNewBlog = async function(data = {}) {
 
 async function renderBlogTable() {
     const controls = [
-        new Label('courses-label', 'Блог'),
+        new Label('window-label', 'Блог'),
         new Button('add-new-course'),
         new SearchLine('courses-search')
     ];

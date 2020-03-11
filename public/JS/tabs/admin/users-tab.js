@@ -29,7 +29,7 @@ DataTable.prototype.createNewUser = async function() {
             input.text.text(e[0]);
             input.object.click(() => {
                 const controls = [
-                    new Label('courses-label', 'Список курсов'),
+                    new Label('window-label', 'Список курсов'),
                     new SearchLine('courses-search')
                 ];
 
@@ -363,7 +363,7 @@ DataTable.prototype.updateData = async function() {
 
             const template = {
                 base: [
-                    new Label('userdata-lable', 'Редактирование данных пользователя'),
+                    new Label('window-label', 'Редактирование данных пользователя'),
                     new InputField('username', 'username', 'Имя пользователя', data.username),
                     // new InputField('role', 'role', 'Роль', data.role),
                     new ObjectWrapper('role-wrapper', [
@@ -410,7 +410,7 @@ DataTable.prototype.updateData = async function() {
                                 c.text.text('Открыть перечень');
                                 c.object.click(() => {
                                     const controls = [
-                                        new Label('courses-label', 'Список курсов'),
+                                        new Label('window-label', 'Список курсов'),
                                         new SearchLine('courses-search')
                                     ];
             
@@ -479,7 +479,7 @@ DataTable.prototype.updateData = async function() {
 
 async function renderUsersTable() {
     const controls = [
-        new Label('users-label', 'Список пользователей'),
+        new Label('window-label', 'Список пользователей'),
         new Button('add-new-user'),
         new SearchLine('users-search')
     ];
