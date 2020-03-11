@@ -16,7 +16,8 @@ async function renderMain(user) {
         
         if (res.status === 'success') {
             userCourse = res.response[0];
-            userClass = userCourse.classes.find(c => c.id === peekBack(currCourse.classes).id);
+            const currClass = currCourse.classes.length ? peekBack(currCourse.classes) : undefined;
+            userClass = currClass && userCourse ? userCourse.classes.find(c => c.id === currClass.id) : undefined;
         }
     }
 
@@ -69,12 +70,13 @@ async function renderMain(user) {
     });
     
     function createInfoBlock() {
-        const courseLink = `<a href=${`/lk/courses?id=${userCourse.id}`}>${userCourse.name}</a>`;
+        const courseLink = userCourse && userCourse.id ? `<a href=${`/lk/courses?id=${userCourse.id}`}>${userCourse.name}</a>` : '';
+        const classLink = userClass && userClass.id ? `<a href=${`/lk/courses?id=${userCourse.id}`}&classId=${userClass.id}>${userClass.name}</a>` : '';
         return new ObjectWrapper('info-block', [
             new Label('greetings-label', `你好, ${user.username}`),
-            new Label('current-course-label', temp.length ? `Текущий курс: ${courseLink}` : 'Вы пока не подписаны на курсы'),
+            new Label('current-course-label', courseLink ? `Текущий курс: ${courseLink}` : 'Вы пока не подписаны на курсы'),
             new Label('next-meeting-label', temp.length ? 'Следующее занятие<br><b>01.03.2020</b>' : ''),
-            new Label('current-class-label', userClass && userClass.name ? userClass.name : 'По поводу уроков напишите вашему преподавателю'),
+            new Label('current-class-label', classLink ? classLink : 'По поводу уроков напишите вашему преподавателю'),
         ]);
     }
 

@@ -71,3 +71,14 @@ class Enum {
 }
 
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
+
+location.on = function(event, callback) {
+    const query = this.getQuery();
+    const fullQuery = Object.entries(query);
+    const targetQuery = fullQuery.find(q => q[0] === event);
+    if (targetQuery) {
+        const target = {};
+        target[targetQuery[0]] = targetQuery[1];
+        callback(target, query);
+    }
+}

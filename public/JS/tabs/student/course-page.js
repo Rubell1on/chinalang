@@ -45,24 +45,7 @@ async function renderCoursePage(userData) {
                                     strip.text.text(c.name);
                                     strip.object.css('background', '#84BC57')
                                     strip.object.click(() => {
-                                        const classesWindow = new DataWindow('class-window', [], [
-                                            new DataTable('class-table', [], [
-                                                new Label('class-label', c.name),
-                                                new ObjectWrapper('class-description-wrapper', [
-                                                    new Label('class-description-label', 'Описание урока'),
-                                                    new Text('class-description-text', c.description)
-                                                ])
-                                            ])
-                                        ]);
-                                        classesWindow.render('');
-                                        classesWindow.renderChildren(table => {
-                                            table.renderChildren(child => {
-                                                if (child.isTypeOf('objectWrapper')) {
-                                                    child.renderChildren(() => {});
-                                                }
-                                            });
-                                        });
-                                        classesWindow.object.append('<script src="../../../public/JS/image-loader.js"></script>');
+                                        createClassWindow(c.name, c.description);
                                     });
                                 } else {
                                     // strip.object.css('opacity', 0.7);
@@ -78,12 +61,24 @@ async function renderCoursePage(userData) {
                 });
             }      
         });
+
+        location.on('classId', query => {
+            const classesData = userCourseData && userCourseData.classes ? userCourseData.classes.sort((a, b) => a.id - b.id) : undefined;
+            const rawCurrClass = classesData.find(c => c.id === query.classId);
+            if (rawCurrClass) {
+                const currClass = courseData.classes
+                .sort((a, b) => a.id - b.id)
+                .find(c => c.id === rawCurrClass.id);
+
+                if (currClass) createClassWindow(currClass.name, currClass.description);
+            }
+        })
     }
     // coursesTable.updateCoursesData([]);
     // coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
- renderPage();
+renderPage();
 
 async function renderPage() {
     renderPageLoader();
@@ -98,4 +93,25 @@ async function renderPage() {
     } else {
         location.reload();
     }
+}
+
+function createClassWindow(name, description) {
+    const classesWindow = new DataWindow('class-window', [], [
+        new DataTable('class-table', [], [
+            new Label('class-label', name),
+            new ObjectWrapper('class-description-wrapper', [
+                new Label('class-description-label', 'Описание урока'),
+                new Text('class-description-text', description)
+            ])
+        ])
+    ]);
+    classesWindow.render('');
+    classesWindow.renderChildren(table => {
+        table.renderChildren(child => {
+            if (child.isTypeOf('objectWrapper')) {
+                child.renderChildren(() => {});
+            }
+        });
+    });
+    classesWindow.object.append('<script src="../../../public/JS/image-loader.js"></script>');
 }
