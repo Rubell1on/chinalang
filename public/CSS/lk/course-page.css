@@ -37,6 +37,28 @@
     color: gray;
 }
 
+.courses-table-data-wrapper > .objects-wrapper > .description-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.courses-table-data-wrapper > .objects-wrapper > .objects-wrapper > .label, .show-hide-description {
+    text-align: left;
+    box-sizing: border-box;
+    padding-left: 5px;
+    margin-bottom: 0;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: gray;
+}
+
+.courses-table-data-wrapper > .objects-wrapper > .objects-wrapper > .show-hide-description {
+    padding: 0;
+    background: none;
+    border-bottom: 1px solid;
+    border-radius: 0;
+}
+
 .courses-table-data-wrapper > .course-name-wrapper > .label {
     text-align: center;
     box-sizing: border-box;

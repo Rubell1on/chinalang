@@ -19,7 +19,10 @@ async function renderCoursePage(userData) {
                 new Label('course-name', courseData.name)
             ]),
             new ObjectWrapper('description-wrapper', [
-                new Label('description-label', 'Описание курса'),
+                new ObjectWrapper('description-top', [
+                    new Label('description-label', 'Описание курса'),
+                    new CheckboxButton('show-hide-description', true),
+                ]),
                 new Text('course-description', courseData.description)
             ]),
             new ObjectWrapper('classes-wrapper',[
@@ -34,8 +37,8 @@ async function renderCoursePage(userData) {
         coursesTable.renderChildren(object => {
             if (object.isTypeOf('objectWrapper')) {
                 object.renderChildren(child => {
-                    if (object.className === 'classes-wrapper') {
-                        if (child.className === 'classes-table') {
+                    if (object.isClassOf('classes-wrapper')) {
+                        if (child.isClassOf('classes-table')) {
                             const strips = courseData.classes.map(c => {
                                 const strip = new DataStrip(c.name.decrease(), c);
                                 strip.parent = object;
@@ -55,8 +58,29 @@ async function renderCoursePage(userData) {
 
                             child.children = strips;
                         }
-                    } else if (child.className === 'courses-name-wrapper') {
+                    } else if (child.isClassOf('courses-name-wrapper')) {
                         child.renderChildren(() => {});
+                    } else if (child.isClassOf('description-top')) {
+                        child.renderChildren(c => {
+                            if (c.isClassOf('show-hide-description')) {
+                                if (c.isTypeOf('checkboxButton')) {
+                                    const state = { true: 'свернуть', false: 'развернуть' }
+                                    c.object.text(state[c.enabled]);
+                                    child.object.click(() => {
+                                        const description = coursesTable.children.find(c => c.isClassOf('description-wrapper')).children.find(c => c.isTypeOf('text'));
+                                        if (c.enabled) {
+                                            description.object.css('display', 'none');
+                                            c.enabled = false;
+                                        } else {
+                                            description.object.css('display', 'block');
+                                            c.enabled = true;
+                                        }
+        
+                                        c.object.text(state[c.enabled]);
+                                    })
+                                }
+                            }
+                        })
                     }
                 });
             }      
