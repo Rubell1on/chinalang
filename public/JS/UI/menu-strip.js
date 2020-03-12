@@ -2,7 +2,7 @@ class StripButton extends SingleCustomWindow {
     constructor(className, text, imgPath = '') {
         super(className);
         this.html = 
-        `<div class="strip-button ${className}">` +
+        `<div class="strip-button ${this.spacedClassName}">` +
             '<div class="icon">' +
                 `<img src=${imgPath} alt="" srcset="">` +
             '</div>' +

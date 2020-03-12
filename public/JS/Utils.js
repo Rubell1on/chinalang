@@ -82,3 +82,11 @@ location.on = function(event, callback) {
         callback(target, query);
     }
 }
+
+function typeOf(object) {
+    return {}.toString.call(object);
+}
+
+function isTypeOf(object, value) {
+    return {}.toString.call(object).includes(value);
+}

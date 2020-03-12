@@ -121,7 +121,7 @@ app.post('/free', async (req, res) => {
             });
         const message = new gAPI.messageBuilder(
             {
-                name: 'chinaLang', 
+                name: 'Chinalang', 
                 email: 'catchyclickstudio@gmail.com'
             }, 
             'dablaev@yandex.ru', 
@@ -931,7 +931,7 @@ app.post('/contact', async (req, res) => {
 
     const toChinalang = new gAPI.messageBuilder(
         {
-            name: 'chinaLang', 
+            name: 'Chinalang', 
             email
         }, 
         email, 
@@ -944,7 +944,7 @@ app.post('/contact', async (req, res) => {
 
     const toUser = new gAPI.messageBuilder(
         {
-            name: 'chinaLang', 
+            name: 'Chinalang', 
             email
         }, 
         q.email, 

@@ -25,6 +25,10 @@
     transition: background 200ms ease;
 }
 
+.strip-button-selected {
+    background: #24466B;
+}
+
 .strip-separator {
     min-height: 20px;
     margin-left: 10px;

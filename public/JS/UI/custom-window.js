@@ -1,8 +1,20 @@
 class SingleCustomWindow {
     constructor(className) {
         this[Symbol.toStringTag] = 'singleCustomWindow';
-        this.className = className;
+        this._className = className;
         this.html = '';
+    }
+
+    get className() {
+        return isTypeOf(this._className, 'String') ? this._className : this._className.join('.');
+    }
+
+    get spacedClassName() {
+        return isTypeOf(this._className, 'String') ? this._className : this._className.join(' ');
+    }
+
+    set className(value) {
+        this._className = value;
     }
 
     prepandRender(parent = '') {
@@ -63,8 +75,20 @@ class SingleCustomWindow {
 class CustomWindow {
     constructor(className) {
         this[Symbol.toStringTag] = 'customWindow';
-        this.className = className;
+        this._className = className;
         this.html = '';
+    }
+
+    get className() {
+        return isTypeOf(this._className, 'String') ? this._className : this._className.join('.');
+    }
+
+    get spacedClassName() {
+        return isTypeOf(this._className, 'String') ? this._className : this._className.join(' ');
+    }
+
+    set className(value) {
+        this._className = value;
     }
 
     prepandRender(parent) {

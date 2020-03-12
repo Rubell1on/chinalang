@@ -4,6 +4,10 @@
     font-family: 'Calibri', 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
 }
 
+a {
+    color: white;
+}
+
 .data-window > .data-wrapper {
     height: calc(100% - 90px);
 }

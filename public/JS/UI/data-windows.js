@@ -3,11 +3,11 @@ class DataTable extends SingleCustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'dataTable';
         
-        this.controlsWrapper = `${this.className}-controls-wrapper`;
+        this.controlsWrapper = `${this.spacedClassName}-controls-wrapper`;
         this.html = 
-            `<div class="data-window ${className}">` +
+            `<div class="data-window ${this.spacedClassName}">` +
                 `<div class="${this.controlsWrapper}"></div>` +
-                `<div class="data-wrapper ${this.className}-data-wrapper"></div>` + 
+                `<div class="data-wrapper ${this.spacedClassName}-data-wrapper"></div>` + 
             '</div>';
         this.children = children;
         this.controls = controls;
@@ -53,7 +53,7 @@ class DataStrip extends CustomWindow {
         this.data = data;
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
         this.html = 
-            `<div class="data user data-strip ${className}">` +
+            `<div class="data user data-strip ${this.spacedClassName}">` +
                 '<div class="icon-wrapper">' +
                     '<div class="icon">' +
                         `<img src="${this.defaultImg}" alt="" srcset="">` +
@@ -97,8 +97,8 @@ class DataWindow extends SingleCustomWindow {
         this.children = children;
         this.onSubmit = new CustomEvent();
         this.html = 
-            `<div class="overlay-window-background ${this.className}-background">` +
-            `<div class="overlay-window ${this.className}">` +
+            `<div class="overlay-window-background ${this.spacedClassName}-background">` +
+            `<div class="overlay-window ${this.spacedClassName}">` +
                 `<div class="inputs">` +
                 '</div>' +
             '</div>' +
@@ -120,16 +120,16 @@ class DataWindow extends SingleCustomWindow {
 
         this.inputs = this.object.find(`.inputs`);
 
-        $(`.${this.className}-background`)
+        $(`.${this.spacedClassName}-background`)
             .click(() => this.destroy())
-            .find(`.${this.className}`)
+            .find(`.${this.spacedClassName}`)
             .click((e) => e.stopPropagation());
     }
 
     destroy() {
-        const object = $(`.${this.className}-background`);
+        const object = $(`.${this.spacedClassName}-background`);
         if (!$.isEmptyObject(object)) {
-            $(`.${this.className}-background`).remove();
+            $(`.${this.spacedClassName}-background`).remove();
         }
     }
 }
@@ -140,7 +140,7 @@ class InputField extends CustomWindow {
         this[Symbol.toStringTag] = 'inputField';
 
         this.html = 
-            `<div class="text-field ${this.className}">` +
+            `<div class="text-field ${this.spacedClassName}">` +
                 `<label for="${id}">${label}</label>` +
                 `<input type="text" id="${id}" ${required ? 'required' : ''} ${readonly ? 'readonly' : ''} value="${value}">` +
             '</div>';
@@ -179,7 +179,7 @@ class TextArea extends InputField {
         this.controls = controls;
 
         this.html = 
-            `<div class="text-field ${this.className}">` +
+            `<div class="text-field ${this.spacedClassName}">` +
                 '<label for="username">Имя</label>' +
                 '<div class="text-field-controls"></div>' +
                 '<textarea type="text" id="username" required></textarea>' +
@@ -207,7 +207,7 @@ class Button extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'button';
 
-        this.html = `<div class="button-big ${className}">${value}</div>`;
+        this.html = `<div class="button-big ${this.spacedClassName}">${value}</div>`;
     }
 }
 
@@ -216,7 +216,7 @@ class CheckboxButton extends SingleCustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'checkboxButton';
 
-        this.html = `<div class="button-big checkbox-button ${className}"></div>`;
+        this.html = `<div class="button-big checkbox-button ${this.spacedClassName}"></div>`;
         this.enabled = enabled;
     }
 }
@@ -227,7 +227,7 @@ class SearchLine extends CustomWindow {
         this[Symbol.toStringTag] = 'searchLine';
 
         this.html = 
-            `<div class="search-line ${className}">` +
+            `<div class="search-line ${this.spacedClassName}">` +
                 '<input type="text" name="" id="" placeholder="Поиск">' +
             '</div>';
     }
@@ -244,7 +244,7 @@ class Label extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'label';
 
-        this.html = `<div class="label ${className}">${text}</div>`;
+        this.html = `<div class="label ${this.spacedClassName}">${text}</div>`;
     }
 
     render(parent) {
@@ -257,7 +257,7 @@ class ObjectWrapper extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'objectWrapper';
 
-        this.html = `<div class="objects-wrapper ${className}"></div>`;
+        this.html = `<div class="objects-wrapper ${this.spacedClassName}"></div>`;
         this.children = children;
     }
 
@@ -280,13 +280,13 @@ class YesNoWindow extends CustomWindow {
 
         this.children = [
             new Label(`${name}-title`, title),
-            new Label(`${className}-info`, info),
+            new Label(`${this.spacedClassName}-info`, info),
             new ObjectWrapper(`${name}-controls`, [new Button(`${name}-yes`, 'Да'), new Button(`${name}-no`, 'Нет')])
         ];
     }
 
     render(parent) {
-        this.object = new DataWindow(this.className, [], this.children);
+        this.object = new DataWindow(this.spacedClassName, [], this.children);
         this.object.render(parent);
         this.object.renderChildren(child => {
             child.parent = this;
@@ -313,7 +313,7 @@ class FileInput extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'fileInput';
 
-        this.html = `<div class="fileInput-wrapper ${this.className}">
+        this.html = `<div class="fileInput-wrapper ${this.spacedClassName}">
                         <input type="file" name="fileData" class="fileInput">
                     </div>`;
     }
@@ -332,7 +332,7 @@ class DropDownList extends CustomWindow {
         this.defaultImg = "../../../public/IMG/dashboard/default_user.png";
 
         this.html = 
-            `<div class="dropdown ${className}">
+            `<div class="dropdown ${this.spacedClassName}">
                 <div class="dropdown-text-wrapper">
                     <div class="dropdown-text">${text}</div>
                 </div>
@@ -366,8 +366,8 @@ class PageLoader extends CustomWindow {
         
         this.children = children;
         this.html = 
-            `<div class="page-loader ${this.className}">`+
-                `<div class="page-loader-overlay ${this.className}-overlay">`+
+            `<div class="page-loader ${this.spacedClassName}">`+
+                `<div class="page-loader-overlay ${this.spacedClassName}-overlay">`+
 
                 '</div>' +
             '</div>';
@@ -399,7 +399,7 @@ class Image extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'image';
 
-        this.html = `<img class="image-widget ${this.className}" src=${src}>`
+        this.html = `<img class="image-widget ${this.spacedClassName}" src=${src}>`
     }
 
     render(parent) {
@@ -416,7 +416,7 @@ class Text extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'text';
 
-        this.html = `<div class="text-widget ${this.className}">${text}</div>`;
+        this.html = `<div class="text-widget ${this.spacedClassName}">${text}</div>`;
     }
 }
 
@@ -501,7 +501,7 @@ class PriceBlock extends CustomWindow {
 
     render(parent) {
         this.html = `
-            <div class="objects-wrapper info-blocks ${this.className}">
+            <div class="objects-wrapper info-blocks ${this.spacedClassName}">
                 <div class="label classes-label">${this._classesCount} занятий</div>
                 <div class="label new-price">${this._newPrice} руб/урок</div>
                 <div class="label old-price">${this._oldPrice} руб/урок</div>
@@ -527,7 +527,7 @@ class StripMenu extends CustomWindow {
     }
 
     render(parent) {
-        this.html = `<div class="menu-strip ${this.className}"></div>`;
+        this.html = `<div class="menu-strip ${this.spacedClassName}"></div>`;
 
         super.render(parent);
 
@@ -565,7 +565,7 @@ class StripSeparator extends CustomWindow {
 
     render(parent) {
         this.html = 
-            `<div class="strip-separator ${this.className}">
+            `<div class="strip-separator ${this.spacedClassName}">
                 <!-- <div class="icon">
                     <img src="../../public/IMG/dashboard/users.png" alt="" srcset="">
                 </div> -->
@@ -616,7 +616,7 @@ class StripButton extends CustomWindow {
             </div>`;
 
         this.html = 
-            `<div class="strip-button ${this.className}">
+            `<div class="strip-button ${this.spacedClassName}">
                 ${this._imageValue ? imgTemp : ''}
                 <div class="text">${this._textValue}</div>
             </div>`;
@@ -648,7 +648,7 @@ class StripImage extends CustomWindow {
 
     render(parent) {
         this.html = 
-            `<div class="strip-image strip-logo ${this.className}">
+            `<div class="strip-image strip-logo ${this.spacedClassName}">
                 <img src="${this._imageValue}" alt="" srcset="">
             </div>`;
 
@@ -664,7 +664,7 @@ class Table extends CustomWindow {
         this[Symbol.toStringTag] = 'table';
 
         this.children = children;
-        this.html = `<table class="table-wrapper ${this.className}"><tbody></tbody></table>`;
+        this.html = `<table class="table-wrapper ${this.spacedClassName}"><tbody></tbody></table>`;
     }
 
     render(parent) {
@@ -690,7 +690,7 @@ class TableRow extends CustomWindow {
         this[Symbol.toStringTag] = 'tableRow';
 
         this.children = children;
-        this.html = `<tr class="table-row ${this.className}"></tr>`;
+        this.html = `<tr class="table-row ${this.spacedClassName}"></tr>`;
     }
 
     renderChildren(callback) {
@@ -710,7 +710,7 @@ class TableCell extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'tableCell';
 
-        this.html = `<td class="table-cell ${this.className}">${text}</td>`;
+        this.html = `<td class="table-cell ${this.spacedClassName}">${text}</td>`;
     }
 }
 
@@ -719,7 +719,7 @@ class Select extends CustomWindow {
         super(className);
         this[Symbol.toStringTag] = 'select';
 
-        this.html = `<select class="select ${this.className}"></select>`;
+        this.html = `<select class="select ${this.spacedClassName}"></select>`;
         this.children = children;
     }
 
@@ -748,6 +748,6 @@ class SelectOption extends CustomWindow {
         this[Symbol.toStringTag] = 'selectOption';
         
         this.data = data;
-        this.html = `<option class="option ${this.className}" value="${this.data && this.data.value ? this.data.value : ''}">${this.data && this.data.text ? this.data.text : ''}</option>`;
+        this.html = `<option class="option ${this.spacedClassName}" value="${this.data && this.data.value ? this.data.value : ''}">${this.data && this.data.text ? this.data.text : ''}</option>`;
     }
 }
