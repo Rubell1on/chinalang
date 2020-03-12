@@ -958,3 +958,7 @@ app.post('/contact', async (req, res) => {
     await gmailClient.sendMessage(toUser);
     res.status(201).send('Ваше сообщение отправлено!');
 })
+
+app.get('/auth', (req, res) => {
+    
+})
