@@ -28,7 +28,9 @@ app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(express.json());
 
-app.listen(3000, '192.168.0.106', () => {
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
     db.connect()
         .then(res => {
             console.log('Подключение к серверу MySQL успешно установлено')
