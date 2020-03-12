@@ -6,7 +6,10 @@
         "express": "^4.17.1",
         "googleapis": "^27.0.0",
         "js-base64": "^2.5.2",
-        "mysql2": "^2.1.0"
+        "moment": "^2.24.0",
+        "moment-timezone": "^0.5.28",
+        "mysql2": "^2.1.0",
+        "request": "^2.88.2"
     },
     "scripts": {
         "start": "node server.js"
