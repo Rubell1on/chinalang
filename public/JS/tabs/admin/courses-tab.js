@@ -329,6 +329,8 @@ async function renderPage() {
 
     renderHeader(user);
     renderControls(user);
+
+    $('.courses-tab').addClass('strip-button-selected');
 }
 
 renderPage();

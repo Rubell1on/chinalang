@@ -9,7 +9,7 @@
 .menu-strip.classes-data > .strip-button > .text {
     margin: 0px 10px;
     padding: 0px;
-    color: #529AE4;
+    color: white;
 }
 
 .menu-strip.classes-data > .w-native {
@@ -17,12 +17,18 @@
 }
 
 .menu-strip.classes-data > .strip-separator > .text {
-    color: #529AE4;
+    color: white;
     margin-bottom: 10px;
 }
 
 .menu-strip.classes-data > .buy-classes {
     font-size: 20px;
+}
+
+.menu-strip.classes-data > .buy-classes {
+    background: white;
+    color: #FE2569;
+    font-weight: bold;
 }
 
 @media (min-width: 1000px) {

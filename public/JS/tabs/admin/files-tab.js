@@ -154,6 +154,8 @@ async function renderPage() {
 
     renderHeader(user);
     renderControls(user);
+
+    $('.files-tab').addClass('strip-button-selected');
 }
 
 renderPage();

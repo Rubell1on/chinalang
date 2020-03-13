@@ -12,6 +12,7 @@ const db = mysql.createConnection(dbSettings).promise();
 const keysManager = require('./public/JS/apiKeyManager').ApiKey;
 const apiKeyManager = new keysManager(db);
 const moment = require('moment-timezone');
+const request = require('request');
 
 const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
@@ -19,6 +20,7 @@ const gmailClient = new gAPI.GmailAPI(credentials, token);
 
 const yandexToken = envVars.getYandexAPIToken().token;
 const yandexDisk = new yAPI(yandexToken);
+const instaToken = envVars.getInstaToken();
 
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
@@ -957,6 +959,23 @@ app.post('/contact', async (req, res) => {
 
     await gmailClient.sendMessage(toUser);
     res.status(201).send('Ваше сообщение отправлено!');
+})
+
+app.get('/api/instaMedia', async (req, res) => {
+    const response = await getMedia(instaToken.token);
+
+    res.status(200).json(response);
+
+    async function getMedia(acess_token, fields = ['id', 'caption', 'media_type', 'media_url', 'permalink', 'thumbnail_url', 'timestamp']) {
+        return new Promise((resolve, reject) => {
+            request.get({
+                url: `https://graph.instagram.com/me/media?fields=${fields.join(',')}&access_token=${acess_token}`
+            }, (err, res, body) => {
+                if (err) reject(err);
+                else resolve({res, body: JSON.parse(body)});
+            })
+        })
+    }
 })
 
 app.get('/auth', (req, res) => {

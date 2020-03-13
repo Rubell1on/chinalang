@@ -517,6 +517,8 @@ async function renderPage() {
 
     renderHeader(user);
     renderControls(user);
+
+    $('.users-tab').addClass('strip-button-selected');
 }
 
 renderPage();

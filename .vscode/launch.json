@@ -26,7 +26,8 @@
                 "scope": "https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly",
                 "token_type": "Bearer",
                 "expiry_date": "1581145197994",
-                "yandex_token": "AgAAAAA780DaAAYO5ajiR1E6RUCWn_GlMAaH5hA"
+                "yandex_token": "AgAAAAA780DaAAYO5ajiR1E6RUCWn_GlMAaH5hA",
+                "instagram_access_token": "IGQVJXWTkxekxJb0xDcVFVWmF6ejF6SjdYMUJRWnhiSVVvQjVhX1VwamdZALXpyei16eXZAsMm50V05POGstM3B0YThrSFNIOVJNZA0F1MlRmVVdFUnVCVUlvNmIwMHJldG9aUzROQXdRQnA5eFhNenZAwRQZDZD"
             }
         },
         {
@@ -46,6 +47,12 @@
             "request": "launch",
             "name": "Node debug",
             "program": "${workspaceFolder}/Node.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "instaAPI debug",
+            "program": "${workspaceFolder}/instaAPI.js"
         }
     ]
 }

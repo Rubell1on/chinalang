@@ -14,8 +14,11 @@
 }
 
 .footer > .top {
-    height: 60px;
+    /* height: 60px; */
     margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .footer > .top > div {
@@ -53,13 +56,11 @@
 
 .social-networks > .wrapper {
     margin: unset;
+    overflow: unset;
 }
 
 .social-networks > .wrapper > a {
     display: block;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
     height: 55px;
     width: 55px;
     box-sizing: border-box;
@@ -116,6 +117,9 @@
 .footer > .middle > a {
     display: block;
     text-decoration: none;
+    width: unset;
+    padding: 0px;
+    transform: none;
 }
 
 .footer > .middle > a:hover {
@@ -125,6 +129,16 @@
 .footer > .middle > div:last-child {
     font-size: 30px;
     margin-top: 100px;
+}
+
+@media (max-width: 476px) {
+    .top > div.logo {
+        width: 100%;
+    }
+
+    .top > .social-networks > .text {
+        text-align: left;
+    }
 }
 
 @media (min-width: 768px) {
@@ -191,7 +205,7 @@
     }
 
     .footer > .top {
-        height: 80px;
+        /* height: 80px; */
     }
 
     .footer > .top > .logo {

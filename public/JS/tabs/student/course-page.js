@@ -114,6 +114,8 @@ async function renderPage() {
         renderControls(user);
 
         renderCoursePage(user);
+
+        $('.courses-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

@@ -168,6 +168,8 @@ async function renderPage() {
         renderControls(user);
 
         renderCoursesTable(user);
+
+        $('.courses-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

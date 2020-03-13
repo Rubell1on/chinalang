@@ -28,6 +28,8 @@ async function renderMain(user) {
 
     const balanceBlock = createBalanceBlock();
     const weeklyWordBlock = createWeeklyWordBlock();
+    const instaBlock = await createInstaBlock();
+    const bottomBlock = createBottomInfoBlock();
 
     const weeklyResponse = await request.get(`/api/db/blog?apiKey=${apiKey}`)
         .catch(e => {
@@ -40,23 +42,38 @@ async function renderMain(user) {
         weeklyWordBlock
     ])
 
-    page.children.push(content);
+    page.children.push(...[
+        content,
+        instaBlock,
+        bottomBlock
+    ]);
     
     page.render('content-window');
     page.renderChildren(block => {
         block.renderChildren(blockChild => {
             switch (blockChild.getType()) {
                 case '[object objectWrapper]':
-                    blockChild.renderChildren(child => {
-                        if (child.isTypeOf('text')) {
-                            if (weeklyResponse.status === 'success') {
-                                const data = weeklyResponse.response.length ? weeklyResponse.response[0].description : ''
-                                child.object.html(data);
-                                blockChild.object.append('<script src="../../../public/JS/image-loader.js"></script>');
+                    if (blockChild.isClassOf('insta-scroll')) {
+                        blockChild.renderChildren(child => {
+                            if (child.isTypeOf('objectWrapper')) {
+                                child.renderChildren(() => {});
+                                child.object.click(() => {
+                                    window.open(child.data.permalink, '_blank');
+                                })
                             }
-                        }
-                        else child.renderChildren(() => {});
-                    });
+                        })
+                    } else {
+                        blockChild.renderChildren(child => {
+                            if (child.isTypeOf('text')) {
+                                if (weeklyResponse.status === 'success') {
+                                    const data = weeklyResponse.response.length ? weeklyResponse.response[0].description : ''
+                                    child.object.html(data);
+                                    blockChild.object.append('<script src="../../../public/JS/image-loader.js"></script>');
+                                }
+                            }
+                            else child.renderChildren(() => {});
+                        });
+                    }
 
                     break;
                 
@@ -68,6 +85,41 @@ async function renderMain(user) {
             }
         });
     });
+
+    function createBottomInfoBlock() {
+        const text = 'Возникли вопросы по поводу расписания? Появилось желание поменять преподавателя? Не можешь найти материалы урока или просто хочешь поболтать?<br><b>Скорее напиши нам, мы всегда на связи!</b>';
+
+        return new ObjectWrapper('bottom-info', [new Text('bottom-text', text)])
+    }
+
+    async function createInstaBlock() {
+        const res = await request.get('/api/instaMedia')
+            .catch(e => {
+                console.error(e);
+                notificationController.error(e.error.responseText);
+            });
+
+        if (res.status === 'success') {
+            const data = res.response
+            const images = res.response.body.data.map((el, i) => {
+                const post = new ObjectWrapper(['insta-post', `insta-post-${i}`], [
+                    new Image('insta-picture', el.media_url),
+                    // new Text('insta-picture', el.caption)
+                    new Text('insta-caption', el.caption ? el.caption : 'Тут должно быть описание картинки. Но по какой-то причине его нет:D')
+                ]);
+
+                post.data = el;
+
+                return post;
+                
+            });
+
+            return new ObjectWrapper('insta-block', [
+                new Label(['insta-block__label', 'header'], 'Последнее из instagram'),
+                new ObjectWrapper('insta-scroll', images)
+            ])
+        }        
+    }
     
     function createInfoBlock() {
         const courseLink = userCourse && userCourse.id ? `<a href=${`/lk/courses?id=${userCourse.id}`}>${userCourse.name}</a>` : '';
@@ -82,7 +134,7 @@ async function renderMain(user) {
 
     function createBalanceBlock() {
         return new StripMenu('classes-data', [
-            new StripSeparator('classes-left', 'Баланс занятий'),
+            new StripSeparator(['classes-left', 'header'], 'Баланс занятий'),
             new StripButton('w-russian', `С русским учителем: ${user.classesWRussian}`),
             new StripButton('w-native', `С носителем языка: ${user.classesWNative}`),
             new Button('buy-classes', 'Пополнить')
@@ -109,6 +161,8 @@ async function renderPage() {
         renderControls(user);
 
         renderMain(user);
+
+        $('.main-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

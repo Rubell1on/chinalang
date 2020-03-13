@@ -3,12 +3,14 @@
 }
 
 .classes-data {
+    background: #FE2569;
     height: initial;
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
     flex: auto;
 }
+
 .weekly-word-block {
     /* background: white; */
     /* border-radius: 10px; */
@@ -17,7 +19,7 @@
 }
 
 .weekly-word-block > .weekly-label-wrapper {
-    background: #FE2569;
+    background:#93D162;;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     color: white;
@@ -69,4 +71,16 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.bottom-info {
+    padding: 15px;
+    background: #93D162;
+    box-sizing: border-box;
+}
+
+.bottom-info > .bottom-text {
+    font-size: 24px;
+    color: #606761;
+    text-align: justify;
 }

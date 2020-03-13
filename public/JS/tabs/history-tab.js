@@ -102,6 +102,8 @@ async function renderPage() {
         renderHistory(user);
         renderHeader(user);
         renderControls(user);
+
+        $('.history-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

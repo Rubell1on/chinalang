@@ -206,6 +206,8 @@ async function renderPage() {
         renderBlogTable(user);
         renderHeader(user);
         renderControls(user);
+
+        $('.blog-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

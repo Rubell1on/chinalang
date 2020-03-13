@@ -213,6 +213,8 @@ async function renderPage() {
         renderUserProfile(user);
         renderHeader(user);
         renderControls(user);
+
+        $('.profile-tab').addClass('strip-button-selected');
     } else {
         location.reload();
     }

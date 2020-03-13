@@ -3,3 +3,9 @@
     margin-bottom: 10px;
     font-size: 18px;
 }
+
+.header {
+    font-weight: bold;
+    font-size: 22px;
+    text-align: center;
+}

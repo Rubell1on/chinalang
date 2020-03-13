@@ -44,6 +44,12 @@ module.exports = {
                 token: this.e.yandex_token
             }
         }
+
+        getInstaToken() {
+            return {
+                token: this.e.instagram_access_token
+            }
+        }
     },
     rndSequence: function rndSequence(length = 6) {
         return Math.random().toString(36).substring(2, 2 + length)
