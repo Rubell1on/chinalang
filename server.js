@@ -667,31 +667,27 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === roles.admin) {
-                const q = req.body;
+            const q = req.body;
 
-                const response = await yandexDisk.deleteData(q.link);
-                const statusCode = response.res.statusCode;
-                if (statusCode === 204) {
-                    if (q.type === 'document') {
-                        await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
-                            .catch(e => {
-                                console.error(e);
-                                res.status(500).send('Ошибка сервера!');
-                            });
-                    } else if (q.type === 'photo') {
-                        await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
-                            .catch(e => {
-                                console.error(e);
-                                res.status(500).send('Ошибка сервера!');
-                            });
-                    }
-                    res.status(204).send('Файл удален!');
-                } else {
-                    res.status(statusCode).send(response.res);
+            const response = await yandexDisk.deleteData(q.link);
+            const statusCode = response.res.statusCode;
+            if (statusCode === 204) {
+                if (q.type === 'document') {
+                    await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+                } else if (q.type === 'photo') {
+                    await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
+                        .catch(e => {
+                            console.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
                 }
+                res.status(204).send('Файл удален!');
             } else {
-                res.status(403).end();
+                res.status(statusCode).send(response.res);
             }
         } else {
             res.status(401).end();

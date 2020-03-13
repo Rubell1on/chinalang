@@ -52,7 +52,8 @@ async function renderUserProfile(data) {
                                         }
 
                                         notificationController.process('Данные отправлены на сервер! Ожидаю ответ');
-                                        const res = await request.put('/api/db/files', JSON.stringify(fileInfo))
+                                        const apiKey = auth.get('apiKey');
+                                        const res = await request.put(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
                                             .catch(e => {
                                                 notificationController.error(e.error.responseText);
                                                 console.error(e);
@@ -69,7 +70,8 @@ async function renderUserProfile(data) {
                                                 if (response.status === 'success') {
                                                     fileInfo.path = responseData.path;
                                                     fileInfo.data = data;
-                                                    const res = await request.post('/api/db/files', JSON.stringify(fileInfo))
+                                                    const apiKey = auth.get('apiKey');
+                                                    const res = await request.post(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
                                                         .catch((e, status) => {
                                                             console.error({e, status});
                                                             notificationController.error(e.error.responseText);
@@ -88,7 +90,8 @@ async function renderUserProfile(data) {
                                 case 'delete-photo':
                                     child.object.click(async () => {
                                         notificationController.process('Отправлен запрос на удаление фото!');
-                                        const res = await request.delete('/api/db/files', JSON.stringify({ type: 'photo', id: user.id, name: user.username, link: user.photoLink }))
+                                        const apiKey = auth.get('apiKey');
+                                        const res = await request.delete(`/api/db/files?apiKey=${apiKey}`, JSON.stringify({ type: 'photo', id: data.id, name: data.username, link: data.photoLink }))
                                             .catch(e => {
                                                 console.error(e);
                                                 notificationController.error(e.error.responseText);
