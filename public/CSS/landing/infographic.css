@@ -114,6 +114,24 @@
     width: 43%;
 } 
 
+@media (max-width: 476px) {
+    .infographic-wrapper {
+        margin-bottom: 0px;
+    }
+
+    .how-it-works > h2 {
+        margin-bottom: 0px;
+    }
+
+    .text-side > .title > div {
+        font-size: 20px;
+    }
+
+    .text-img-infographic > .text-side > div.info > div {
+        font-size: 16px;
+    }
+}
+
 @media (max-width: 768px) {
     .infographic-wrapper {
         width: 100%;
