@@ -86,6 +86,31 @@
     transform: translatex(-50%);
 }
 
+@media (max-width: 476px) {
+    .logo-wrapper > .strip-logo {
+        height: 40px;
+        min-height: unset;
+    }
+
+    .tabs-separator > .text {
+        font-size: 20px;
+    }
+
+    .page-tabs > .strip-button {
+        min-height: 34px;
+    }
+
+    .page-tabs > .strip-button > .icon {
+        padding: 8px;
+        padding-right: 0px;
+        width: 34px;
+    }
+
+    .page-tabs > .strip-button > .text {
+        font-size: 16px;
+    }
+}
+
 @media (min-width: 1000px) {
     /* .strip-button >.icon {
         display: none;
