@@ -59,7 +59,7 @@
 
 .data-wrapper > .objects-wrapper > .data > .subscribe {
     float: right;
-    margin-right: 10px;
+    height: fit-content;
     padding: 6px;
     font-size: 18px;
     position: relative;
@@ -102,7 +102,7 @@
 
 .data-wrapper > .data > .subscribe {
     float: right;
-    margin-right: 10px;
+    height: fit-content;
     padding: 6px;
     font-size: 18px;
     position: relative;

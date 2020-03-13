@@ -200,10 +200,21 @@
     font-size: 26px;
 }
 
+@media (max-width: 1000px) {
+    .files-table-data-wrapper > div > .add-file {
+        padding: 3px 10px;
+    }
+}
+
 @media (min-width: 1000px) {
     .data.user.data-strip > div.button-big {
         width: 40px;
         height: 40px;
         line-height: 27px;
+    }
+
+    .data.user.data-strip > div.button-big.add-file {
+        width: unset;
+        padding: 6px 10px;
     }
 }
