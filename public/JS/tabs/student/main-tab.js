@@ -115,7 +115,7 @@ async function renderMain(user) {
             });
 
             return new ObjectWrapper('insta-block', [
-                new Label(['insta-block__label', 'header'], 'Последнее из instagram'),
+                new Label(['insta-block__label', 'header'], 'Читайте наш instaBlog'),
                 new ObjectWrapper('insta-scroll', images)
             ])
         }        

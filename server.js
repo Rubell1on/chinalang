@@ -128,12 +128,15 @@ app.post('/free', async (req, res) => {
                 name: 'Chinalang', 
                 email: 'catchyclickstudio@gmail.com'
             }, 
-            'dablaev@yandex.ru', 
+            q.email, 
             'Регистрация завершена!', 
             `Теперь вы можете войти в свой личный кабинет!<br>Логин: ${q.username}<br>Пароль: ${password}`
         ).build();
 
-        await gmailClient.sendMessage(message);
+        const messageResponse = await gmailClient.sendMessage(message)
+            .catch(e => {
+                console.log(e)
+            });;
         res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
     } else {
         res.status(400).send('Данный пользователь уже существует!');
