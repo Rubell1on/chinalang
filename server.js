@@ -636,28 +636,24 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === roles.admin) {
-                const q = req.body;
-                const types = ['document', 'image'];
+            const q = req.body;
+            const types = ['document', 'image'];
 
-                if (types.includes(q.type)) {
-                    const data = await db.query(`INSERT INTO files(name, link, type) VALUE('${q.name}', '${q.path}', '${q.type}')`)
-                        .catch(e => {
-                            console.error(e);
-                            res.status(500).send('Ошибка сервера!');
-                        });
-                    res.status(201).send('Файл создан!');
-                } else if (q.type === 'photo') {
-                    const response = await yandexDisk.publishFile(q.path);
-                    const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
-                        .catch(e => {
-                            console.error(e);
-                            res.status(500).send('Ошибка сервера!');
-                        });
-                    res.status(201).send('Файл создан!');
-                }
-            } else {
-                res.status(403).end();
+            if (types.includes(q.type)) {
+                const data = await db.query(`INSERT INTO files(name, link, type) VALUE('${q.name}', '${q.path}', '${q.type}')`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+                res.status(201).send('Файл создан!');
+            } else if (q.type === 'photo') {
+                const response = await yandexDisk.publishFile(q.path);
+                const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('Ошибка сервера!');
+                    });
+                res.status(201).send('Файл создан!');
             }
         } else {
             res.status(401).end();
@@ -697,38 +693,34 @@ app.route('/api/db/files')
         const data = await apiKeyManager.getUser(req.query.apiKey);
 
         if (data.length) {
-            if (data[0].role === roles.admin) {
-                const q = req.body;
+            const q = req.body;
 
-                const routes = {
-                    root: 'chinalang',
-                    document: 'documents',
-                    photo: 'photos',
-                    image: 'images'
-                };
+            const routes = {
+                root: 'chinalang',
+                document: 'documents',
+                photo: 'photos',
+                image: 'images'
+            };
 
-                const type = routes[q.type];
+            const type = routes[q.type];
 
-                const filesList = await yandexDisk.getList();
-                const tree = utils.getDirTree(filesList.body.items);
+            const filesList = await yandexDisk.getList();
+            const tree = utils.getDirTree(filesList.body.items);
 
-                if (tree.find(routes.root) === null) {
-                    yandexDisk.initFolder(routes.root);
-                }
-
-                if (tree.find(type) === null) {
-                    const path = `${routes.root}/${type}`;
-                    await yandexDisk.initFolder(path);
-                }
-
-                const name = utils.translate(q.name);
-                const filePath = `${routes.root}/${type}/${name}`;
-                const link = await yandexDisk.getUploadLink(filePath);
-                
-                res.status(200).json({data: link.body, path: filePath});
-            } else {
-                res.status(403).end();
+            if (tree.find(routes.root) === null) {
+                yandexDisk.initFolder(routes.root);
             }
+
+            if (tree.find(type) === null) {
+                const path = `${routes.root}/${type}`;
+                await yandexDisk.initFolder(path);
+            }
+
+            const name = utils.translate(q.name);
+            const filePath = `${routes.root}/${type}/${name}`;
+            const link = await yandexDisk.getUploadLink(filePath);
+            
+            res.status(200).json({data: link.body, path: filePath});
         } else {
             res.status(401).end();
         }
