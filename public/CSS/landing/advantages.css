@@ -63,7 +63,7 @@
 
 .advantages-block > .info-graphic:nth-child(n+3) .info-graphic-extra {
     box-sizing: border-box;
-    padding: 0px 28px;
+    /* padding: 0px 28px; */
 }
 
 /* .info-graphic-wrapper > div.info-graphic-extra:nth-child(n+3) {

@@ -111,7 +111,7 @@
 } 
 
 .text-img-infographic:nth-child(even) .img-side {
-    width: 43%;
+    width: 37%;
 } 
 
 @media (max-width: 476px) {

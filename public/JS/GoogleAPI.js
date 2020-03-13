@@ -38,12 +38,12 @@ module.exports = {
     
             const encodedMessage = Base64.encodeURI(message);
     
-            const res = await this.gmail.users.messages.send({
+            return this.gmail.users.messages.send({
                 userId: 'me',
                 resource: {
                     raw: encodedMessage,
                 }
-            }).catch(e => console.log(e));
+            });
         }
     },
 

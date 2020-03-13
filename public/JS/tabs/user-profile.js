@@ -72,9 +72,17 @@ async function renderUserProfile(data) {
                                                     fileInfo.data = data;
                                                     const apiKey = auth.get('apiKey');
                                                     const res = await request.post(`/api/db/files?apiKey=${apiKey}`, JSON.stringify(fileInfo))
-                                                        .catch((e, status) => {
+                                                        .catch(async (e, status) => {
                                                             console.error({e, status});
                                                             notificationController.error(e.error.responseText);
+                                                            const res = await request.delete(`/api/db/files?apiKey=${apiKey}`, JSON.stringify({ type: 'photo', id: data.id, name: data.username, link: data.photoLink }))
+                                                                .catch(e => {
+                                                                    console.error(e);
+                                                                });
+                                                            
+                                                            if (res.status === 'nocontent') {
+                                                                console.log('Фото удалено');
+                                                            }
                                                         });
 
                                                     if (res.status) {

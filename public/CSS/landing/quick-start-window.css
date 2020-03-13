@@ -29,10 +29,10 @@
     width: 50%;
 }
 
-.quick-start-window > .info {
+/* .quick-start-window > .info {
     box-sizing: border-box;
     padding-right: 10px;
-}
+} */
 
 .quick-start-window > .info > .text {
     position: absolute;
@@ -46,7 +46,7 @@
     font-weight: bold;
     font-size: 30px;
     color: #24466B;
-    word-break: break-word;
+    word-break: keep-all;
 }
 
 .submit {
@@ -110,7 +110,8 @@
 
 @media (max-width: 476px) {
     .quick-start-window > .info > div.text {
-        font-size: 24px;
+        font-size: 19px;
+        letter-spacing: -0.5px;
     }
 
     .quick-start-window > .inputs > .button-big {

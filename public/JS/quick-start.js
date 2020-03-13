@@ -53,7 +53,7 @@ $('.login').click(() => {
                         auth.setData(res.response);
 
                         const pageRoute = role === 'student' ? 'lk' : 'dashboard';
-                        const courseRoute = role === 'student' ? 'courses' : 'users';
+                        const courseRoute = role === 'student' ? 'main' : 'users';
 
                         // location.href = `${location.origin}/${pageRoute}/${courseRoute}?apiKey=${auth.getData()['apiKey']}`;
                         location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
