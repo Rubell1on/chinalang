@@ -117,8 +117,8 @@ app.post('/free', async (req, res) => {
 
     if (count === 0) {
         const password = utils.rndSequence();
-        const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian) VALUES(?, ?, ?, ?, ?, ?, ?)', arr)
+        const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1, JSON.stringify([])];
+        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian, courses) VALUES(?, ?, ?, ?, ?, ?, ?, ?)', arr)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
