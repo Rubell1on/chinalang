@@ -41,3 +41,11 @@
 .button-big:hover {
     background: #24466B;
 }
+
+@media (max-width: 1000px) {
+    .button-very-big {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+    }
+}

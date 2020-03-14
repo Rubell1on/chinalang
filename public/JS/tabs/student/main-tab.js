@@ -100,12 +100,15 @@ async function renderMain(user) {
             });
 
         if (res.status === 'success') {
-            const data = res.response
-            const images = res.response.body.data.map((el, i) => {
+            const data = res.response;
+            const template = '<b>chinalang_ru</b>';
+            const images = data.body.data.map((el, i) => {
+                const maxLen = 67;
+                const caption = el && el.caption && el.caption.length > maxLen ? el.caption.substr(0, maxLen) + '...' : el.caption + '...';
                 const post = new ObjectWrapper(['insta-post', `insta-post-${i}`], [
                     new Image('insta-picture', el.media_url),
                     // new Text('insta-picture', el.caption)
-                    new Text('insta-caption', el.caption ? el.caption : 'Тут должно быть описание картинки. Но по какой-то причине его нет:D')
+                    new Text('insta-caption', caption ? `${template} ${caption}` : `${template} Тут должно быть описание картинки. Но по какой-то причине его нет:D`)
                 ]);
 
                 post.data = el;

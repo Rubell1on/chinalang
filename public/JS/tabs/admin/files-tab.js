@@ -82,7 +82,7 @@ DataTable.prototype.createNewFile = async function(data = {}) {
             const type = file.type.split('/')[1];
             const fileType = Object.entries(types).filter(e => e[1].join(', ').includes(type))[0][0];
             const fileInfo = {
-                name: name.isEmpty() ? file.name : name,
+                name: name.isEmpty() ? file.name : translate(name).decrease(),
                 type: fileType
             }
             const apiKey = auth.get('apiKey');

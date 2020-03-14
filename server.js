@@ -270,7 +270,7 @@ app.route('/api/db/users')
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
-                    rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE realname REGEXP '${value}' username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
+                    rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE realname REGEXP '${value}' OR username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -328,8 +328,8 @@ app.route('/api/db/users')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const password = utils.rndSequence();
-                const data = [q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q.courses];
-                const rows = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
+                const data = [q.realname, q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q.courses];
+                const rows = await db.query('INSERT INTO users(realname, username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('При создании пользователя произошла ошибка!');

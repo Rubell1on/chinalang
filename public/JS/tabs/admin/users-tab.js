@@ -385,8 +385,11 @@ DataTable.prototype.updateData = async function() {
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
-    const deleteButton = role === roles.admin ? [new Button(['delete-user', 'button-very-big'], '-')] : [];
-    this.children = data.map((row, i) => new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, deleteButton), []);
+    this.children = data.map((row, i) => {
+        const name = row && row.realname ? translate(row.realname.decrease()) : row.username;
+        const deleteButton = role === roles.admin ? [new Button(['delete-user', 'button-very-big', `delete-${name}-${i}`], '-')] : [];
+        return new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, deleteButton);
+    }, []);
     this.renderChildren(strip => {
         const data = strip.data;
         strip.text.text(data && data.realname ? data.realname : data.username);
@@ -475,20 +478,27 @@ DataTable.prototype.updateData = async function() {
         });
         strip.renderChildren(child => {
             if (child.isTypeOf('button')) {
-                child.object.click(async e => {
+                child.object.click(e => {
                     e.stopPropagation();
-                    const apiKey = auth.get('apiKey');
-                    const res = await request.delete(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(child.parent.data))
-                        .catch(e => {
-                            console.error(e);
-                            notificationController.error(e.error.responseText);
-                        });
-                    
-                    if (res.status === 'success') {
-                        console.log(res);
-                        notificationController.success(res.response);
-                        this.updateData();
-                    }
+                    const data = child.parent.data;
+                    const confirm = new YesNoWindow('confirm-delete', 'Подтвердите удаление', `Вы действительно хотите удалить пользователя ${data && data.realname ? data.realname : data.username}?`);
+                    confirm.render('');
+                    confirm.yes.click(async () => {
+                        const apiKey = auth.get('apiKey');
+                        const res = await request.delete(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(child.parent.data))
+                            .catch(e => {
+                                console.error(e);
+                                notificationController.error(e.error.responseText);
+                            });
+                        
+                        if (res.status === 'success') {
+                            console.log(res);
+                            notificationController.success(res.response);
+                            this.updateData();
+                            confirm.destroy();
+                        }
+                    });
+                    confirm.no.click(() => confirm.destroy());
                 })
             }
         })
