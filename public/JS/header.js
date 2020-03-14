@@ -8,7 +8,7 @@ async function renderHeader(user) {
             new StripImage('chinalang-icon').setImage('../../public/IMG/header/triangle_logo.png'),
         ]),
         new ObjectWrapper('header-controls', [
-            new DropDownList('user-menu', user.username),
+            new DropDownList('user-menu', user && user.realname ? user.realname : user.username),
             new Button('contacts', 'Контакты')
         ])
     ];

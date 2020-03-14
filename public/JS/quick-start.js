@@ -6,7 +6,7 @@ $('.get-free-lesson').click(() => {
 $('.login').click(() => {
     const children = [
         new Label('login-window-label', 'Авторизация'),
-        new InputField('username-field', 'username', 'Имя пользователя'),
+        new InputField('email-field', 'email', 'Email'),
         new InputField('password-field', 'password', 'Пароль'),
         new Button('login-submit', 'Войти')
     ];
@@ -88,8 +88,8 @@ class QuickStartWindow extends SingleCustomWindow {
             '<div class="info"></div>' +
             '<div class="inputs">' +
                 '<div class="text-field">' +
-                    '<label for="username">Имя</label>' +
-                    '<input type="text" id="username" required>' +
+                    '<label for="realname">Имя</label>' +
+                    '<input type="text" id="realname" required>' +
                 '</div>' +
                 '<div class="text-field">' +
                     '<label for="phone">Номер телефона</label>' +
@@ -143,19 +143,6 @@ class QuickStartWindow extends SingleCustomWindow {
             notificationController.success(res.response);
             this.destroy();
         }
-        // $.ajax({
-        //     url:'/free',
-        //     data,
-        //     success: (data, status) => {
-        //         new NotificationSuccess('user-registered', data).render();
-        //         console.log({data, status})
-        //         this.destroy();
-        //     },
-        //     error: (error, status) => {
-        //         new NotificationError('err-window', error.responseText).render();
-        //         console.log({error, status})
-        //     }
-        // })
     }
 
     destroy() {
@@ -167,7 +154,7 @@ class QuickStartWindow extends SingleCustomWindow {
 
     async submit() {
         const data = {
-            "username": undefined,
+            "realname": undefined,
             "phone": undefined,
             "email": undefined,
             "skype": undefined
@@ -199,11 +186,8 @@ class QuickStartWindow extends SingleCustomWindow {
             console.log(JSON.stringify(data));
             await this.register(data);
             notificationController.process('Данные отправлены! Ожидаю ответ.')
-            // new NotificationWindow('window', 'Данные отправлены! Ожидаю ответ.').render();
         } else {
             notificationController.error('Некорректно заполнены поля')
-            // new NotificationError('err-window', "Некорректно заполнены поля").render();
-            // console.error("Некорректно заполнены поля");
         }
     }
 }

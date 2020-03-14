@@ -11,8 +11,8 @@ DataTable.prototype.updateCoursesData = async function(source) {
     const data = res.response;
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
-        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
-        return new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
+        // return new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
+        return new DataStrip(rowName, row);
     }, []);
 
     this.renderChildren(wChildren => {
@@ -26,74 +26,74 @@ DataTable.prototype.updateCoursesData = async function(source) {
                     l.href = `${l.origin}/lk/courses?id=${id}`;
                 });
 
-                if (userCourses == false) {
-                    wChildren.renderChildren(s => {
-                        s.object.css('background', colors.subscribe);
-                        s.object.text('Подписаться');
-                        s.object.click(async e => {
-                            const result = s.click(wChildren.data, userCourses);
-                            await submitCoursesData(source, {courses: userCourses}, () => {
-                                if (s.enabled) {
-                                    s.object.css('background', colors.unsubscribe);
-                                    s.object.text('Отписаться');
-                                } else {
-                                    s.object.css('background', colors.subscribe);
-                                    s.object.text('Подписаться');
-                                }
-                            });
+                // if (userCourses == false) {
+                //     wChildren.renderChildren(s => {
+                //         s.object.css('background', colors.subscribe);
+                //         s.object.text('Подписаться');
+                //         s.object.click(async e => {
+                //             const result = s.click(wChildren.data, userCourses);
+                //             await submitCoursesData(source, {courses: userCourses}, () => {
+                //                 if (s.enabled) {
+                //                     s.object.css('background', colors.unsubscribe);
+                //                     s.object.text('Отписаться');
+                //                 } else {
+                //                     s.object.css('background', colors.subscribe);
+                //                     s.object.text('Подписаться');
+                //                 }
+                //             });
 
-                            e.stopPropagation();
-                        });
-                    });
-                } else {
-                    const id = wChildren.data.id;
+                //             e.stopPropagation();
+                //         });
+                //     });
+                // } else {
+                //     const id = wChildren.data.id;
         
-                    let flag = true;
+                //     let flag = true;
         
-                    for (let i in userCourses) {
-                        if (userCourses[i].id === id) {
-                            wChildren.renderChildren(s => {
-                                s.enabled = true;
-                                s.object.css('background', colors.unsubscribe);
-                                s.object.text('Отписаться');
-                                s.object.click(async e => {
-                                    e.stopPropagation();
-                                    const result = s.click(wChildren.data, userCourses);
-                                    await submitCoursesData(source, {courses: userCourses}, () => {
-                                        if (s.enabled) {
-                                            s.object.css('background', colors.unsubscribe);
-                                            s.object.text('Отписаться');
-                                        } else {
-                                            s.object.css('background', colors.subscribe);
-                                            s.object.text('Подписаться');
-                                        }
-                                    });
-                                });
-                            });
-                            flag = false;
-                            break;
-                        }
-                    }
+                //     for (let i in userCourses) {
+                //         if (userCourses[i].id === id) {
+                //             wChildren.renderChildren(s => {
+                //                 s.enabled = true;
+                //                 s.object.css('background', colors.unsubscribe);
+                //                 s.object.text('Отписаться');
+                //                 s.object.click(async e => {
+                //                     e.stopPropagation();
+                //                     const result = s.click(wChildren.data, userCourses);
+                //                     await submitCoursesData(source, {courses: userCourses}, () => {
+                //                         if (s.enabled) {
+                //                             s.object.css('background', colors.unsubscribe);
+                //                             s.object.text('Отписаться');
+                //                         } else {
+                //                             s.object.css('background', colors.subscribe);
+                //                             s.object.text('Подписаться');
+                //                         }
+                //                     });
+                //                 });
+                //             });
+                //             flag = false;
+                //             break;
+                //         }
+                //     }
         
-                    if (flag) wChildren.renderChildren(s => {
-                        s.object.css('background', colors.subscribe);
-                        s.object.text('Подписаться');
-                        s.object.click(async e => {
-                            e.stopPropagation();
-                            const result = s.click(wChildren.data, userCourses);
-                            await submitCoursesData(source, {courses: userCourses}, () => {
-                                if (s.enabled) {
-                                    s.object.css('background', colors.unsubscribe);
-                                    s.object.text('Отписаться');
-                                } else {
-                                    s.object.css('background', colors.subscribe);
-                                    s.object.text('Подписаться');
-                                }
-                            });
+                //     if (flag) wChildren.renderChildren(s => {
+                //         s.object.css('background', colors.subscribe);
+                //         s.object.text('Подписаться');
+                //         s.object.click(async e => {
+                //             e.stopPropagation();
+                //             const result = s.click(wChildren.data, userCourses);
+                //             await submitCoursesData(source, {courses: userCourses}, () => {
+                //                 if (s.enabled) {
+                //                     s.object.css('background', colors.unsubscribe);
+                //                     s.object.text('Отписаться');
+                //                 } else {
+                //                     s.object.css('background', colors.subscribe);
+                //                     s.object.text('Подписаться');
+                //                 }
+                //             });
 
-                        });
-                    });
-                }
+                //         });
+                //     });
+                // }
 
                 break;
             }

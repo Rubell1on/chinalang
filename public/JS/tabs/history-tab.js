@@ -146,7 +146,7 @@ DataTable.prototype.updateData = async function() {
         return acc;
     }, []);
     
-    this.children = data.map(row => {
+    this.children = data.map((row, i)=> {
         const template = [
             new Select('status-select', options), 
             new Button('add-history', 'Отметить')
@@ -154,13 +154,14 @@ DataTable.prototype.updateData = async function() {
 
         if (auth.get('role') === roles.admin) template.unshift(new Select('role-select', [{ value: 'teacher', text: 'Рускоговорящий преподаватель' }, { value: 'nativeTeacher', text: 'Носитель языка' }]));
 
-        return new DataStrip(row.username, row, [
+        return new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, [
             new ObjectWrapper('history-strip-controls', template)
         ])
     }, []);
 
     this.renderChildren(strip => {
-        strip.text.text(strip.data.username);
+        const data = strip.data;
+        strip.text.text(data && data.realname ? data.realname : data.username);
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
         const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;

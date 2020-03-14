@@ -2,7 +2,8 @@ async function renderUserProfile(data) {
     const newData = {};
 
     const leftTableChildren = [
-        new InputField('username-field', 'username', 'Имя пользователя',data.username),
+        new InputField('realname-field', 'realname', 'Имя пользователя', data.realname),
+        new InputField('username-field', 'username', 'Никнейм', data.username),
         new InputField('phone-field', 'phone', 'Телефон', data.phone),
         new InputField('email-field', 'email', 'Эл.почта', data.email),
         new InputField('skype-field', 'skype', 'Skype', data.skype, false),

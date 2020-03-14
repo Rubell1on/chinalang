@@ -48,17 +48,19 @@ app.get('/', (req, res) => {
 app.get('/login', async (req, res) => {
     const q = req.query;
 
-    const rows = await db.query(`SELECT id, username, password, role, photoLink FROM users WHERE username='${q.username}'`)
+    const rows = await db.query(`SELECT id, realname, username, password, role, photoLink FROM users WHERE email='${q.email}'`)
         .catch(e => {
             console.error(e);
             res.status(400).send('Неверное имя пользователя!');
         });
 
     const users = rows[0];
-    const id = users[0].id
-    const password = users[0].password;
-    const role = users[0].role;
-    const photoLink = users[0].photoLink;
+    const id = users[0] && users[0].id ? users[0].id : '';
+    const realname = users[0] && users[0].realname ? users[0].realname : '';
+    const username = users[0] && users[0].username ? users[0].username : '';
+    const password = users[0] && users[0].password ? users[0].password : '';
+    const role = users[0] && users[0].role ? users[0].role : '';
+    const photoLink = users[0] && users[0].photoLink ? users[0].photoLink : '';
 
     if (users.length) {
         if (password === q.password) {
@@ -88,14 +90,14 @@ app.get('/login', async (req, res) => {
                     console.error(e);
                     res.status(500).send('Произошла ошибка при обновлении данных!');
                 });
-                res.status(200).json({id, username: users[0].username, role, apiKey, photo: buffer});
+                res.status(200).json({id, realname, username, role, apiKey, photo: buffer});
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Произошла ошибка при добавлении данных!');
                 });
-                res.status(201).json({id, username: users[0].username, role, apiKey, photo: buffer});
+                res.status(201).json({id, realname, username, role, apiKey, photo: buffer});
             }
         } else {
             res.status(403).send('Неверный логин или пароль!');
@@ -108,7 +110,7 @@ app.get('/login', async (req, res) => {
 app.post('/free', async (req, res) => {
     const q = req.body;
     
-    const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE username='${q.username}' OR email='${q.email}'`)
+    const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE phone='${q.phone}' OR email='${q.email}'`)
         .catch(e => {
             console.error(e);
             res.status(400).send('При регистрации пользователя произошла ошибка!');
@@ -117,8 +119,8 @@ app.post('/free', async (req, res) => {
 
     if (count === 0) {
         const password = utils.rndSequence();
-        const arr = [q.username, roles.student, q.phone, q.email, q.skype, password, 1, JSON.stringify([])];
-        const result = await db.query('INSERT INTO users(username, role, phone, email, skype, password, classesWRussian, courses) VALUES(?, ?, ?, ?, ?, ?, ?, ?)', arr)
+        const arr = [q.realname, '', roles.student, q.phone, q.email, q.skype, password, 1, JSON.stringify([])];
+        const result = await db.query('INSERT INTO users(realname, username, role, phone, email, skype, password, classesWRussian, courses) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', arr)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
@@ -130,7 +132,7 @@ app.post('/free', async (req, res) => {
             }, 
             q.email, 
             'Регистрация завершена!', 
-            `Теперь вы можете войти в свой личный кабинет!<br>Логин: ${q.username}<br>Пароль: ${password}`
+            `Теперь вы можете войти в свой личный кабинет!<br>Логин/email: ${q.email}<br>Пароль: ${password}`
         ).build();
 
         const messageResponse = await gmailClient.sendMessage(message)
@@ -262,13 +264,13 @@ app.route('/api/db/users')
                 const roleTemplate = q && q.role ? `role='${q.role}'` : '' ;
 
                 if (value === '') {
-                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users ${q && q.role ? `WHERE ${roleTemplate}` : ''}`)
+                    rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users ${q && q.role ? `WHERE ${roleTemplate}` : ''}`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
-                    rows = await db.query(`SELECT username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
+                    rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE realname REGEXP '${value}' username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
                             console.error(e);
                             res.status(500).send('Ошибка сервера!');
@@ -367,7 +369,7 @@ app.route('/api/db/userData')
         const q = req.query;
 
         if (q && q.apiKey) {
-            const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink, users.courses FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
+            const rows = await db.query(`SELECT users.id, users.realname, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink, users.courses FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
                     console.error(e);
                     res.status(500).send('Ошибка сервера!');
@@ -397,7 +399,7 @@ app.route('/api/db/userData')
     .put(async (req, res) => {
         const apiKey = req.query.apiKey;
 
-        const rows = await db.query(`SELECT users.id, users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
+        const rows = await db.query(`SELECT users.id, users.realname, users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
             .catch(e => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');

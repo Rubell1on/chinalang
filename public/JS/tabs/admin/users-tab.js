@@ -1,8 +1,9 @@
 function createUserTemplate(data, role) {
     const template = {
         base: [
-            new Label('window-label', data && data.username ?'Редактирование данных пользователя' : 'Создание нового пользователя'),
-            new InputField('username', 'username', 'Имя пользователя', data.username),
+            new Label('window-label', data && data.realname ?'Редактирование данных пользователя' : 'Создание нового пользователя'),
+            new InputField('realname', 'realname', 'Имя пользователя', data.realname),
+            new InputField('username', 'username', 'Никнейм', data.username),
             new ObjectWrapper('role-wrapper', [
                 new Label('role-label', 'Роль'),
                 new Select('role', roleObject)
@@ -385,19 +386,20 @@ DataTable.prototype.updateData = async function() {
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
     const deleteButton = role === roles.admin ? [new Button(['delete-user', 'button-very-big'], '-')] : [];
-    this.children = data.map(row => new DataStrip(row.username, row, deleteButton), []);
+    this.children = data.map((row, i) => new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, deleteButton), []);
     this.renderChildren(strip => {
-        strip.text.text(strip.data.username);
-        const coursesStr = strip.data.courses;
-        const userCourses = strip.data && coursesStr ? coursesStr : [];
-        const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;
-        if (strip.data && strip.data.photo) delete strip.data.photo;
+        const data = strip.data;
+        strip.text.text(data && data.realname ? data.realname : data.username);
+        const coursesStr = data.courses;
+        const userCourses = data && coursesStr ? coursesStr : [];
+        const photoLink = data && data.photo ? `data:image/*;base64,${data.photo}` : strip.defaultImg;
+        if (data && data.photo) delete data.photo;
         strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const data = strip.data;
 
             const template = createUserTemplate(data, role);
-            const dataWindow = new DataWindow('user-data-window', strip.data, template);
+            const dataWindow = new DataWindow('user-data-window', data, template);
             dataWindow.render('');
             dataWindow.renderChildren(child => {
                 switch(child.getType()) {
