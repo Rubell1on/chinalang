@@ -84,3 +84,9 @@
     color: #606761;
     text-align: justify;
 }
+
+@media (max-width: 476px) {
+    .bottom-info > .bottom-text {
+        text-align: left;
+    }
+}
