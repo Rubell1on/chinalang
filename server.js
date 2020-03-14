@@ -341,6 +341,26 @@ app.route('/api/db/users')
             res.status(401).end();
         }
     })
+    .delete(async (req, res) => {
+        const q = req.body;
+
+        const data = await apiKeyManager.getUser(req.query.apiKey);
+        if (data.length) {
+            if (data[0].role === roles.admin) {
+                const rows = await db.query(`DELETE FROM users WHERE username='${q.username}' AND email='${q.email}'`)
+                    .catch(e => {
+                        console.error(e);
+                        res.status(500).send('При удалении пользователя произошла ошибка!');
+                    });
+
+                res.status(200).send(`Пользователь ${q.username} успешно удален!`);
+            } else {
+                res.status(403).end();
+            }
+        } else {
+            res.status(401).end();
+        }
+    })
 
 app.route('/api/db/userData')
     .get(async (req, res) => {
@@ -581,7 +601,6 @@ app.route('/api/db/class')
             res.status(401).end();
         }
     })
-
     .delete(async (req, res) => {
         const data = await apiKeyManager.getUser(req.query.apiKey);
 

@@ -27,6 +27,15 @@
     transition: background 200ms ease;
     font-size: 22px;
     text-align: center;
+    flex-shrink: 0;
+}
+
+.button-very-big {
+    width: 40px;
+    height: 40px;
+    line-height: 27px;
+    padding: 0;
+    line-height: 40px;
 }
 
 .button-big:hover {

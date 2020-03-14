@@ -384,7 +384,8 @@ DataTable.prototype.updateData = async function() {
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
-    this.children = data.map(row => new DataStrip(row.username, row), []);
+    const deleteButton = role === roles.admin ? [new Button(['delete-user', 'button-very-big'], '-')] : [];
+    this.children = data.map(row => new DataStrip(row.username, row, deleteButton), []);
     this.renderChildren(strip => {
         strip.text.text(strip.data.username);
         const coursesStr = strip.data.courses;
@@ -470,6 +471,26 @@ DataTable.prototype.updateData = async function() {
                 }
             });
         });
+        strip.renderChildren(child => {
+            if (child.isTypeOf('button')) {
+                child.object.click(async e => {
+                    e.stopPropagation();
+                    const apiKey = auth.get('apiKey');
+                    const res = await request.delete(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(child.parent.data))
+                        .catch(e => {
+                            console.error(e);
+                            notificationController.error(e.error.responseText);
+                        });
+                    
+                    if (res.status === 'success') {
+                        console.log(res);
+                        notificationController.success(res.response);
+                        this.updateData();
+                    }
+                })
+            }
+        })
+
         strip.onDataChange.addListener(() => this.updateData());
     });
 }
