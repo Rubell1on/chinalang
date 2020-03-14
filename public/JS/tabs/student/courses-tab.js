@@ -151,7 +151,7 @@ async function renderCoursesTable(user) {
     const coursesTable = new DataTable('courses-table', controls);
     coursesTable.wrapperClass = 'courses-wrapper';
     coursesTable.render('content-window');
-    coursesTable.renderControls();
+    coursesTable.renderControls(() => {});
     coursesTable.updateCoursesData(user);
     coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }

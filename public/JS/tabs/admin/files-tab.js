@@ -129,7 +129,7 @@ async function renderFilesTable() {
     const filesTable = new DataTable('files-table', controls);
     filesTable.wrapperClass = 'files-wrapper';
     filesTable.render('content-window');
-    filesTable.renderControls();
+    filesTable.renderControls(() => {});
 
     const addCourse = filesTable.controls.find(c => c.isTypeOf('button'));
     addCourse.object.text('+');

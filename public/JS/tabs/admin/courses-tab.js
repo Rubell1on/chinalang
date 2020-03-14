@@ -198,7 +198,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
     lessonWindow.render('');
     lessonWindow.renderChildren(c => {
         if (c.isTypeOf('textArea')) {
-            c.renderControls();
+            c.renderControls(() => {});
             const addFile = c.controls.find(c => c.className === 'add-file-link')
             addFile.object.click(() => {
                 createFileSelect('document');
@@ -226,7 +226,7 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
                 const filesWindow = new DataWindow('files-window', [], [filesTable]);
                 filesWindow.render('');
                 filesWindow.renderChildren(child => {
-                    if (child.isTypeOf('dataTable')) child.renderControls();
+                    if (child.isTypeOf('dataTable')) child.renderControls(() => {});
                 });
             
                 const addCourse = filesTable.controls.find(c => c.isTypeOf('button'));
@@ -304,7 +304,7 @@ async function renderCoursesTable() {
     const coursesTable = new DataTable('courses-table', controls);
     coursesTable.wrapperClass = 'courses-wrapper';
     coursesTable.render('content-window');
-    coursesTable.renderControls();
+    coursesTable.renderControls(() => {});
 
     const addCourse = coursesTable.controls.find(c => c.isTypeOf('button'));
     addCourse.object.text('+');

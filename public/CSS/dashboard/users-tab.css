@@ -39,7 +39,7 @@
 }
 
 .users-search {
-    width: calc(100% - 49px);
+    /* width: calc(100% - 49px); */
     float: left;
     /* background: ; */
 }

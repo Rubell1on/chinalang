@@ -119,7 +119,7 @@ async function renderUsersTable() {
 
     const userWindow = new DataTable('users', controls);
     userWindow.render('content-window');
-    userWindow.renderControls();
+    userWindow.renderControls(() => {});
     userWindow.updateData();
     userWindow.controls.find(c => c.isTypeOf('searchLine')).input.change(async () => {
         await userWindow.updateData();

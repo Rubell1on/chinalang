@@ -72,6 +72,13 @@ class Enum {
 
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
+const roleObject = [
+    { value: 'admin', text: 'администратор' },
+    { value: 'teacher', text: 'русскоязычный преподаватель' },
+    { value: 'nativeTeacher', text: 'носитель языка' },
+    { value: 'student', text: 'студент' }
+];
+
 location.on = function(event, callback) {
     const query = this.getQuery();
     const fullQuery = Object.entries(query);

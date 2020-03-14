@@ -30,11 +30,12 @@ class DataTable extends SingleCustomWindow {
         }
     }
 
-    renderControls() {
+    renderControls(callback) {
         if (this.controls.length > 0) {
             this.controls.forEach(c => {
                 c.parent = this;
                 c.render(this.controlsWrapper);
+                callback(c);
             });
         }
     }

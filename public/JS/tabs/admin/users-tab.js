@@ -1,3 +1,45 @@
+function createUserTemplate(data, role) {
+    const template = {
+        base: [
+            new Label('window-label', data && data.username ?'Редактирование данных пользователя' : 'Создание нового пользователя'),
+            new InputField('username', 'username', 'Имя пользователя', data.username),
+            new ObjectWrapper('role-wrapper', [
+                new Label('role-label', 'Роль'),
+                new Select('role', roleObject)
+            ]),
+            new InputField('phone', 'phone', 'Номер телефона', data.phone),
+            new InputField('email', 'email', 'Эл.почта', data.email),
+            new InputField('skype', 'skype', 'Skype', data.skype, false),
+        ],
+        foot: [
+            new ObjectWrapper('courses-wrapper', [
+                new Label('courses-label', 'Перечень курсов'),
+                new DataStrip('courses', data.courses)
+            ]),
+            new Button('submit', 'Применить')
+        ]
+    }
+    
+    const templates = {
+        admin: [
+            ...template.base,
+            new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
+            new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
+            ...template.foot
+        ],
+        teacher: [
+            ...template.base,
+            ...template.foot
+        ],
+        nativeTeacher: [
+            ...template.base,
+            ...template.foot
+        ]
+    }
+
+    return templates[role];
+}
+
 DataTable.prototype.createNewUser = async function() {
     const data = {
         username: '',
@@ -10,96 +52,94 @@ DataTable.prototype.createNewUser = async function() {
         courses: []
     };
 
-    const dataWindow = new DataWindow('user-data-window', data);
+    const role = auth.get('role');
+
+    const template = createUserTemplate(data, role);
+
+    const dataWindow = new DataWindow('user-data-window', data ,template);
+
     dataWindow.render('');
     const parent = dataWindow.inputs.attr('class');
-
-    const children = Object.entries(data).map(e => {
-        let input = undefined;
-        if (e[0] !== 'courses') {
-            input = new InputField(e[0]);
-            input.render(parent);
-            input.setIds(e[0]);
-            input.label.text(e[0]);
-            input.input.val(e[1]);
-        } else {
-            input = new DataStrip('courses', e[1]);
-            input.render(parent);
-            // input.icon.attr('src', '');
-            input.text.text(e[0]);
-            input.object.click(() => {
-                const controls = [
-                    new Label('window-label', 'Список курсов'),
-                    new SearchLine('courses-search')
-                ];
-
-                const coursesTable = new DataTable('courses-table', controls);
-                coursesTable.wrapperClass = 'courses-wrapper'
-
-                const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
-                coursesWindow.render('');
-                coursesWindow.renderChildren(async windowChild => {
-                    switch (windowChild.getType()) {
-                        case '[object dataTable]':
-                            windowChild.renderControls();
-                            windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
-                            await windowChild.updateCoursesData(data.courses);
-
-                            break;
-                        
-                        case '[object button]':
-                            windowChild.object.text('Подтвердить выбор');
-                            windowChild.object.click(() => {
-                                dataWindow.children.find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(data.courses);
-                                coursesWindow.destroy();
-                            });
-
-                            break;
-                    }
-                });
-            });
-        }
+    dataWindow.renderChildren(child => {
+        if (child.isTypeOf('objectWrapper')) {
+            if (child.isClassOf('courses-wrapper')) {
+                child.renderChildren(e => {
+                    if (e.isTypeOf('dataStrip')) {
+                        e.text.text('Открыть перечень');
+                        e.object.click(() => {
+                        const controls = [
+                            new Label('window-label', 'Список курсов'),
+                            new SearchLine('courses-search')
+                        ];
         
-        return input;
-    }, []);
-
-    const submit = new Button('submit');
-    submit.render(parent);
-    submit.object.text('Создать пользователя');
-    submit.object.click(async () => {
-        const inputsData = getInputData();
-        const apiKey = auth.get('apiKey');
-        const res = await request.post(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(inputsData))
-            .catch(e => {
-                notificationController.error(e.error.responseText)
-                console.log(e);
-            });
-
-        if (res.status === 'success') {
-            notificationController.success(res.response);
-            this.updateData();
-            dataWindow.destroy();
-        }
-    });
-
-    children.push(submit);           
-
-    dataWindow.children = children;
+                        const coursesTable = new DataTable('courses-table', controls);
+                        coursesTable.wrapperClass = 'courses-wrapper'
+        
+                        const coursesWindow = new DataWindow('courses-data-window', {}, [coursesTable, new Button('submit-courses')]);
+                        coursesWindow.render('');
+                        coursesWindow.renderChildren(async windowChild => {
+                            switch (windowChild.getType()) {
+                                case '[object dataTable]':
+                                    windowChild.renderControls(() => {});
+                                    windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
+                                    await windowChild.updateCoursesData(data.courses);
+        
+                                    break;
+                                
+                                case '[object button]':
+                                    windowChild.object.text('Подтвердить выбор');
+                                    windowChild.object.click(() => {
+                                        dataWindow.children
+                                        .find(c => c.isTypeOf('objectWrapper') && c.isClassOf('courses-wrapper')).children
+                                        .find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(data.courses);
+                                        coursesWindow.destroy();
+                                    });
+        
+                                    break;
+                            }
+                        });
+                    })
+                }
+                })
+            } else child.renderChildren(() => {});
+        } else if (child.isTypeOf('button')) child.object.click(async () => {
+            const inputsData = getInputData();
+            const apiKey = auth.get('apiKey');
+            const res = await request.post(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(inputsData))
+                .catch(e => {
+                    notificationController.error(e.error.responseText)
+                    console.log(e);
+                });
+    
+            if (res.status === 'success') {
+                notificationController.success(res.response);
+                this.updateData();
+                dataWindow.destroy();
+            }
+        });
+    })
 
     function getInputData() {
         return dataWindow.children.reduce((acc, curr) => {
-            let key = '';
+            const key = curr.className;;
             switch(curr.getType()) {
                 case '[object inputField]': 
-                    key = curr.className;
                     acc[key] = curr.input.val();
     
                     break;
                 
                 case '[object dataStrip]':
-                    key = curr.className;
                     acc[key] = JSON.stringify(data.courses);
     
+                    break;
+
+                case '[object objectWrapper]':
+                    if (curr.isClassOf('courses-wrapper')) {
+                        acc.courses = curr.children.find(c => c.isTypeOf('dataStrip')).compareData;
+                    } else if (curr.isClassOf('role-wrapper')) {
+                        acc.role = curr.children.find(c => c.isTypeOf('select')).getSelected();
+                    }
+
                     break;
             }
     
@@ -110,7 +150,7 @@ DataTable.prototype.createNewUser = async function() {
 
 DataTable.prototype.updateCoursesData = async function(userCourses) {
     this.removeChildren();
-    const searchingValue = this.controls[1].input.val();
+    const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/courses?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
@@ -338,16 +378,9 @@ DataWindow.prototype.checkDifferences = function checkDifferences() {
 }
 
 DataTable.prototype.updateData = async function() {
-    const roleObject = [
-        { value: 'admin', text: 'администратор' },
-        { value: 'teacher', text: 'русскоязычный преподаватель' },
-        { value: 'nativeTeacher', text: 'носитель языка' },
-        { value: 'student', text: 'студент' }
-    ];
-
     this.removeChildren();
     const role = auth.get('role');
-    const searchingValue = this.controls[2].input.val();
+    const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const apiKey = auth.get('apiKey');
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
@@ -357,50 +390,13 @@ DataTable.prototype.updateData = async function() {
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
         const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;
+        if (strip.data && strip.data.photo) delete strip.data.photo;
         strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const data = strip.data;
 
-            const template = {
-                base: [
-                    new Label('window-label', 'Редактирование данных пользователя'),
-                    new InputField('username', 'username', 'Имя пользователя', data.username),
-                    // new InputField('role', 'role', 'Роль', data.role),
-                    new ObjectWrapper('role-wrapper', [
-                        new Label('role-label', 'Роль'),
-                        new Select('role', roleObject)
-                    ]),
-                    new InputField('phone', 'phone', 'Номер телефона', data.phone),
-                    new InputField('email', 'email', 'Эл.почта', data.email),
-                    new InputField('skype', 'skype', 'Skype', data.skype, false),
-                ],
-                foot: [
-                    new ObjectWrapper('courses-wrapper', [
-                        new Label('courses-label', 'Перечень курсов'),
-                        new DataStrip('courses', data.courses)
-                    ]),
-                    new Button('submit', 'Применить')
-                ]
-            }
-
-            const templates = {
-                admin: [
-                    ...template.base,
-                    new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
-                    new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
-                    ...template.foot
-                ],
-                teacher: [
-                    ...template.base,
-                    ...template.foot
-                ],
-                nativeTeacher: [
-                    ...template.base,
-                    ...template.foot
-                ]
-            }
-
-            const dataWindow = new DataWindow('user-data-window', strip.data, templates[role]);
+            const template = createUserTemplate(data, role);
+            const dataWindow = new DataWindow('user-data-window', strip.data, template);
             dataWindow.render('');
             dataWindow.renderChildren(child => {
                 switch(child.getType()) {
@@ -422,7 +418,7 @@ DataTable.prototype.updateData = async function() {
                                     coursesWindow.renderChildren(async windowChild => {
                                         switch (windowChild.getType()) {
                                             case '[object dataTable]':
-                                                windowChild.renderControls();
+                                                windowChild.renderControls(() => {});
                                                 windowChild.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await windowChild.updateCoursesData(userCourses));
                                                 await windowChild.updateCoursesData(userCourses);
             
@@ -431,6 +427,7 @@ DataTable.prototype.updateData = async function() {
                                             case '[object button]':
                                                 windowChild.object.text('Подтвердить выбор');
                                                 windowChild.object.click(() => {
+
                                                     dataWindow.children
                                                         .find(c => c.isTypeOf('objectWrapper') && c.className === 'courses-wrapper').children
                                                         .find(c => c.isTypeOf('dataStrip')).compareData = JSON.stringify(userCourses);
@@ -478,23 +475,28 @@ DataTable.prototype.updateData = async function() {
 }
 
 async function renderUsersTable() {
+    const role = auth.get('role');
     const controls = [
         new Label('window-label', 'Список пользователей'),
-        new Button('add-new-user'),
-        new SearchLine('users-search')
+        new SearchLine(['users-search', role === roles.admin ? 'search-line-short' : 'search-line'])
     ];
+
+    if (role === roles.admin) controls.splice(1, 0, new Button('add-new-user'))
 
     const userWindow = new DataTable('users', controls);
     userWindow.render('content-window');
-    userWindow.renderControls();
-    userWindow.updateData();
-    const addNewUser = userWindow.controls.find(c => c.isTypeOf('button'));
-    addNewUser.object.text('+');
-    addNewUser.object.attr('title', 'Добавить нового пользователя');
-    addNewUser.object.click(async () => userWindow.createNewUser());
-    userWindow.controls[2].input.change(async () => {
-        await userWindow.updateData();
+    userWindow.renderControls(child => {
+        if (child.isTypeOf('button')) {
+            child.object.text('+');
+            child.object.attr('title', 'Добавить нового пользователя');
+            child.object.click(async () => userWindow.createNewUser());
+        } else if (child.isTypeOf('searchLine')) {
+            child.input.change(async () => {
+                await userWindow.updateData();
+            });
+        }
     });
+    userWindow.updateData();
 
     userWindow.renderChildren(strip => {
         strip.text = strip.data.username;
