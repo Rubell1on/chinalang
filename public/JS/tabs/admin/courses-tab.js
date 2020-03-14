@@ -17,8 +17,8 @@ DataTable.prototype.updateCoursesData = async function() {
     const data = res.response;
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
-        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
-        const classes = row.classes.map(r => new DataStrip(r.name.replace(/[ .,&?*$;@\(\)]/g, ''), r, [new CheckboxButton('subscribe')]));
+        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])]);
+        const classes = row.classes.map(r => new DataStrip(r.name.replace(/[ .,&?*$;@\(\)]/g, ''), r, [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])]));
         const classesTable = new DataTable('classes-table', [], classes);
 
         return new ObjectWrapper(`${rowName}-strip-wrapper`, [courseStrip, classesTable]);
@@ -29,7 +29,7 @@ DataTable.prototype.updateCoursesData = async function() {
             switch(wChildren.getType()) {
                 case '[object dataStrip]':
                     wChildren.text.text(wChildren.data.name);
-                    wChildren.addLesson = new Button('add-new-class', '+');
+                    wChildren.addLesson = new Button(['add-new-class', 'button-very-big', 'button-green', 'button-allign-vertical-middle'], '+');
                     wChildren.addLesson.prepandRender(wChildren.object);
                     wChildren.object.click(async () => {
                         await this.createNewCourse(wChildren.data);

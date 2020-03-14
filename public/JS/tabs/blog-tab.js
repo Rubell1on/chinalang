@@ -17,7 +17,7 @@ DataTable.prototype.updateBlogData = async function() {
     const data = res.response;
     this.children = data.map(row => {
         const rowName = row.name.decrease();
-        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton('subscribe')]);
+        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])]);
 
         return new ObjectWrapper(`${rowName}-strip-wrapper`, [courseStrip]);
     }, []);

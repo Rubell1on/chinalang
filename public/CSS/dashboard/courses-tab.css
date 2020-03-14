@@ -22,77 +22,12 @@
     background: #3cb371;
 }
 
+.add-new-class {
+    margin-right: 10px;
+}
+
 .data-wrapper > .objects-wrapper > div > .icon-wrapper {
     display: none;
-}
-
-.data-wrapper > .objects-wrapper > .data > .subscribe {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    line-height: 19px;
-    float: right;
-    padding: 6px;
-    font-size: 22px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 5px;
-    transition: none;
-    font-weight: bold;
-    background: #FB2267;
-}
-
-.data-wrapper > .data > .subscribe {
-    width: 30px;
-    height: 30px;
-    line-height: 18px;
-    float: right;
-    padding: 6px;
-    font-size: 22px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 5px;
-    transition: none;
-    font-weight: bold;
-    transition: none;
-    background: #FB2267;
-}
-
-.data-wrapper > .data > .subscribe {
-    width: 30px;
-    height: 30px;
-    line-height: 18px;
-    float: right;
-    padding: 6px;
-    font-size: 22px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 5px;
-    transition: none;
-    font-weight: bold;
-    transition: none;
-}
-
-.data-wrapper > .objects-wrapper > .data > .add-new-class {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    line-height: 19px;
-    /* float: right; */
-    margin-right: 10px;
-    padding: 6px;
-    font-size: 22px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 5px;
-    transition: none;
-    font-weight: bold;
-    transition: none;
-    background: #3cb371;
 }
 
 .classes-table {
@@ -198,23 +133,4 @@
     font-weight: bold;
     margin-bottom: 20px;
     font-size: 26px;
-}
-
-@media (max-width: 1000px) {
-    .files-table-data-wrapper > div > .add-file {
-        padding: 3px 10px;
-    }
-}
-
-@media (min-width: 1000px) {
-    .data.user.data-strip > div.button-big {
-        width: 40px;
-        height: 40px;
-        line-height: 27px;
-    }
-
-    .data.user.data-strip > div.button-big.add-file {
-        width: unset;
-        padding: 6px 10px;
-    }
 }

@@ -5,7 +5,7 @@ DataTable.prototype.updateFilesData = async function() {
     const res = await request.get(`/api/db/files?apiKey=${apiKey}`, { searchingValue });
 
     const data = res.response;
-    this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton('remove')]), []);
+    this.children = data.map(row => new DataStrip(row.name.replace(/[ .,&?*$;@\(\)]/g, ''), row, [new CheckboxButton(['remove', 'button-very-big', 'button-allign-vertical-middle'])]), []);
 
     this.renderChildren(
             wChildren => {

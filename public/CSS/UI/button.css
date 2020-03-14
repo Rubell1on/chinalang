@@ -38,6 +38,20 @@
     line-height: 40px;
 }
 
+.button-red {
+    background: #FB2267;
+}
+
+.button-green {
+    background: #3cb371;
+}
+
+.button-allign-vertical-middle {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .button-big:hover {
     background: #24466B;
 }
