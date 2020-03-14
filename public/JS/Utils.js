@@ -11,6 +11,11 @@ String.prototype.decrease = function() {
     return this.replace(/[^A-Za-zА-ЯЁа-яё\d\(\)\.]/g, '');
 }
 
+String.prototype.isCorrect = function() {
+    const temp = this.match(/[^A-Za-zА-ЯЁа-яё\d\(\)\.]/g);
+    return temp && temp.length ? false : true;
+}
+
 function peekBack (array) {
     const len = array.length;
     return len ? array[len - 1] : undefined;

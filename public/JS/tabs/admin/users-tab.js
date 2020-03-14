@@ -105,17 +105,21 @@ DataTable.prototype.createNewUser = async function() {
             } else child.renderChildren(() => {});
         } else if (child.isTypeOf('button')) child.object.click(async () => {
             const inputsData = getInputData();
-            const apiKey = auth.get('apiKey');
-            const res = await request.post(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(inputsData))
-                .catch(e => {
-                    notificationController.error(e.error.responseText)
-                    console.log(e);
-                });
-    
-            if (res.status === 'success') {
-                notificationController.success(res.response);
-                this.updateData();
-                dataWindow.destroy();
+            if (inputsData.username.isEmpty() && inputsData.realname.isEmpty()) {
+                notificationController.error('Имя пользователя или никнейм должны быть заполнены!');
+            } else {
+                const apiKey = auth.get('apiKey');
+                const res = await request.post(`/api/db/users?apiKey=${apiKey}`, JSON.stringify(inputsData))
+                    .catch(e => {
+                        notificationController.error(e.error.responseText)
+                        console.log(e);
+                    });
+        
+                if (res.status === 'success') {
+                    notificationController.success(res.response);
+                    this.updateData();
+                    dataWindow.destroy();
+                }
             }
         });
     })
@@ -457,18 +461,23 @@ DataTable.prototype.updateData = async function() {
                             const keys = Object.keys(diffs);
             
                             if (keys.length !== 0) {
-                                const apiKey = auth.get('apiKey');
-                                const res = await request.put(`/api/db/users?apiKey=${apiKey}`, JSON.stringify({sources: dataWindow.data, diffs}))
-                                    .catch(e => {
-                                        notificationController.error(e.error.responseText)
-                                        console.log(e);
-                                    });
-            
-                                if (res.status === 'success') {
-                                    notificationController.success(res.response);
-                                    strip.onDataChange.raise()
-                                    console.log(res);
-                                    dataWindow.destroy();
+                                const inputs = dataWindow.children.filter(el => el.isClassOf('realname') || el.isClassOf('username')).map(el => el.input.val());
+                                if (inputs[0].isEmpty() && inputs[1].isEmpty()) {
+                                    notificationController.error('Имя пользователя или никнейм должны быть заполнены!');
+                                } else {
+                                    const apiKey = auth.get('apiKey');
+                                    const res = await request.put(`/api/db/users?apiKey=${apiKey}`, JSON.stringify({sources: dataWindow.data, diffs}))
+                                        .catch(e => {
+                                            notificationController.error(e.error.responseText)
+                                            console.log(e);
+                                        });
+                
+                                    if (res.status === 'success') {
+                                        notificationController.success(res.response);
+                                        strip.onDataChange.raise()
+                                        console.log(res);
+                                        dataWindow.destroy();
+                                    }
                                 }
                             }
                         });

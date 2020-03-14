@@ -3,7 +3,7 @@ async function renderUserProfile(data) {
 
     const leftTableChildren = [
         new InputField('realname-field', 'realname', 'Имя пользователя', data.realname),
-        
+        new InputField('username-field', 'username', 'Никнейм', data.username, true, true),
         new InputField('phone-field', 'phone', 'Телефон', data.phone),
         new InputField('email-field', 'email', 'Эл.почта', data.email),
         new InputField('skype-field', 'skype', 'Skype', data.skype, false),
@@ -11,8 +11,6 @@ async function renderUserProfile(data) {
         new InputField('new-password-field', 'new-password', 'Новый пароль'),
         new InputField('confirm-new-password-field', 'confirm-password', 'Подтвердите новый пароль')
     ];
-
-    if (auth.get('role') !== roles.student) leftTableChildren.splice(1, 0, new InputField('username-field', 'username', 'Никнейм', data.username));
 
     const rightTableChildren = [
         new Label('photo-label', 'Фото'),
