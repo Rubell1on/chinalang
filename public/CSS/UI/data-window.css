@@ -43,6 +43,7 @@
 }
 
 .data-wrapper > .data > .icon-wrapper > .icon {
+    display: block;
     float: left;
     position: relative;
     height: 50px;
