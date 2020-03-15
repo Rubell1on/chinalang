@@ -59,12 +59,12 @@
 
 
 .data-wrapper > .data > .icon-wrapper > .icon > img {
-    position: absolute;
+    box-sizing: border-box;
+    position: relative;
     height: 100%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
 }
 
 .data-wrapper > .data > .text {
