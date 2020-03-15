@@ -82,6 +82,12 @@
     float: right;
 }
 
+@media (max-width: 476px) {
+    .data-strip > div.history-strip-controls > select {
+        max-width: 40px;
+    }
+}
+
 @media (min-width: 1000px) {
     .history-strip-controls > .add-history {
         padding: 10px 10px;
