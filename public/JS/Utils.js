@@ -7,8 +7,11 @@ String.prototype.toNumber = function() {
 }
 
 String.prototype.decrease = function() {
-    // return this.replace(/[ ._,&?*$;#@\(\)]/g, '');
     return this.replace(/[^A-Za-zА-ЯЁа-яё\d\(\)\.]/g, '');
+}
+
+String.prototype.decreaseForTag = function() {
+    return this.replace(/[ ._,&?*$;#@\(\)]/g, '');
 }
 
 String.prototype.isCorrect = function() {

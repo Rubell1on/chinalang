@@ -343,7 +343,7 @@ DataTable.prototype.updateFilesData = async function(type = 'document') {
 
     if (res.status === 'success') {
         const data = res.response;
-        this.children = data.map(row => new DataStrip(row.name.decrease(), row, [new CheckboxButton('add-file')]), []);
+        this.children = data.map(row => new DataStrip(row.name.decreaseForTag(), row, [new CheckboxButton('add-file')]), []);
 
         this.renderChildren(wChildren => {
             switch(wChildren.getType()) {
