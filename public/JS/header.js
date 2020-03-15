@@ -3,9 +3,11 @@ async function renderHeader(user) {
 
     const children = [
         new Button('menu-button', '≡'),
-        new ObjectWrapper('chinalang-logo-wrapper', [
-            new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
-            new StripImage('chinalang-icon').setImage('../../public/IMG/header/triangle_logo.png'),
+        new Link('chinalang-link', location.origin, [
+            new ObjectWrapper('chinalang-logo-wrapper', [
+                new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
+                new StripImage('chinalang-icon').setImage('../../public/IMG/header/triangle_logo.png'),
+            ])
         ]),
         new ObjectWrapper('header-controls', [
             new DropDownList('user-menu', user && user.realname ? user.realname : user.username),
@@ -26,7 +28,9 @@ async function renderHeader(user) {
                     $('.controls').animate({'left': `${value}px`}, 200);                 
                 });
                 break;
-
+            case 'chinalang-link':
+                child.renderChildren(c => c.renderChildren(() => {}));
+                break;
             case 'chinalang-logo-wrapper':
                 child.renderChildren(() => {});
                 break;

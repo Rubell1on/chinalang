@@ -752,3 +752,36 @@ class SelectOption extends CustomWindow {
         this.html = `<option class="option ${this.spacedClassName}" value="${this.data && this.data.value ? this.data.value : ''}">${this.data && this.data.text ? this.data.text : ''}</option>`;
     }
 }
+
+class Link extends CustomWindow {
+    constructor(className, href = '', children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'link';
+        this._href = href;
+
+        this.children = children;
+    }
+
+    render(parent) {
+        this.html = `<a class=${this.spacedClassName} href=${this.href}></a>`;
+        super.render(parent);
+    }
+
+    set href(value) {
+        this._href = value;
+    }
+
+    get href() {
+        return this._href;
+    }
+
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+}

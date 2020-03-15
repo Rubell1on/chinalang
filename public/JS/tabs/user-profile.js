@@ -98,16 +98,21 @@ async function renderUserProfile(data) {
 
                                 case 'delete-photo':
                                     child.object.click(async () => {
-                                        notificationController.process('Отправлен запрос на удаление фото!');
-                                        const apiKey = auth.get('apiKey');
-                                        const res = await request.delete(`/api/db/files?apiKey=${apiKey}`, JSON.stringify({ type: 'photo', id: data.id, name: data.username, link: data.photoLink }))
-                                            .catch(e => {
-                                                console.error(e);
-                                                notificationController.error(e.error.responseText);
-                                            });
-                                        
-                                        if (res.status === 'nocontent') {
-                                            notificationController.success('Фото успешно удалено!')
+                                        if (data.photoLink) {
+                                            notificationController.process('Отправлен запрос на удаление фото!');
+                                            const apiKey = auth.get('apiKey');
+                                            const res = await request.delete(`/api/db/files?apiKey=${apiKey}`, JSON.stringify({ type: 'photo', id: data.id, name: data.username, link: data.photoLink }))
+                                                .catch(e => {
+                                                    console.error(e);
+                                                    notificationController.error(e.error.responseText);
+                                                });
+                                            
+                                            if (res.status === 'nocontent') {
+                                                notificationController.success('Фото успешно удалено!');
+                                                location.reload();
+                                            }
+                                        } else {
+                                            notificationController.error('Нет изображения для удаления!');
                                         }
                                     });
 
@@ -222,9 +227,10 @@ async function renderPage() {
 
     if (response) {
         const user = response;
-        renderUserProfile(user);
         renderHeader(user);
         renderControls(user);
+        if (user && user.photo) delete user.photo;
+        renderUserProfile(user);
 
         $('.profile-tab').addClass('strip-button-selected');
     } else {

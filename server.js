@@ -125,20 +125,12 @@ app.post('/free', async (req, res) => {
                 console.error(e);
                 res.status(500).send('Ошибка сервера!');
             });
-        const message = new gAPI.messageBuilder(
-            {
-                name: 'Chinalang', 
-                email: 'catchyclickstudio@gmail.com'
-            }, 
-            q.email, 
-            'Регистрация завершена!', 
-            `Теперь вы можете войти в свой личный кабинет!<br>Логин/email: ${q.email}<br>Пароль: ${password}`
-        ).build();
 
-        const messageResponse = await gmailClient.sendMessage(message)
+        const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
             .catch(e => {
-                console.log(e)
-            });;
+                console.log(e);
+                res.status(500).send('Во время отправки сообщения произошла ошибка!');
+            });
         res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
     } else {
         res.status(400).send('Данный пользователь уже существует!');
@@ -328,11 +320,17 @@ app.route('/api/db/users')
         if (data.length) {
             if (data[0].role === roles.admin) {
                 const password = utils.rndSequence();
-                const data = [q.realname, q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q.courses];
+                const data = [q.realname, q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q && q.courses ? q.courses : JSON.stringify([])];
                 const rows = await db.query('INSERT INTO users(realname, username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
                     .catch(e => {
                         console.error(e);
                         res.status(500).send('При создании пользователя произошла ошибка!');
+                    });
+
+                const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
+                    .catch(e => {
+                        console.log(e);
+                        res.status(500).send('При создании пользователя произошла обшибка!');
                     });
 
                 res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);

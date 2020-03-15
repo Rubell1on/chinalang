@@ -12,9 +12,11 @@ async function renderControls(user) {
     const parent = 'controls';
 
     const headerTemplate = [
-        new ObjectWrapper('logo-wrapper', [
-            new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
-            new StripImage('chinalang-logo').setImage('../../public/IMG/header/triangle_logo.png')
+        new Link('chinalang-link', location.origin, [
+            new ObjectWrapper('logo-wrapper', [
+                new StripImage('chinalang-logo').setImage('../../public/IMG/header/chinalang_label.png'),
+                new StripImage('chinalang-logo').setImage('../../public/IMG/header/triangle_logo.png')
+            ])
         ]),
         new StripSeparator('tabs-separator', 'Личный кабинет'),
     ];
@@ -53,8 +55,8 @@ async function renderControls(user) {
     const stripMenu = new StripMenu('page-tabs', children[data.role])
         .render(parent)
         .renderChildren(c => {
-            if (c.isTypeOf('objectWrapper')) {
-                c.renderChildren(() => {});
+            if (c.isTypeOf('link')) {
+                c.renderChildren(child => child.renderChildren(() => {}));
             } else {
                 switch(c.className) {
                     case 'main-tab':

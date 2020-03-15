@@ -2,6 +2,26 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const Base64 = require('js-base64').Base64;
 
+const messageBuilder = class MessageBuilder {
+    constructor(from, to, subject, text) {
+        const messageParts = [
+            `From: ${from.name} <${from.email}>`,
+            `To: <${to}>`,
+            'Content-Type: text/html; charset=utf-8',
+            'MIME-Version: 1.0',
+            `Subject: =?utf-8?B?${Base64.encodeURI(subject)}?=`,
+            '',
+            `${text}`
+        ];
+
+        this.message = messageParts.join('\n');
+    } 
+    
+    build() {
+        return this.message;
+    }
+}
+
 module.exports = {
     GmailAPI: class GmailAPI {
         constructor(credentials, token) {
@@ -45,25 +65,21 @@ module.exports = {
                 }
             });
         }
+
+        async sendUserdata(data) {
+            const message = new messageBuilder(
+                {
+                    name: 'Chinalang', 
+                    email: 'catchyclickstudio@gmail.com'
+                }, 
+                data.email, 
+                'Регистрация завершена!', 
+                `Теперь вы можете войти в свой личный кабинет!<br>Логин/email: ${data.email}<br>Пароль: ${data.password}`
+            ).build();
+    
+            return this.sendMessage(message);
+        }
     },
 
-    messageBuilder: class MessageBuilder {
-        constructor(from, to, subject, text) {
-            const messageParts = [
-                `From: ${from.name} <${from.email}>`,
-                `To: <${to}>`,
-                'Content-Type: text/html; charset=utf-8',
-                'MIME-Version: 1.0',
-                `Subject: =?utf-8?B?${Base64.encodeURI(subject)}?=`,
-                '',
-                `${text}`
-            ];
-
-            this.message = messageParts.join('\n');
-        } 
-        
-        build() {
-            return this.message;
-        }
-    }
+    messageBuilder 
 }

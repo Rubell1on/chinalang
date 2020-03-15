@@ -42,12 +42,12 @@
     color: white;
 }
 
-.header-wrapper > .chinalang-logo-wrapper {
+.header-wrapper > .chinalang-link > .chinalang-logo-wrapper {
     height: 50px;
     display: flex;
 }
 
-.header-wrapper > .chinalang-logo-wrapper > div {
+.header-wrapper > .chinalang-link >.chinalang-logo-wrapper > div {
     height: 100%;
     width: initial;
     background: none;
@@ -216,14 +216,14 @@
         display: block;
     }
     
-    .header-wrapper > .chinalang-logo-wrapper {
+    .header-wrapper > .chinalang-link > .chinalang-logo-wrapper {
         height: 40px;
         display: none;
     }
 }
 
 @media (min-width: 768px) {  
-    .header-wrapper > .chinalang-logo-wrapper {
+    .header-wrapper > .chinalang-link > .chinalang-logo-wrapper {
         height: 40px;
     }
 }
@@ -237,7 +237,7 @@
         padding: 10px 10px;
     }
 
-    .header-wrapper > .chinalang-logo-wrapper {
+    .header-wrapper > .chinalang-link > .chinalang-logo-wrapper {
         height: 50px;
     }
 

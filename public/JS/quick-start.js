@@ -13,57 +13,62 @@ $('.login').click(() => {
 
     const loginWindow = new DataWindow('login-window', [], children);
     loginWindow.render('');
+    loginWindow.object.keypress(async e => {
+        if (e.which === 13) await login();
+    })
     loginWindow.renderChildren(c => {
         if (c.isTypeOf('button')) {
-            c.object.click(async () => {
-                const inputs = loginWindow.children.filter(child => child.isTypeOf('inputField'));
-
-                const userData = {};
-                let flag = true;
-
-                for (let i in inputs) {
-                    const child = inputs[i];
-
-                    const val = child.value;
-                    if (child.input.attr('required')) {
-                        
-                        if (!val.isEmpty()) {
-                            const key = child.className.match(/^\w*/g)[0];
-                            userData[key] = val;
-                        }
-                        else {
-                            flag = false;
-                            child.input.focus();
-                            break;
-                        }
-                    } else {
-                        userData[child.className] = val;
-                    }
-                }
-
-                if (flag) {
-                    const res = await request.get('/login', userData)
-                        .catch(e => {
-                            console.log(e);
-                            notificationController.error(e.error.responseText);
-                        });
-                    if (res.status === 'success') {
-                        const role = res.response.role;
-                        // delete res.response.role;
-                        auth.setData(res.response);
-
-                        const pageRoute = role === 'student' ? 'lk' : 'dashboard';
-                        const courseRoute = role === 'student' ? 'main' : 'users';
-
-                        // location.href = `${location.origin}/${pageRoute}/${courseRoute}?apiKey=${auth.getData()['apiKey']}`;
-                        location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
-                    }
-                } else {
-                    notificationController.error('Необходимо заполнить выделенные поля!');
-                }
-            })
+            c.object.click(async () => await login())
         }
     });
+
+    async function login() {
+        const inputs = loginWindow.children.filter(child => child.isTypeOf('inputField'));
+
+        const userData = {};
+        let flag = true;
+
+        for (let i in inputs) {
+            const child = inputs[i];
+
+            const val = child.value;
+            if (child.input.attr('required')) {
+                
+                if (!val.isEmpty()) {
+                    const key = child.className.match(/^\w*/g)[0];
+                    userData[key] = val;
+                }
+                else {
+                    flag = false;
+                    child.input.focus();
+                    break;
+                }
+            } else {
+                userData[child.className] = val;
+            }
+        }
+
+        if (flag) {
+            const res = await request.get('/login', userData)
+                .catch(e => {
+                    console.log(e);
+                    notificationController.error(e.error.responseText);
+                });
+            if (res.status === 'success') {
+                const role = res.response.role;
+                // delete res.response.role;
+                auth.setData(res.response);
+
+                const pageRoute = role === 'student' ? 'lk' : 'dashboard';
+                const courseRoute = role === 'student' ? 'main' : 'users';
+
+                // location.href = `${location.origin}/${pageRoute}/${courseRoute}?apiKey=${auth.getData()['apiKey']}`;
+                location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
+            }
+        } else {
+            notificationController.error('Необходимо заполнить выделенные поля!');
+        }
+    }
 });
 
 $('.contacts').click(async() => {
