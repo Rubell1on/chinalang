@@ -25,9 +25,7 @@ async function renderControls(user) {
         new StripButton('profile-tab', 'Мой профиль', '../../public/IMG/dashboard/course.png'),
         new StripButton('users-tab', 'Пользователи', '../../public/IMG/dashboard/users.png'),
         new StripButton('courses-tab', 'Курсы', '../../public/IMG/dashboard/course.png'),
-        new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
         new StripButton('history-tab', 'История занятий', '../../public/IMG/dashboard/history.png'),
-        new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/blog.png')
     ]
 
     let children = {
@@ -40,7 +38,9 @@ async function renderControls(user) {
         ],
         admin: [
             ...headerTemplate,
-            ...bodyTemplate
+            ...bodyTemplate,
+            new StripButton('files-tab', 'Файлы', '../../public/IMG/dashboard/files.png'),
+            new StripButton('blog-tab', 'Блог', '../../public/IMG/dashboard/blog.png')
         ],
         teacher: [
             ...headerTemplate,

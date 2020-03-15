@@ -90,6 +90,7 @@ body {
 }
 
 .content-window {
+    height: 100%;
     /* width: 50%; */
     background: white;
     border-radius: 10px;

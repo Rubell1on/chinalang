@@ -10,6 +10,15 @@
     text-align: center;
 }
 
+.input-label {
+    box-sizing: border-box;
+    padding-left: 5px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+}
+
 .gray {
     color: #606761;
 }

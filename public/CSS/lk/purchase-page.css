@@ -1,6 +1,6 @@
 .window > .content-window {
     max-width: unset;
-    height: unset;
+    /* height: unset; */
 }
 
 .window > .content-window > .purchase-table > .purchase-table-data-wrapper {

@@ -8,8 +8,6 @@ function createUserTemplate(data, role) {
                 new Label('role-label', 'Роль'),
                 new Select('role', roleObject)
             ]),
-            new InputField('phone', 'phone', 'Номер телефона', data.phone),
-            new InputField('email', 'email', 'Эл.почта', data.email),
             new InputField('skype', 'skype', 'Skype', data.skype, false),
         ],
         foot: [
@@ -24,6 +22,8 @@ function createUserTemplate(data, role) {
     const templates = {
         admin: [
             ...template.base,
+            new InputField('phone', 'phone', 'Номер телефона', data.phone),
+            new InputField('email', 'email', 'Эл.почта', data.email),
             new InputField('classesWRussian', 'classes', 'Занятия с рускоговорящим учителем', data.classesWRussian),
             new InputField('classesWNative', 'classes', 'Занятия с носителем языка', data.classesWNative),
             ...template.foot

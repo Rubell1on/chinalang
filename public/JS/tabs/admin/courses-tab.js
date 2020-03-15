@@ -10,6 +10,7 @@ function diff(first, second) {
 }
 
 DataTable.prototype.updateCoursesData = async function() {
+    const role = auth.get('role');
     this.removeChildren();
     const searchingValue = this.controls.find(c => c.isTypeOf('searchLine')).input.val();
     const apiKey = auth.get('apiKey');
@@ -17,8 +18,8 @@ DataTable.prototype.updateCoursesData = async function() {
     const data = res.response;
     this.children = data.map(row => {
         const rowName = row.name.replace(/[ .,&?*$;@\(\)]/g, '');
-        const courseStrip = new DataStrip(rowName, row, [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])]);
-        const classes = row.classes.map(r => new DataStrip(r.name.replace(/[ .,&?*$;@\(\)]/g, ''), r, [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])]));
+        const courseStrip = new DataStrip(rowName, row, role === roles.admin ? [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])] : []);
+        const classes = row.classes.map(r => new DataStrip(r.name.replace(/[ .,&?*$;@\(\)]/g, ''), r, role === roles.admin ? [new CheckboxButton(['subscribe', 'button-very-big', 'button-allign-vertical-middle'])] : []));
         const classesTable = new DataTable('classes-table', [], classes);
 
         return new ObjectWrapper(`${rowName}-strip-wrapper`, [courseStrip, classesTable]);
@@ -29,16 +30,19 @@ DataTable.prototype.updateCoursesData = async function() {
             switch(wChildren.getType()) {
                 case '[object dataStrip]':
                     wChildren.text.text(wChildren.data.name);
-                    wChildren.addLesson = new Button(['add-new-class', 'button-very-big', 'button-green', 'button-allign-vertical-middle'], '+');
-                    wChildren.addLesson.prepandRender(wChildren.object);
-                    wChildren.object.click(async () => {
-                        await this.createNewCourse(wChildren.data);
-                        this.updateCoursesData();
-                    });
-                    wChildren.addLesson.object.click(() => {
-                        wChildren.createNewClass();
-                        wChildren.onDataChange.addListener(() => this.updateCoursesData());
-                    });
+                    if (role === roles.admin) {
+                        wChildren.addLesson = new Button(['add-new-class', 'button-very-big', 'button-green', 'button-allign-vertical-middle'], '+');
+                        wChildren.addLesson.prepandRender(wChildren.object);
+                        wChildren.object.click(async () => {
+                            await this.createNewCourse(wChildren.data);
+                            this.updateCoursesData();
+                        });
+                        wChildren.addLesson.object.click(() => {
+                            wChildren.createNewClass();
+                            wChildren.onDataChange.addListener(() => this.updateCoursesData());
+                        });
+                    }
+
                     wChildren.renderChildren(s => {
                         s.object.text('-');
                         s.object.click(() => {
@@ -69,7 +73,9 @@ DataTable.prototype.updateCoursesData = async function() {
                 case '[object dataTable]':
                     wChildren.renderChildren(tChildren => {
                         tChildren.text.text(tChildren.data.name);
-                        tChildren.object.click(() => tChildren.createNewClass(tChildren.data));
+                        tChildren.object.click(() => role === roles.admin 
+                                                    ? tChildren.createNewClass(tChildren.data)
+                                                    : createClassWindow(tChildren.data.name, tChildren.data.description));
                         tChildren.onDataChange.addListener(() => this.updateCoursesData());
                         tChildren.renderChildren(child => {
                             child.object.text('-');
@@ -104,6 +110,27 @@ DataTable.prototype.updateCoursesData = async function() {
             wChildren.object.children().filter(':not(.text-wrapper)').click(e => e.stopPropagation());
         });
     });
+}
+
+function createClassWindow(name, description) {
+    const classesWindow = new DataWindow('class-window', [], [
+        new DataTable('class-table', [], [
+            new Label('class-label', name),
+            new ObjectWrapper('class-description-wrapper', [
+                new Label('class-description-label', 'Описание урока'),
+                new Text('class-description-text', description)
+            ])
+        ])
+    ]);
+    classesWindow.render('');
+    classesWindow.renderChildren(table => {
+        table.renderChildren(child => {
+            if (child.isTypeOf('objectWrapper')) {
+                child.renderChildren(() => {});
+            }
+        });
+    });
+    classesWindow.object.append('<script src="../../../public/JS/image-loader.js"></script>');
 }
 
 DataTable.prototype.createNewCourse = async function(data = {}) {
@@ -295,21 +322,26 @@ DataStrip.prototype.createNewClass = async function(data = {}) {
 }
 
 async function renderCoursesTable() {
+    const role = auth.get('role');
     const controls = [
         new Label('window-label', 'Список курсов'),
-        new Button('add-new-course'),
-        new SearchLine('courses-search')
+        new SearchLine(role === roles.admin ? ['courses-search', 'search-line-short'] : ['search-line'])
     ];
+
+    if (role === roles.admin) controls.splice(1, 0 , new Button('add-new-course'));
 
     const coursesTable = new DataTable('courses-table', controls);
     coursesTable.wrapperClass = 'courses-wrapper';
     coursesTable.render('content-window');
-    coursesTable.renderControls(() => {});
+    coursesTable.renderControls(child => 
+    {
+        if (child.isTypeOf('button') && role === roles.admin) {
+            child.object.text('+');
+            child.object.attr('title', 'Добавить новый курс');
+            child.object.click(async () => coursesTable.createNewCourse());
+        }
+    });
 
-    const addCourse = coursesTable.controls.find(c => c.isTypeOf('button'));
-    addCourse.object.text('+');
-    addCourse.object.attr('title', 'Добавить новый курс');
-    addCourse.object.click(async () => coursesTable.createNewCourse());
     coursesTable.updateCoursesData([]);
     coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
