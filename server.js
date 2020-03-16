@@ -740,7 +740,7 @@ app.route('/api/db/files')
 
             const name = utils.translate(q.name);
             const filePath = `${routes.root}/${type}/${name}`;
-            const link = await yandexDisk.getUploadLink(filePath);
+            const link = await yandexDisk.getUploadLink(filePath, type === routes.photo ? true : false);
             
             res.status(200).json({data: link.body, path: filePath});
         } else {
