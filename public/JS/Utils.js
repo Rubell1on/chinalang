@@ -19,6 +19,30 @@ String.prototype.isCorrect = function() {
     return temp && temp.length ? false : true;
 }
 
+File.prototype.resizeImage = async function(size) {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size.w;
+        canvas.height = size.h;
+        const ctx = canvas.getContext('2d');
+        
+        const img = document.createElement('img');
+
+        if (this) img.src = URL.createObjectURL(this);
+        img.onload = () => {
+            ctx.clearRect(0, 0, size.w, size.h);
+            ctx.drawImage(img, 
+                        0, 0, img.width, img.height,
+                        0, 0, size.w, size.h);
+
+                canvas.toBlob(blob => {
+                    if (blob) resolve(new File([blob], this.name));
+                    else reject();
+                }, this.type);
+        };
+    })
+}
+
 function peekBack (array) {
     const len = array.length;
     return len ? array[len - 1] : undefined;

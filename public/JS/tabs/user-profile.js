@@ -45,10 +45,11 @@ async function renderUserProfile(data) {
                                     child.object.click(async () => {
                                         const fileInput = table.children.find(c => c.isTypeOf('fileInput'));
                                         const file = fileInput.input[0].files[0];
+                                        const resizedFile = await file.resizeImage({w: 64, h:64});
                                         const fileType = file.name.match(/\.\w*/)[0];
 
                                         const fileInfo = {
-                                            name: `${data.username}_photo${fileType}`,
+                                            name: `${data.email}_photo${fileType}`,
                                             type: 'photo'
                                         }
 
@@ -62,7 +63,7 @@ async function renderUserProfile(data) {
 
                                             if (res.status === 'success') {
                                                 const responseData = res.response;
-                                                const response = await request.put(responseData.data.href, file, false)
+                                                const response = await request.put(responseData.data.href, resizedFile, false)
                                                     .catch(e => {
                                                         console.error(e);
                                                         notificationController.error(e.error.responseText);
