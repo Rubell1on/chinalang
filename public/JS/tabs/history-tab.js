@@ -159,13 +159,11 @@ DataTable.prototype.updateData = async function() {
         ])
     }, []);
 
-    this.renderChildren(strip => {
+    this.renderChildren(async strip => {
         const data = strip.data;
         strip.text.text(data && data.realname ? data.realname : data.username);
         const coursesStr = strip.data.courses;
         const userCourses = strip.data && coursesStr ? coursesStr : [];
-        const photoLink = strip.data && strip.data.photo ? `data:image/*;base64,${strip.data.photo}` : strip.defaultImg;
-        strip.icon.attr('src',  photoLink);
         strip.renderChildren(wrapper => {
             wrapper.renderChildren(child => {
                 if (child.isTypeOf('button')) {
@@ -201,5 +199,31 @@ DataTable.prototype.updateData = async function() {
                 }
             });
         });
+
+        const tempData = data.reduce((acc, el) => {
+            acc.push({
+                email: el && el.email ? el.email : '',
+                photoLink: el && el.photoLink ? el.photoLink : ''
+            });
+    
+            return acc;
+        }, []);
+    
+        const photosRes = await request.get(`/api/download?apiKey=${apiKey}`, {data: tempData, type: 'photo'})
+            .catch(e => console.log(e));
+    
+        if (photosRes.status === 'success') {
+            photosRes.response.forEach(el => {
+                for (let i in this.children) {
+                    const strip = this.children[i];
+    
+                    if (strip.data.email === el.email) {
+                        if (el && el.photo) strip.image = `data:image/*;base64,${el.photo}`;
+    
+                        break;
+                    }
+                }
+            })
+        }
     });
 }

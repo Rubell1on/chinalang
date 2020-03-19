@@ -89,7 +89,10 @@ class DataStrip extends CustomWindow {
     }
 
     set image(value) {
-        this.icon.attr('src', value);
+        this.icon.animate({opacity: 0}, 200, () => {
+            this.icon.attr('src', value);
+            this.icon.animate({opacity: 1}, 200)
+        });
     }
 }
 
