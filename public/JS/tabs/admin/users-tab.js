@@ -399,9 +399,9 @@ DataTable.prototype.updateData = async function() {
         strip.text.text(data && data.realname ? data.realname : data.username);
         const coursesStr = data.courses;
         const userCourses = data && coursesStr ? coursesStr : [];
-        const photoLink = data && data.photo ? `data:image/*;base64,${data.photo}` : strip.defaultImg;
-        if (data && data.photo) delete data.photo;
-        strip.icon.attr('src',  photoLink);
+        // const photoLink = data && data.photo ? `data:image/*;base64,${data.photo}` : strip.defaultImg;
+        // if (data && data.photo) delete data.photo;
+        // strip.icon.attr('src',  photoLink);
         strip.object.click(() => {
             const data = strip.data;
 
@@ -514,6 +514,33 @@ DataTable.prototype.updateData = async function() {
 
         strip.onDataChange.addListener(() => this.updateData());
     });
+
+    const tempData = data.reduce((acc, el) => {
+        acc.push({
+            email: el && el.email ? el.email : '',
+            photoLink: el && el.photoLink ? el.photoLink : ''
+        });
+
+        return acc;
+    }, []);
+
+    const photosRes = await request.get(`/api/download?apiKey=${apiKey}`, {data: tempData, type: 'photo'})
+        .catch(e => console.log(e));
+
+    if (photosRes.status === 'success') {
+        photosRes.response.forEach(el => {
+            for (let i in this.children) {
+                const strip = this.children[i];
+
+                if (strip.data.email === el.email) {
+                    strip.image = el && el.photo ? `data:image/*;base64,${el.photo}` : strip.defaultImg;
+                    break;
+                }
+            }
+        })
+
+        console.log(this);
+    }
 }
 
 async function renderUsersTable() {

@@ -87,6 +87,10 @@ class DataStrip extends CustomWindow {
             });
         }
     }
+
+    set image(value) {
+        this.icon.attr('src', value);
+    }
 }
 
 class DataWindow extends SingleCustomWindow {

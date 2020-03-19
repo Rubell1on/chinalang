@@ -269,35 +269,7 @@ app.route('/api/db/users')
                         });
                 }
 
-                const response = await yandexDisk.getPublished();
-
-                const files = response.body.items.filter(file => {
-                    let flag = false;
-
-                    for (let i in rows[0]) {
-                        const rec = rows[0][i];
-                        if (rec && rec.photoLink) {
-                            if (rec.photoLink.includes(file.name)) {
-                                flag = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    return flag;
-                });
-
-                const links = await Promise.all(files.map(file => yandexDisk.getData(file.file)));
-
-                const users = rows[0].map((user) => {
-                    const i = files.findIndex(f => f.path.slice(6) === user.photoLink);
-                    const link = i !== -1 ? links[i] : null;
-                    user.photo = links && link && link.body ? Base64.encode(link.body) : null ;
-
-                    return user;
-                }, []);
-
-                res.status(200).json(users);
+                res.status(200).json(rows[0]);
             } else {
                 res.status(403).end();
             }
@@ -925,9 +897,16 @@ app.route('/api/db/blog')
 
 app.get('/api/download', async (req, res) => {
     const q = req.query;
-    const path = q.path;
-    const data = await yandexDisk.getDowndloadLink(path);
-    const file = await yandexDisk.getData(data.body.href);
+
+    let path = undefined;
+    let data = undefined;
+    let file = undefined;
+
+    if (q.type !== 'photo') {
+        path = q.path;
+        data = await yandexDisk.getDowndloadLink(path);
+        file = await yandexDisk.getData(data.body.href);
+    }
     
     switch(q.type) {
         case 'document':
@@ -943,7 +922,35 @@ app.get('/api/download', async (req, res) => {
             break;
 
         case 'photo':
+            const response = await yandexDisk.getPublished();
 
+            const files = response.body.items.filter(file => {
+                let flag = false;
+
+                for (let i in q.data) {
+                    const rec = q.data[i];
+                    if (rec && rec.photoLink) {
+                        if (rec.photoLink.includes(file.name)) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+
+                return flag;
+            });
+
+            const links = await Promise.all(files.map(file => yandexDisk.getData(file.file)));
+
+            const users = q.data.map((user) => {
+                const i = files.findIndex(f => f.path.slice(6) === user.photoLink);
+                const link = i !== -1 ? links[i] : null;
+                user.photo = links && link && link.body ? Base64.encode(link.body) : null ;
+
+                return user;
+            }, []);
+
+            res.status(200).json(users);
             break;
     }
 })
