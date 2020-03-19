@@ -271,7 +271,21 @@ app.route('/api/db/users')
 
                 const response = await yandexDisk.getPublished();
 
-                const files = response.body.items;
+                const files = response.body.items.filter(file => {
+                    let flag = false;
+
+                    for (let i in rows[0]) {
+                        const rec = rows[0][i];
+                        if (rec && rec.photoLink) {
+                            if (rec.photoLink.includes(file.name)) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    return flag;
+                });
 
                 const links = await Promise.all(files.map(file => yandexDisk.getData(file.file)));
 
@@ -924,9 +938,12 @@ app.get('/api/download', async (req, res) => {
             break;
 
         case 'image':
-            console.log()
             const encodedData = Base64.encode(file.body);
             res.status(200).send(encodedData);
+            break;
+
+        case 'photo':
+
             break;
     }
 })
