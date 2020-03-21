@@ -30,7 +30,7 @@ app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 
 app.listen(PORT, () => {
     db.connect()
@@ -126,12 +126,14 @@ app.post('/free', async (req, res) => {
                 res.status(500).send('Ошибка сервера!');
             });
 
-        const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
+        if (result) {
+            const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
             .catch(e => {
                 console.log(e);
                 res.status(500).send('Во время отправки сообщения произошла ошибка!');
             });
-        res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
+            res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
+        }
     } else {
         res.status(400).send('Данный пользователь уже существует!');
     }
