@@ -13,6 +13,13 @@ const keysManager = require('./public/JS/apiKeyManager').ApiKey;
 const apiKeyManager = new keysManager(db);
 const moment = require('moment-timezone');
 const request = require('request');
+const { Logger, LogTarget, LogFile } = require('./public/JS/logger');
+const logger = new Logger()
+    .addTarget(new LogFile(`${__dirname}/logs`))
+    .addTarget(new LogTarget({
+        log: (message) => console.log(message),
+        error: (message) => console.error(message)
+    }));
 
 const credentials = envVars.getGoogleAPICredentials();
 const token = envVars.getGoogleAPIToken();
@@ -35,10 +42,10 @@ const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
     db.connect()
         .then(res => {
-            console.log('Подключение к серверу MySQL успешно установлено')
-            console.log('Сервер запущен');
+            logger.log('Подключение к серверу MySQL успешно установлено');
+            logger.log('Сервер запущен');
         })
-        .catch(err => console.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
+        .catch(err => logger.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
 })
 
 app.get('/', (req, res) => {
@@ -50,7 +57,7 @@ app.get('/login', async (req, res) => {
 
     const rows = await db.query(`SELECT id, realname, username, password, role, photoLink FROM users WHERE email='${q.email}'`)
         .catch(e => {
-            console.error(e);
+            logger.error(e);
             res.status(400).send('Неверное имя пользователя!');
         });
 
@@ -69,7 +76,7 @@ app.get('/login', async (req, res) => {
 
             const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
 
@@ -87,14 +94,14 @@ app.get('/login', async (req, res) => {
             if (rows[0].length) {
                 await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Произошла ошибка при обновлении данных!');
                 });
                 res.status(200).json({id, realname, username, role, apiKey, photo: buffer});
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Произошла ошибка при добавлении данных!');
                 });
                 res.status(201).json({id, realname, username, role, apiKey, photo: buffer});
@@ -112,7 +119,7 @@ app.post('/free', async (req, res) => {
     
     const rows = await db.query(`SELECT COUNT(*) as count FROM users WHERE phone='${q.phone}' OR email='${q.email}'`)
         .catch(e => {
-            console.error(e);
+            logger.error(e);
             res.status(400).send('При регистрации пользователя произошла ошибка!');
         });
     const count = rows[0][0].count;
@@ -122,14 +129,14 @@ app.post('/free', async (req, res) => {
         const arr = [q.realname, '', roles.student, q.phone, q.email, q.skype, password, 1, JSON.stringify([])];
         const result = await db.query('INSERT INTO users(realname, username, role, phone, email, skype, password, classesWRussian, courses) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', arr)
             .catch(e => {
-                console.error(e);
+                logger.error(e);
                 res.status(500).send('Ошибка сервера!');
             });
 
         if (result) {
             const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
             .catch(e => {
-                console.log(e);
+                logger.error(e);
                 res.status(500).send('Во время отправки сообщения произошла ошибка!');
             });
             res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
@@ -160,7 +167,7 @@ app.route('/api/db/prices')
                     ROUNDTOHIGH(PERCENT(oldClassPrice, discount), 10) * count as newTotalPrice
                 FROM prices WHERE teacherType = 'russian'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
             const nativeTeachers = await db.query(`SELECT 
@@ -174,7 +181,7 @@ app.route('/api/db/prices')
                     ROUNDTOLOW(PERCENT(oldClassPrice, discount), 10) * count as newTotalPrice
                 FROM prices WHERE teacherType = 'native'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
 
@@ -260,13 +267,13 @@ app.route('/api/db/users')
                 if (value === '') {
                     rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users ${q && q.role ? `WHERE ${roleTemplate}` : ''}`)
                         .catch(e => {
-                            console.error(e);
+                            logger.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else {
                     rows = await db.query(`SELECT realname, username, role, phone, email, skype, classesWRussian, classesWNative, courses, photoLink FROM users WHERE realname REGEXP '${value}' OR username REGEXP '${value}' ${q && q.role ? `AND ${roleTemplate}` : `OR role REGEXP '${value}'`} OR phone REGEXP '${value}' OR email REGEXP '${value}' OR skype REGEXP '${value}' OR classesWRussian REGEXP '${value}'`)
                         .catch(e => {
-                            console.error(e);
+                            logger.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 }
@@ -289,7 +296,7 @@ app.route('/api/db/users')
                 const template = utils.obj2strArr(diffs).join(', ');
                 const rows = await db.query(`UPDATE users SET ${template} WHERE username = '${sources.username}' AND email = '${sources.email}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При обновлении данных произошла ошибка!');
                     });
                 res.status(200).send(`Данные пользователя ${sources.username} успешно обновлены!`);
@@ -311,13 +318,13 @@ app.route('/api/db/users')
                 const data = [q.realname, q.username, q.role, q.phone, q.email, q.skype, password, q.classesWRussian, q.classesWNative, q && q.courses ? q.courses : JSON.stringify([])];
                 const rows = await db.query('INSERT INTO users(realname, username, role, phone, email, skype, password, classesWRussian, classesWNative, courses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При создании пользователя произошла ошибка!');
                     });
 
                 const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
                     .catch(e => {
-                        console.log(e);
+                        logger.error(e);
                         res.status(500).send('При создании пользователя произошла обшибка!');
                     });
 
@@ -337,7 +344,7 @@ app.route('/api/db/users')
             if (data[0].role === roles.admin) {
                 const rows = await db.query(`DELETE FROM users WHERE username='${q.username}' AND email='${q.email}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При удалении пользователя произошла ошибка!');
                     });
 
@@ -357,7 +364,7 @@ app.route('/api/db/userData')
         if (q && q.apiKey) {
             const rows = await db.query(`SELECT users.id, users.realname, users.username, users.phone, users.email, users.skype, users.classesWRussian, users.classesWNative, users.photoLink, users.courses FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${q.apiKey}'`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
 
@@ -387,7 +394,7 @@ app.route('/api/db/userData')
 
         const rows = await db.query(`SELECT users.id, users.realname, users.username, users.phone, users.email, users.skype, users.password FROM users JOIN usersapi ON users.id = usersapi.userId WHERE usersapi.apiKey = '${apiKey}'`)
             .catch(e => {
-                console.error(e);
+                logger.error(e);
                 res.status(500).send('Ошибка сервера!');
             });
 
@@ -408,7 +415,7 @@ app.route('/api/db/userData')
 
             const result = await db.query(`UPDATE users JOIN usersapi ON users.id = usersapi.userId SET ${template} WHERE usersapi.apiKey = '${apiKey}'`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('При обновлении данных произошла ошибка!');
                 });
             res.status(200).send('Данные пользователя успешно обновлены!');
@@ -433,13 +440,13 @@ app.route('/api/db/courses')
             if (value === '') {
                 rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id ${template}`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При отправке данных произошла ошибка!');
                     });
             } else {
                 rows = await db.query(`SELECT courses.id, courses.name, courses.description, classes.id as class_id, classes.name as class_name, classes.description as class_description, classes.files FROM courses LEFT JOIN classes ON courses.id = classes.course_id WHERE courses.name REGEXP '${value}' OR courses.description REGEXP '${value}' OR classes.name REGEXP '${value}' OR classes.description REGEXP '${value}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При отправке данных произошла ошибка!');
                     });
             }
@@ -489,7 +496,7 @@ app.route('/api/db/courses')
 
                 await db.query(`INSERT INTO courses(name, description) VALUES(?, ?)`, data)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При создании курса произошла ошибка!');
                     });
                 
@@ -511,7 +518,7 @@ app.route('/api/db/courses')
                 const template = utils.obj2strArr(data).join(', ');
                 const rows = await db.query(`UPDATE courses SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При обновлении курса произошла ошибка!');
                     });
 
@@ -532,7 +539,7 @@ app.route('/api/db/courses')
 
                 await db.query(`DELETE FROM courses WHERE id = ${q.id}`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При удалении курса произошла ошибка!');
                     });
 
@@ -555,7 +562,7 @@ app.route('/api/db/class')
                 const data = [q.courseId, q.name, q.description]
                 await db.query('INSERT INTO classes(course_id, name, description) VALUES(?, ?, ?)', data)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При создании урока произошла ошибка!');
                     });
 
@@ -577,7 +584,7 @@ app.route('/api/db/class')
                 const template = utils.obj2strArr(data).join(', ');
                 await db.query(`UPDATE classes SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При обновлении урока произошла ошибка!');
                     });
 
@@ -598,7 +605,7 @@ app.route('/api/db/class')
 
             await db.query(`DELETE FROM classes WHERE course_id = ${q.courseId} AND id = ${q.id}`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('При удалении урока произошла ошибка!');
                 });
 
@@ -624,7 +631,7 @@ app.route('/api/db/files')
             if (!value) {
                 rows = await db.query(`SELECT * FROM files ${type ? `WHERE ${type}` : ''}`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
             }
@@ -632,7 +639,7 @@ app.route('/api/db/files')
                 const typeTemplate = q && q.type ? `AND ${type}` : `or type REGEXP '${value}'` ;
                 rows = await db.query(`SELECT * FROM files WHERE name REGEXP '${value}' ${typeTemplate}`)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
             }
@@ -652,7 +659,7 @@ app.route('/api/db/files')
             if (types.includes(q.type)) {
                 const data = await db.query(`INSERT INTO files(name, link, type) VALUE('${q.name}', '${q.path}', '${q.type}')`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
                 res.status(201).send('Файл создан!');
@@ -660,7 +667,7 @@ app.route('/api/db/files')
                 const response = await yandexDisk.publishFile(q.path);
                 const data = await db.query(`UPDATE users SET photoLink = '${q.path}' WHERE id = ${q.data.id};`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
                 res.status(201).send('Файл создан!');
@@ -681,13 +688,13 @@ app.route('/api/db/files')
                 if (q.type === 'document') {
                     await db.query(`DELETE FROM files WHERE id = '${q.id}' AND name = '${q.name}'`)
                         .catch(e => {
-                            console.error(e);
+                            logger.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 } else if (q.type === 'photo') {
                     await db.query(`UPDATE users SET photoLink = '' WHERE id = ${q.id} AND username = '${q.name}'`)
                         .catch(e => {
-                            console.error(e);
+                            logger.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
                 }
@@ -753,7 +760,7 @@ app.route('/api/db/history')
 
             const rows = await db.query('SELECT `student`.username as studentName, `teacher`.username as teacherName, history.status, history.date, history.change, balance FROM history RIGHT JOIN users as `student` ON studentId = `student`.id RIGHT JOIN users as `teacher` ON teacherId = `teacher`.id ' + tail)
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
 
@@ -768,7 +775,7 @@ app.route('/api/db/history')
             if (data[0].role !== roles.student) {
                 const rows = await db.query(`SELECT * FROM users WHERE username='${q.data.username}' AND email='${q.data.email}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
                 
@@ -796,13 +803,13 @@ app.route('/api/db/history')
                 if (userData[key] > 0) {
                     await db.query(`INSERT INTO history(studentId, teacherId, history.status, history.date, history.change, balance) VALUES('${userData.id}', '${data[0].id}', '${q.status}', '${currDate}', ${subtractionValues[q.status]}, ${classesLeft})`) 
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
 
                     await db.query(`UPDATE users SET ${key}='${classesLeft}' WHERE id=${userData.id}`)
                         .catch(e => {
-                            console.error(e);
+                            logger.error(e);
                             res.status(500).send('Ошибка сервера!');
                         });
 
@@ -826,7 +833,7 @@ app.route('/api/db/blog')
         if (data.length) {
             rows = await db.query('SELECT * FROM blog')
                 .catch(e => {
-                    console.error(e);
+                    logger.error(e);
                     res.status(500).send('Ошибка сервера!');
                 });
 
@@ -844,7 +851,7 @@ app.route('/api/db/blog')
             if (data[0].role !== roles.student) {
                 rows = await db.query(`INSERT INTO blog(name, description) VALUE('${q.name}', '${q.description}')`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
 
@@ -866,7 +873,7 @@ app.route('/api/db/blog')
                 const template = utils.obj2strArr(data).join(', ');
                 await db.query(`UPDATE blog SET ${template} WHERE id = '${source.id}' AND name = '${source.name}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('При удалении записи произошла ошибка!');
                     });
 
@@ -885,7 +892,7 @@ app.route('/api/db/blog')
             if (data[0].role !== roles.student) {
                 await db.query(`DELETE FROM blog WHERE id='${req.body.id}'`)
                     .catch(e => {
-                        console.error(e);
+                        logger.error(e);
                         res.status(500).send('Ошибка сервера!');
                     });
                 res.status(204).send('Файл удален!');
