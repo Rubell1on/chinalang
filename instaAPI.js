@@ -72,13 +72,3 @@ const data = {
     access_token: 'IGQVJXb2p4TzMxcXpaTlBVT2dmUWZADVHlYR0tLcDR5YnR2QnJkdDQxdFZAKRDFmQ3FNa3REem9aTGo1OFZATNHBYa2JyRmhwUUVhSkdoLU1LOGZAsSUJCdW9JaS1BYkY4Mm9aOFd4RWdxbEpWWjBVUXZABRmFycnNWYmtFV0ZAN',
     user_id: '17841424957882109' 
 };
-
-// (async () => {
-//     const insta = new InstagramAPI(data.client_id, data.redirect_uri);
-//     const response = await insta.getMarker(data.secret, data.code)
-//         .catch(e => {
-//             console.error();
-//         });
-//     const res = await insta.getMedia(data.access_token)
-//     console.log(response);
-// })();

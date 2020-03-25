@@ -75,7 +75,6 @@ function diff(first, second) {
     }, {})
 }
 
-//
 function renderPageLoader() {
     const pageLoader = new PageLoader('user-tab-loader', [
         new Label('loader-label', 'Идет загрузка страницы!'),

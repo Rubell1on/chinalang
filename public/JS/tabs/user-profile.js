@@ -218,7 +218,6 @@ async function renderUserProfile(data) {
                 break;
         }
     });
-    // }
 }
 
 async function renderPage() {

@@ -1,6 +1,4 @@
 async function renderCoursePage(userData) {
-    // renderPageLoader();
-
     const query = location.getQuery();
     const apiKey = auth.get('apiKey');
 
@@ -51,7 +49,6 @@ async function renderCoursePage(userData) {
                                         createClassWindow(c.name, c.description);
                                     });
                                 } else {
-                                    // strip.object.css('opacity', 0.7);
                                     strip.text.text('Закрыто');
                                 }
                             });
@@ -98,8 +95,6 @@ async function renderCoursePage(userData) {
             }
         })
     }
-    // coursesTable.updateCoursesData([]);
-    // coursesTable.controls.find(control => control.isTypeOf('searchLine')).input.change(async () => await coursesTable.updateCoursesData([]));
 }
 
 renderPage();

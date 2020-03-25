@@ -4,7 +4,6 @@ class request {
             $.ajax({
                 url,
                 type: 'GET',
-                // dataType: 'json',
                 contentType: 'Application/json',
                 processData,
                 data,
@@ -19,7 +18,6 @@ class request {
             $.ajax({
                 url,
                 type: 'POST',
-                // dataType: 'json',
                 contentType: 'Application/json',
                 processData,
                 data,
@@ -34,7 +32,6 @@ class request {
             $.ajax({
                 url,
                 type: 'PUT',
-                // dataType: 'json',
                 contentType: 'Application/json',
                 processData,
                 data,
@@ -49,7 +46,6 @@ class request {
             $.ajax({
                 url,
                 type: 'DELETE',
-                // dataType: 'json',
                 contentType: 'Application/json',
                 processData,
                 data,

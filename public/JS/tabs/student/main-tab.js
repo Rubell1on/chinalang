@@ -107,7 +107,6 @@ async function renderMain(user) {
                 const caption = el && el.caption && el.caption.length > maxLen ? el.caption.substr(0, maxLen) + '...' : el.caption + '...';
                 const post = new ObjectWrapper(['insta-post', `insta-post-${i}`], [
                     new Image('insta-picture', el.media_url),
-                    // new Text('insta-picture', el.caption)
                     new Text('insta-caption', caption ? `${template} ${caption}` : `${template} Тут должно быть описание картинки. Но по какой-то причине его нет:D`)
                 ]);
 

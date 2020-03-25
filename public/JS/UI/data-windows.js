@@ -574,9 +574,6 @@ class StripSeparator extends CustomWindow {
     render(parent) {
         this.html = 
             `<div class="strip-separator ${this.spacedClassName}">
-                <!-- <div class="icon">
-                    <img src="../../public/IMG/dashboard/users.png" alt="" srcset="">
-                </div> -->
                 <div class="text">${this._textValue}</div>
             </div>`;
 

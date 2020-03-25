@@ -38,7 +38,6 @@ async function renderHeader(user) {
             case 'header-controls':
                 child.renderChildren(child => {
                     if (child.className === 'user-menu') {
-                        // const photo = auth.get('photo');
                         child.image.attr('src', user && user.photo ? `data:image/*;base64,${user.photo}` : child.defaultImg);
                         child.object.click(() => {
                             const window = new DataWindow('user-menu', [], [new Button('exit-button', 'Выход')]);
@@ -51,17 +50,6 @@ async function renderHeader(user) {
                         });
                     } else if (child.className === 'contacts') {
                         child.object.click(async () => {
-                            // const window = new DataWindow('user-menu', [], [
-                            //     new Button('feedback-button', 'Обратная связь'),
-                            //     new Button('callback-button', 'Заказать звонок'),
-                            //     new Button('collab-button', 'Вопросы сотрудничеста')
-                            // ]);
-                            // window.render('');
-                            // window.renderChildren(button => {
-                            //     if (button.className === 'exit-button') {
-                            //         button.object.click(() => auth.logOut());
-                            //     }
-                            // }); 
                             const data = auth.getData();
                             await createFeedbackWindow(data);
                         })

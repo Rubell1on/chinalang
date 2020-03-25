@@ -42,20 +42,7 @@ module.exports = {
             this.gmail = google.gmail({version: 'v1', auth: this.oAuth2Client});
         }
     
-        async sendMessage(message) {
-            // const messageParts = [
-            //     'From: CatchyClick <catchyclickstudio@gmail.com>',
-            //     'To: <dablaev@yandex.ru>',
-            //     'Content-Type: text/html; charset=utf-8',
-            //     'MIME-Version: 1.0',
-            //     'Subject: Hello world!',
-            //     '',
-            //     'This is a message just to say hello.',
-            //     'So... <b>Hello!</b>  🤘❤️😎'
-            // ];
-    
-            // const message = messageParts.join('\n');
-    
+        async sendMessage(message) {  
             const encodedMessage = Base64.encodeURI(message);
     
             return this.gmail.users.messages.send({

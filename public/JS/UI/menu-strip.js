@@ -18,5 +18,3 @@ class StripButton extends SingleCustomWindow {
         }
     }
 }
-
-// const button = new StripButton('exit', 'выход').render('menu-strip');

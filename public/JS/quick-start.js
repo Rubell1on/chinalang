@@ -56,13 +56,11 @@ $('.login').click(() => {
                 });
             if (res.status === 'success') {
                 const role = res.response.role;
-                // delete res.response.role;
                 auth.setData(res.response);
 
                 const pageRoute = role === 'student' ? 'lk' : 'dashboard';
                 const courseRoute = role === 'student' ? 'main' : 'users';
 
-                // location.href = `${location.origin}/${pageRoute}/${courseRoute}?apiKey=${auth.getData()['apiKey']}`;
                 location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
             }
         } else {
