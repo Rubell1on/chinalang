@@ -8,7 +8,8 @@ const gAPI = require('./public/JS/GoogleAPI');
 const yAPI = require('./public/JS/yandexApi');
 const Node = require('./public/JS/Node').Node;
 const dbSettings = envVars.getDBSettings();
-const db = mysql.createConnection(dbSettings).promise();
+dbSettings.connectionLimit = 10;
+const db = mysql.createPool(dbSettings).promise();
 const keysManager = require('./public/JS/apiKeyManager').ApiKey;
 const apiKeyManager = new keysManager(db);
 const moment = require('moment-timezone');
@@ -39,14 +40,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 80;
 
-app.listen(PORT, () => {
-    db.connect()
-        .then(res => {
-            logger.log('Подключение к серверу MySQL успешно установлено');
-            logger.log('Сервер запущен');
-        })
-        .catch(err => logger.error(`При подключении к серверу MySQL произошла ошибка : ${err.message}`));
-})
+app.listen(PORT, () =>  logger.log('Сервер запущен'));
 
 app.get('/', (req, res) => {
     res.render('index');
@@ -242,10 +236,6 @@ app.get('/lk/:section', (req, res) => {
                 res.render(`${path}/courses`);
             }
             break;
-
-        // case 'history':
-        //     res.render(`${path}/history`);
-        //     break;
 
         default:
             res.status(404).send('Запрашиваемая страница не найдена!');
@@ -821,9 +811,6 @@ app.route('/api/db/history')
     .put(async (req, res) => {
 
     })
-    // .delete(async (req, res) => {
-
-    // })
 
 app.route('/api/db/blog')
     .get(async (req, res) => {
