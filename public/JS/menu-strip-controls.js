@@ -60,11 +60,11 @@ async function renderControls(user) {
             } else {
                 switch(c.className) {
                     case 'main-tab':
-                        c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/main`);
+                        c.object.click(() => location.href = `${location.origin}/dashboard/main`);
                         break;
     
                     case 'profile-tab':
-                        c.object.click(() => location.href = `${location.origin}/profile`);
+                        c.object.click(() => location.href = `${location.origin}/dashboard/profile`);
                         break;
     
                     case 'users-tab':
@@ -72,7 +72,7 @@ async function renderControls(user) {
                         break;
     
                     case 'courses-tab':
-                        c.object.click(() => location.href = `${location.origin}/${ data.role === 'student' ? 'lk' : 'dashboard' }/courses`);
+                        c.object.click(() => location.href = `${location.origin}/dashboard/courses`);
                         break;
                         
                     case 'files-tab':
@@ -80,11 +80,11 @@ async function renderControls(user) {
                         break;
     
                     case 'blog-tab':
-                        c.object.click(() => location.href = `${location.origin}/blog`);
+                        c.object.click(() => location.href = `${location.origin}/dashboard/blog`);
                         break;
     
                     case 'history-tab':
-                        c.object.click(() => location.href = `${location.origin}/history`);
+                        c.object.click(() => location.href = `${location.origin}/dashboard/history`);
                         break;
                 }
             }

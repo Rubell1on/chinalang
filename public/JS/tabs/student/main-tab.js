@@ -124,8 +124,8 @@ async function renderMain(user) {
     }
     
     function createInfoBlock() {
-        const courseLink = userCourse && userCourse.id ? `<a href=${`/lk/courses?id=${userCourse.id}`}>${userCourse.name}</a>` : '';
-        const classLink = userClass && userClass.id ? `<a href=${`/lk/courses?id=${userCourse.id}`}&classId=${userClass.id}>${userClass.name}</a>` : '';
+        const courseLink = userCourse && userCourse.id ? `<a href=${`/dashboard/courses?id=${userCourse.id}`}>${userCourse.name}</a>` : '';
+        const classLink = userClass && userClass.id ? `<a href=${`/dashboard/courses?id=${userCourse.id}`}&classId=${userClass.id}>${userClass.name}</a>` : '';
         return new ObjectWrapper('info-block', [
             new Label('greetings-label', `你好, ${user && user.realname ? user.realname : user.username}`),
             new Label('current-course-label', courseLink ? `Текущий курс: ${courseLink}` : 'Вы пока не подписаны на курсы'),

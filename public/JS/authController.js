@@ -37,23 +37,23 @@ class AuthController {
 
         if (location.pathname !== '/') {
             if (!apiKey) this.logOut();
-            else {
-                const res = await request.get('/api/verify', { apiKey })
-                    .catch(e => {
-                        console.error(e);
-                        this.logOut();
-                    });
+            // else {
+            //     const res = await request.get('/api/verify', { apiKey })
+            //         .catch(e => {
+            //             console.error(e);
+            //             this.logOut();
+            //         });
                 
-                if (res.status === 'success') {
-                    const user = res.response[0];
-                    if (user.role === 'student') {
-                        if (location.pathname.includes('/dashboard/')) {
-                            const l = location;
-                            location.href = `${l.origin}/lk/courses`;
-                        }
-                    }
-                }
-            }
+            //     if (res.status === 'success') {
+            //         const user = res.response[0];
+            //         if (user.role === 'student') {
+            //             if (location.pathname.includes('/dashboard/')) {
+            //                 const l = location;
+            //                 location.href = `${l.origin}/lk/courses`;
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
 
