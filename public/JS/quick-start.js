@@ -58,10 +58,9 @@ $('.login').click(() => {
                 const role = res.response.role;
                 auth.setData(res.response);
 
-                const pageRoute = role === 'student' ? 'lk' : 'dashboard';
                 const courseRoute = role === 'student' ? 'main' : 'users';
 
-                location.href = `${location.origin}/${pageRoute}/${courseRoute}`;
+                location.href = `${location.origin}/dashboard/${courseRoute}`;
             }
         } else {
             notificationController.error('Необходимо заполнить выделенные поля!');

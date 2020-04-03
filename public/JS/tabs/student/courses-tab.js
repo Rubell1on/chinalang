@@ -22,7 +22,7 @@ DataTable.prototype.updateCoursesData = async function(source) {
                     const apiKey = auth.get('apiKey');
                     const id = wChildren.data.id;
                     const l = location;
-                    l.href = `${l.origin}/lk/courses?id=${id}`;
+                    l.href = `${l.origin}/dashboard/courses?id=${id}`;
                 });
 
                 break;

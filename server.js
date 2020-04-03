@@ -68,6 +68,24 @@ app.get('/login', async (req, res) => {
             const apiKey = utils.rndSequence(10);
             const data = [id, apiKey, req.ip];
 
+            const apiRows = await db.query(`SELECT * FROM usersapi WHERE userIp ='${req.ip}'`)
+                .catch(e => {
+                    logger.error(e);
+                    res.status(500).send('Ошибка сервера!');
+                });
+
+            if (apiRows) {
+                const data = apiRows[0];
+                if (apiRows && data && data.length) {
+                    const promises = data.map(a => db.query(`DELETE FROM usersapi WHERE userId = '${a.userId}'`));
+                    await Promise.all(promises)
+                        .catch(e => {
+                            logger.error(e);
+                            res.status(500).send('Ошибка сервера!');
+                        });
+                }
+            }
+
             const rows = await db.query(`SELECT * FROM usersapi WHERE userId = '${id}'`)
                 .catch(e => {
                     logger.error(e);
@@ -187,62 +205,60 @@ app.route('/api/db/prices')
         }
     })
 
-app.get('/profile', (req, res) => {
-    res.render('./dashboard/profile');
-})
-
-app.get('/history', (req, res) => {
-    res.render('./dashboard/history');
-});
-
-app.get('/blog', (req, res) => {
-    res.render('./dashboard/blog');
-});
-
 app.get('/dashboard/:section', async (req, res) => {
-    const path = './dashboard/admin';
-    const section = req.params.section;
-
-    switch(section) {
-        case 'users':
-            res.render(`${path}/users`);
-            break;
-        case 'courses':
-            res.render(`${path}/courses`);
-            break;
-
-        case 'files':
-            res.render(`${path}/files`);
-            break;
-
-        default:
-            res.status(404).send('Запрашиваемая страница не найдена!');
-            break;
-    }
-})
-
-app.get('/lk/:section', (req, res) => {
-    const path = './dashboard/student';
     const q = req.query;
-    const section = req.params.section;
-    
-    switch(section) {
-        case 'main':
-            res.render(`${path}/main`);
-            break;
+    const rows = await db.query(`select * from usersapi join users on userId = id where userIp = '${req.ip}'`)
+        .catch(e => {
+            logger.error(e);
+            res.status(500).send('Ошибка сервера!');
+        });
 
-        case 'courses':
-            if (q && q.id) {
-                res.render(`${path}/course-page`);
-            } else {
-                res.render(`${path}/courses`);
+    if (rows && rows[0]) {
+        const users = rows[0];
+
+        if (users && users[0]) {
+            const user = users[0];
+            const root = './dashboard';
+            const adminPath = `${root}/admin`;
+            const studentPath = `${root}/student`;
+
+            const baseTemplate = {
+                profile: `${root}/profile`,
+                history: `${root}/history`
             }
-            break;
 
-        default:
-            res.status(404).send('Запрашиваемая страница не найдена!');
-            break;
-    }
+            const extTemplate = {
+                users: `${adminPath}/users`,
+                courses: `${adminPath}/courses`,
+            }
+
+            const templates = {
+                student: Object.assign({
+                    main: `${studentPath}/main`,
+                    courses: q && q.id ? `${studentPath}/course-page` : `${studentPath}/courses`,
+                }, baseTemplate),
+                admin: Object.assign({
+                    'files': `${adminPath}/files`,
+                    'blog': `${root}/blog`
+                }, baseTemplate, extTemplate),
+                teacher: Object.assign(baseTemplate, extTemplate),
+                native_teacher: Object.assign(baseTemplate, extTemplate),
+            };
+
+            const roleTemplate = templates[user.role];
+
+            if (templates && roleTemplate) {
+                const path = roleTemplate[req.params.section];
+                if (roleTemplate && path)
+                    res.render(path);
+                else
+                    res.status(404).send('Запрашиваемая страница не найдена!');                    
+            } else
+                res.status(403).send('Недостаточно прав!');            
+        } else 
+            res.status(404).send('Пользователь не найден!');
+    } else
+        res.status(500).send('Произошла ошибка сервера!');
 })
 
 app.route('/api/db/users')
