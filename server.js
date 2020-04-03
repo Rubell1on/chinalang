@@ -85,20 +85,22 @@ app.get('/login', async (req, res) => {
                 buffer = file && image && image.body ? Base64.encode(image.body) : '';
             }
 
+            const dataObject = { id, realname, email: q.email, username, role, apiKey, photo: buffer }
+
             if (rows[0].length) {
                 await db.query(`UPDATE usersapi SET apiKey = '${apiKey}', userIp = '${req.ip}' WHERE userId = '${id}'`)
                 .catch(e => {
                     logger.error(e);
                     res.status(500).send('Произошла ошибка при обновлении данных!');
                 });
-                res.status(200).json({id, realname, username, role, apiKey, photo: buffer});
+                res.status(200).json(dataObject);
             } else {
                 await db.query('INSERT INTO usersapi(userId, apiKey, userIp) VALUES(?, ?, ?)', data)
                 .catch(e => {
                     logger.error(e);
                     res.status(500).send('Произошла ошибка при добавлении данных!');
                 });
-                res.status(201).json({id, realname, username, role, apiKey, photo: buffer});
+                res.status(201).json(dataObject);
             }
         } else {
             res.status(403).send('Неверный логин или пароль!');
@@ -971,7 +973,9 @@ app.post('/contact', async (req, res) => {
         email, 
         messageType[q.type], 
         `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
-        ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}`
+        ${q && q.phone ? `<br>Телефон: ${q.phone}` : ''}
+        ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}
+        `
     ).build();
 
     await gmailClient.sendMessage(toChinalang);

@@ -1,5 +1,5 @@
 class AuthController {
-    constructor(keys = ['id', 'realname', 'username', 'apiKey', 'role', 'photo']) {
+    constructor(keys = ['id', 'realname', 'username', 'apiKey', 'role', 'photo', 'email']) {
         this.keys = keys;
     }
 

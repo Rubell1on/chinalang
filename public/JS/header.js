@@ -61,10 +61,13 @@ async function renderHeader(user) {
 }
 
 async function createFeedbackWindow(data = {}) {
+    let required = ['username', 'email'];
+    let phoneField = undefined;
+
     const window = new DataWindow('contacts-window', [], [
         new Label('window-label', 'Связаться с нами'),
         new ObjectWrapper('contact-fields', [
-            new InputField('username', 'username', 'Имя пользователя', data && data.username ? data.username : '', true, data && data.username ? true : false),
+            new InputField('username', 'username', 'Имя', data && data.username ? data.username : '', true, data && data.username ? true : false),
             new InputField('email', 'email', 'Эл. почта', data && data.email ? data.email : '', true, data && data.email ? true : false),
             new Label('message-type-label', 'Тема сообщения'),
             new Select('message-type', [
@@ -81,44 +84,84 @@ async function createFeedbackWindow(data = {}) {
     window.render('');
     window.renderChildren(child => {
         if (child.isTypeOf('objectWrapper')) child.renderChildren(wrapperChild => {
-            if (wrapperChild.isTypeOf('textArea')) wrapperChild.label.text('Текст сообщения')
-            else if (wrapperChild.isTypeOf('button')) wrapperChild.object.click(async e => {
-                e.stopPropagation();
-                const wrapper = window.children.find(c => c.isTypeOf('objectWrapper')).children;
-                let flag = true;
-                const data = {};
+            switch (wrapperChild.getType()) {
+                case '[object select]':
+                    wrapperChild.object.change(() => {
+                        const phone = 'phone';
+                        const selected = wrapperChild.getSelected();
 
-                for (child in wrapper) {
-                    const c = wrapper[child];
-                    if (['username', 'email'].includes(c.className)) {
-                        const value = c.input.val();
-                            if (c.input.attr('required')) {
-                                if (value.isEmpty()) {
-                                    flag = false;
-                                    c.input.focus();
-                                    notificationController.error('Необходимо заполнить выделенные поля!')
-                                    break;
-                                }
+                        if (selected === 'callback') {
+                            if (phoneField) {
+                                destroy(phoneField);
                             }
+                            
+                            required.push(phone);
+                            child.children.push(new InputField(phone, phone, 'Телефон'));
+                            phoneField = child.children.find(c => c.isClassOf('phone'));
+                            phoneField.render(child.object);
+                            const email = child.children.find(c => c.isClassOf('email'));
+                            phoneField.object.insertAfter(email.input);
+                        } else {
+                            destroy(phoneField);
+                        }
 
-                            data[c.className] = value;
-                    } else if (c.isClassOf('message-type')) data['type'] = c.getSelected();
-                    else if (c.isClassOf('message-text')) data['text'] = c.input.val();
-                }
+                        function destroy(phoneField) {
+                            phoneField.destroy();
+                            required.reduce((acc, curr) => {
+                                if (curr !== 'phone') acc.push(curr);
+                                return acc;
+                            }, []);
+                        }
+                    })
+                    break;
 
-                if (flag) {
-                    const res = await request.post(`${location.origin}/contact`, JSON.stringify(data))
-                        .catch(e => {
-                            console.error(e);
-                            notificationController.error(e.error.responseText);
-                        })
-                    
-                    if (res.status === 'success') {
-                        notificationController.success(res.response);
-                        window.destroy();
-                    }
-                }
-            })
+                case '[object textArea]':
+                    wrapperChild.label.text('Текст сообщения');
+
+                    break;
+
+                case '[object button]':
+                    wrapperChild.object.click(async e => {
+                        e.stopPropagation();
+                        const wrapper = window.children.find(c => c.isTypeOf('objectWrapper')).children;
+                        const selected = wrapper.find(c => c.isClassOf('message-type')).getSelected();
+                        let flag = true;
+                        const data = {};
+
+                        for (child in wrapper) {
+                            const c = wrapper[child];
+                            if (required.includes(c.className)) {
+                                const value = c.input.val();
+                                    if (c.input.attr('required')) {
+                                        if (value.isEmpty()) {
+                                            flag = false;
+                                            c.input.focus();
+                                            notificationController.error('Необходимо заполнить выделенные поля!')
+                                            break;
+                                        }
+                                    }
+
+                                    data[c.className] = value;
+                            } else if (c.isClassOf('message-type')) data['type'] = c.getSelected();
+                            else if (c.isClassOf('message-text')) data['text'] = c.input.val();
+                        }
+
+                        if (flag) {
+                            const res = await request.post(`${location.origin}/contact`, JSON.stringify(data))
+                                .catch(e => {
+                                    console.error(e);
+                                    notificationController.error(e.error.responseText);
+                                })
+                            
+                            if (res.status === 'success') {
+                                notificationController.success(res.response);
+                                window.destroy();
+                            }
+                        }
+                    });
+
+                    break;
+            }                
         });
     })
 }
