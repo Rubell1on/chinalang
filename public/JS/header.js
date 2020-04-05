@@ -107,7 +107,7 @@ async function createFeedbackWindow(data = {}) {
 
                         function destroy(phoneField) {
                             phoneField.destroy();
-                            required.reduce((acc, curr) => {
+                            required = required.reduce((acc, curr) => {
                                 if (curr !== 'phone') acc.push(curr);
                                 return acc;
                             }, []);
