@@ -95,5 +95,14 @@ module.exports = {
         });
 
         return root;
+    },
+
+    messageBottomHTML: function() {
+        return `<br><br><div>
+                    <div>С уважением, команда</div>
+                    <a style="display: block;" href="https://www.china-lang.com">
+                        <img style="height: 35px; width: 191.41px; display: block;" src="https://i.ibb.co/vk038yN/chinalang.png" title="Logo" alt="https://www.china-lang.com">
+                    </a>
+                </div>`;
     }
 }
