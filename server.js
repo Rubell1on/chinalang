@@ -40,7 +40,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 80;
 
-app.listen(PORT, () =>  logger.log('Сервер запущен'));
+app.listen(PORT, () => logger.log('Сервер запущен'));
 
 app.get('/', (req, res) => {
     res.render('index');
@@ -148,11 +148,25 @@ app.post('/free', async (req, res) => {
             });
 
         if (result) {
-            const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
-            .catch(e => {
-                logger.error(e);
-                res.status(500).send('Во время отправки сообщения произошла ошибка!');
-            });
+            const message = new gAPI.messageBuilder(
+                {
+                    name: 'Chinalang', 
+                    email: 'catchyclickstudio@gmail.com'
+                }, 
+                q.email, 
+                'Регистрация в Chinalang', 
+                `Здравствуйте, ${q.realname}! Вы только что записались на бесплатный вводный урок по изучению китайского языка. 🇨🇳
+                <br><br>В ближайшее время с вами свяжется наш менеджер, чтобы договориться об удобном для вас времени проведения урока.
+                <br><br>А пока вы можете зайти в свой личный кабинет на нашем <a href="https://www.china-lang.com">сайте<a/> и ознакомиться со всеми материалами. 🤗
+                <br><br>Логин:${q.email}
+                <br>Пароль:${password}${utils.messageBottomHTML()}`
+            ).build();
+
+            const sendingResult = await gmailClient.sendMessage(message)
+                .catch(e => {
+                    logger.error(e);
+                    res.status(500).send('Во время отправки сообщения произошла ошибка!');
+                });
             res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
         }
     } else {
@@ -330,13 +344,28 @@ app.route('/api/db/users')
                         res.status(500).send('При создании пользователя произошла ошибка!');
                     });
 
-                const sendingResult = await gmailClient.sendUserdata({email: q.email, password})
-                    .catch(e => {
-                        logger.error(e);
-                        res.status(500).send('При создании пользователя произошла обшибка!');
-                    });
+                if (rows) {
+                    const message = new gAPI.messageBuilder(
+                        {
+                            name: 'Chinalang', 
+                            email: 'catchyclickstudio@gmail.com'
+                        }, 
+                        q.email, 
+                        'Регистрация в Chinalang', 
+                        `Здравствуйте, ${q.realname}! Добро пожаловать в команду Chinalang 🤗
+                        <br><br>Можете зайти на наш <a href="https://www.china-lang.com">сайт</a>  и ознакомиться с личным кабинетом.
+                        <br><br>Логин:${q.email}
+                        <br>Пароль:${password}${utils.messageBottomHTML()}`
+                    ).build();
+        
+                    const sendingResult = await gmailClient.sendMessage(message)
+                        .catch(e => {
+                            logger.error(e);
+                            res.status(500).send('Во время отправки сообщения произошла ошибка!');
+                        });
 
-                res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
+                        res.status(201).send(`Пользователь ${q.username} успешно добавлен!`);
+                }
             } else {
                 res.status(403).end();
             }
@@ -1002,9 +1031,13 @@ app.post('/contact', async (req, res) => {
             email
         }, 
         q.email, 
-        'Благодарим за обратную связь!', 
-        `Уважаемый, ${q.username}!
-        <br>Ваше сообщение было получено! В ближайшее время с вами свяжутся сотрудники chinalang!`
+        'Ваша заявка принята', 
+        `<div>
+            <div>Здравствуйте, ${q.username}!</div>
+            <div>Ваше обращение поступило в обработку.
+            В ближайшее время мы с вами свяжемся.</div>
+            ${utils.messageBottomHTML()}
+        </div>`
     ).build();
 
     await gmailClient.sendMessage(toUser);
