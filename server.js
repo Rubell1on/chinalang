@@ -1009,7 +1009,7 @@ app.post('/contact', async (req, res) => {
 
     const toChinalang = new gAPI.messageBuilder(
         chinalangMail, 
-        email, 
+        chinalangMail.email, 
         messageType[q.type], 
         `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
         ${q && q.phone ? `<br>Телефон: ${q.phone}` : ''}
