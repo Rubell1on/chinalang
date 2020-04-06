@@ -30,6 +30,11 @@ const yandexToken = envVars.getYandexAPIToken().token;
 const yandexDisk = new yAPI(yandexToken);
 const instaToken = envVars.getInstaToken();
 
+const chinalangMail = {
+    name: 'Chinalang', 
+    email: 'chinalangofficial@gmail.com'
+}
+
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
@@ -149,10 +154,7 @@ app.post('/free', async (req, res) => {
 
         if (result) {
             const message = new gAPI.messageBuilder(
-                {
-                    name: 'Chinalang', 
-                    email: 'catchyclickstudio@gmail.com'
-                }, 
+                chinalangMail, 
                 q.email, 
                 'Регистрация в Chinalang', 
                 `Здравствуйте, ${q.realname}! Вы только что записались на бесплатный вводный урок по изучению китайского языка. 🇨🇳
@@ -346,10 +348,7 @@ app.route('/api/db/users')
 
                 if (rows) {
                     const message = new gAPI.messageBuilder(
-                        {
-                            name: 'Chinalang', 
-                            email: 'catchyclickstudio@gmail.com'
-                        }, 
+                        chinalangMail, 
                         q.email, 
                         'Регистрация в Chinalang', 
                         `Здравствуйте, ${q.realname}! Добро пожаловать в команду Chinalang 🤗
@@ -1008,13 +1007,8 @@ app.post('/contact', async (req, res) => {
         another: 'Обратная связь (другое)'
     }
 
-    const email = 'catchyclickstudio@gmail.com';
-
     const toChinalang = new gAPI.messageBuilder(
-        {
-            name: 'Chinalang', 
-            email
-        }, 
+        chinalangMail, 
         email, 
         messageType[q.type], 
         `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
@@ -1026,10 +1020,7 @@ app.post('/contact', async (req, res) => {
     await gmailClient.sendMessage(toChinalang);
 
     const toUser = new gAPI.messageBuilder(
-        {
-            name: 'Chinalang', 
-            email
-        }, 
+        chinalangMail, 
         q.email, 
         'Ваша заявка принята', 
         `<div>

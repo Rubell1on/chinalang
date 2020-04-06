@@ -52,38 +52,6 @@ module.exports = {
                 }
             });
         }
-
-        async sendRegisterData(data) {
-            const message = new messageBuilder(
-                {
-                    name: 'Chinalang', 
-                    email: 'catchyclickstudio@gmail.com'
-                }, 
-                data.email, 
-                'Регистрация в Chinalang', 
-                `Здравствуйте, ${data.username}! Вы только что записались на бесплатный вводный урок по изучению китайского языка. 🇨🇳
-                <br><br>В ближайшее время с вами свяжется наш менеджер, чтобы договориться об удобном для вас времени проведения урока.
-                <br><br>А пока вы можете зайти в свой личный кабинет на нашем <a href="https://www.china-lang.com">сайте<a/> и ознакомиться со всеми материалами. 🤗
-                <br><br>Логин:${data.email}
-                <br>Пароль:${data.password}`
-            ).build();
-    
-            return this.sendMessage(message);
-        }
-
-        async sendUserdata(data) {
-            const message = new messageBuilder(
-                {
-                    name: 'Chinalang', 
-                    email: 'catchyclickstudio@gmail.com'
-                }, 
-                data.email, 
-                'Регистрация завершена!', 
-                `Теперь вы можете войти в свой личный кабинет!<br>Логин/email: ${data.email}<br>Пароль: ${data.password}`
-            ).build();
-    
-            return this.sendMessage(message);
-        }
     },
 
     messageBuilder 

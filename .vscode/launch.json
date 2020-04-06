@@ -33,6 +33,32 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Chinalang Server debug",
+            "program": "${workspaceFolder}/server.js",
+            "env": {
+                "host": "localhost",
+                "user": "root",
+                "database": "chinalang",
+                "password": "Dimas1996",
+                "client_id": "515712180219-92ja8ntifnvaiaidj15g6ai5dnoa0q87.apps.googleusercontent.com",
+                "project_id": "quickstart-1586151927016",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": "AKPTitfto4eLMo5-Zllc0G3W",
+                "redirect_uris": "urn:ietf:wg:oauth:2.0:oob",
+                "access_token": "ya29.a0Ae4lvC3LROH02qh6aY94YPTza8ufjGcXi75UbbjsQ20WS8TV34EiDhxL619BJovqYnmQQMS1jn44xn6_FHngpsH7VJv0qjEDoa_Eq9i3Q8KZa_Hnj6Gh4qY05H7AnYEA0OdP1ByqV6kdKt5Wncd0G3eR77PC9jrjMus",
+                "refresh_token": "1//0c3R0pxYmBB7qCgYIARAAGAwSNwF-L9IrNoMV4IHlpRdyELYXxHqcxuWpIipDpKMbli3GZ_ZrTbS8hL12gX4dF1ffB-CkPoAONK0",
+                "scope": "https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly",
+                "token_type": "Bearer",
+                "expiry_date": "1586157464796",
+                "yandex_token": "AgAAAAA780DaAAYO5ajiR1E6RUCWn_GlMAaH5hA",
+                "instagram_access_token": "IGQVJXWTkxekxJb0xDcVFVWmF6ejF6SjdYMUJRWnhiSVVvQjVhX1VwamdZALXpyei16eXZAsMm50V05POGstM3B0YThrSFNIOVJNZA0F1MlRmVVdFUnVCVUlvNmIwMHJldG9aUzROQXdRQnA5eFhNenZAwRQZDZD"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Gmail debug",
             "program": "${workspaceFolder}/index.js"
         },
