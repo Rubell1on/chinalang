@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+var httpsRedirect = require('express-https-redirect');
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
 const Enum = require('./public/JS/enum');
@@ -38,6 +39,7 @@ const chinalangMail = {
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
+app.use('/', httpsRedirect())
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
