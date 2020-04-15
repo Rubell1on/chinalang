@@ -44,17 +44,18 @@ app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(express.json());
-app.use((req, res, next) => {
-    const redirectURLs =['/'];
+// app.use((req, res, next) => {
+//     const redirectURLs =['/'];
 
-    if (redirectURLs.includes(req.url)) {
-        if (req.secure) {
-            return next();
-        } else {
-            res.redirect(`https://${req.host}${req.url}`);
-        }
-    }
-})
+//     if (redirectURLs.includes(req.url)) {
+//         if (req.secure) {
+//             next();
+//         } else {
+//             res.redirect(`https://${req.host}${req.url}`);
+//         }
+//     }
+// })
+
 app.enable('trust proxy');
 
 const PORT = process.env.PORT || 80;
