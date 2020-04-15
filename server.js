@@ -48,7 +48,7 @@ app.use((req, res, next) => {
     const redirectURLs =['/'];
 
     if (redirectURLs.includes(req.url)) {
-        if (req.secure) {
+        if (req.protocol === 'http') {
             return next();
         } else {
             res.redirect(`https://${req.host}${req.url}`);
