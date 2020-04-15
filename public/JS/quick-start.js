@@ -6,8 +6,8 @@ $('.get-free-lesson').click(() => {
 $('.login').click(() => {
     const children = [
         new Label('login-window-label', 'Авторизация'),
-        new InputField('email-field', 'email', 'Email'),
-        new InputField('password-field', 'password', 'Пароль'),
+        new InputField('email-field', 'email', 'Email', undefined, true, false, true),
+        new InputField('password-field', 'password', 'Пароль', undefined, true, false, true),
         new Button('login-submit', 'Войти')
     ];
 
