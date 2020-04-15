@@ -48,13 +48,14 @@ app.use((req, res, next) => {
     const redirectURLs =['/'];
 
     if (redirectURLs.includes(req.url)) {
-        if (req.protocol === 'https') {
+        if (req.secure) {
             return next();
         } else {
             res.redirect(`https://${req.host}${req.url}`);
         }
     }
 })
+app.enable('trust proxy');
 
 const PORT = process.env.PORT || 80;
 
