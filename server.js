@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-var httpsRedirect = require('express-https-redirect');
+// var httpsRedirect = require('express-https-redirect');
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
 const Enum = require('./public/JS/enum');
@@ -39,11 +39,22 @@ const chinalangMail = {
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
-app.use('/', httpsRedirect())
+// app.use('/', httpsRedirect())
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(express.json());
+app.use((req, res, next) => {
+    const redirectURLs =['/'];
+
+    if (redirectURLs.includes(req.url)) {
+        if (req.secure) {
+            return next();
+        } else {
+            res.redirect(`https://${req.host}${req.url}`);
+        }
+    }
+})
 
 const PORT = process.env.PORT || 80;
 
@@ -420,11 +431,13 @@ app.route('/api/db/userData')
                     buffer = file && image && image.body ? Base64.encode(image.body) : '';
                     users[0].photo = buffer;
                 }
-            }
 
-            res.status(200).json(rows[0]);
+                res.status(200).json(rows[0]);
+            } else {
+                res.status(404).send('Не найден apiKey!');
+            }
         } else {
-            res.status(400).send('Неверный apiKey!');
+            res.status(400).send('Не передан apiKey!');
         }
     })
     .put(async (req, res) => {

@@ -97,15 +97,15 @@ async function renderPage() {
     
     const response = await auth.getUserData();
 
-    if (response) {
-        const user = response;
+    if (response.status === 'success') {
+        const user = response.response[0];
         renderHistory(user);
         renderHeader(user);
         renderControls(user);
 
         $('.history-tab').addClass('strip-button-selected');
-    } else {
-        location.reload();
+    } else if (response.status === 'error') {
+        auth.logOut();
     }
 }
 

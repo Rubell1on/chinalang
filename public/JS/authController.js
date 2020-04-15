@@ -9,9 +9,10 @@ class AuthController {
         .catch(e => {
             console.error(e);
             notificationController.error(e.error.responseText);
+            return e;
         });
 
-        if (res.status === 'success') return res.response[0];
+        return res;
     }
 
     setData(object) {
