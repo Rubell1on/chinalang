@@ -154,7 +154,7 @@ DataTable.prototype.updateData = async function() {
 
         if (auth.get('role') === roles.admin) template.unshift(new Select('role-select', [{ value: 'teacher', text: 'Рускоговорящий преподаватель' }, { value: 'nativeTeacher', text: 'Носитель языка' }]));
 
-        return new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, [
+        return new DataStrip(row && row.realname ? `${translate(row.realname).decrease()}-${i}` : `${row.username.decrease()}-${i}`, row, [
             new ObjectWrapper('history-strip-controls', template)
         ])
     }, []);
