@@ -97,15 +97,15 @@ async function renderPage() {
     
     const response = await auth.getUserData();
 
-    if (response) {
-        const user = response;
+    if (response.status === 'success') {
+        const user = response.response[0];
         renderHistory(user);
         renderHeader(user);
         renderControls(user);
 
         $('.history-tab').addClass('strip-button-selected');
-    } else {
-        location.reload();
+    } else if (response.status === 'error') {
+        auth.logOut();
     }
 }
 
@@ -154,7 +154,7 @@ DataTable.prototype.updateData = async function() {
 
         if (auth.get('role') === roles.admin) template.unshift(new Select('role-select', [{ value: 'teacher', text: 'Рускоговорящий преподаватель' }, { value: 'nativeTeacher', text: 'Носитель языка' }]));
 
-        return new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, [
+        return new DataStrip(row && row.realname ? `${translate(row.realname).decrease()}-${i}` : `${row.username.decrease()}-${i}`, row, [
             new ObjectWrapper('history-strip-controls', template)
         ])
     }, []);

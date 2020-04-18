@@ -90,9 +90,10 @@ renderPage();
 
 async function renderPage() {
     renderPageLoader();
+    
     const response = await auth.getUserData();
 
-    if (response) {
+    if (response.status === 'success') {
         const user = response;
         renderHeader(user);
         renderControls(user);
@@ -100,8 +101,8 @@ async function renderPage() {
         renderCoursesTable(user);
 
         $('.courses-tab').addClass('strip-button-selected');
-    } else {
-        location.reload();
+    } else if (response.status === 'error') {
+        auth.logOut();
     }
 }
 

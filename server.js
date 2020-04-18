@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+// var httpsRedirect = require('express-https-redirect');
 const mysql = require('mysql2');
 const utils = require('./public/JS/BEUtils');
 const Enum = require('./public/JS/enum');
@@ -30,13 +31,32 @@ const yandexToken = envVars.getYandexAPIToken().token;
 const yandexDisk = new yAPI(yandexToken);
 const instaToken = envVars.getInstaToken();
 
+const chinalangMail = {
+    name: 'Chinalang', 
+    email: 'chinalangofficial@gmail.com'
+}
+
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
+// app.use('/', httpsRedirect())
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
 app.use(express.json());
+// app.use((req, res, next) => {
+//     const redirectURLs =['/'];
+
+//     if (redirectURLs.includes(req.url)) {
+//         if (req.secure) {
+//             next();
+//         } else {
+//             res.redirect(`https://${req.host}${req.url}`);
+//         }
+//     }
+// })
+
+app.enable('trust proxy');
 
 const PORT = process.env.PORT || 80;
 
@@ -149,10 +169,7 @@ app.post('/free', async (req, res) => {
 
         if (result) {
             const message = new gAPI.messageBuilder(
-                {
-                    name: 'Chinalang', 
-                    email: 'catchyclickstudio@gmail.com'
-                }, 
+                chinalangMail, 
                 q.email, 
                 'Регистрация в Chinalang', 
                 `Здравствуйте, ${q.realname}! Вы только что записались на бесплатный вводный урок по изучению китайского языка. 🇨🇳
@@ -167,6 +184,21 @@ app.post('/free', async (req, res) => {
                     logger.error(e);
                     res.status(500).send('Во время отправки сообщения произошла ошибка!');
                 });
+
+            const toChinalang = new gAPI.messageBuilder(
+                chinalangMail, 
+                chinalangMail.email, 
+                'Регистрация ученика', 
+                `Заявка на бесплатный урок:<br>
+                Имя: ${q.realname};<br>
+                Телефон: ${q.phone};<br>
+                E-mail: ${q.email};<br>
+                ${q.skype ? `Skype: ${q.skype}`: ''}<br>
+                ${utils.messageBottomHTML()}
+                `
+            ).build();
+        
+            await gmailClient.sendMessage(toChinalang);
             res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
         }
     } else {
@@ -346,10 +378,7 @@ app.route('/api/db/users')
 
                 if (rows) {
                     const message = new gAPI.messageBuilder(
-                        {
-                            name: 'Chinalang', 
-                            email: 'catchyclickstudio@gmail.com'
-                        }, 
+                        chinalangMail, 
                         q.email, 
                         'Регистрация в Chinalang', 
                         `Здравствуйте, ${q.realname}! Добро пожаловать в команду Chinalang 🤗
@@ -419,11 +448,13 @@ app.route('/api/db/userData')
                     buffer = file && image && image.body ? Base64.encode(image.body) : '';
                     users[0].photo = buffer;
                 }
-            }
 
-            res.status(200).json(rows[0]);
+                res.status(200).json(rows[0]);
+            } else {
+                res.status(404).send('Не найден apiKey!');
+            }
         } else {
-            res.status(400).send('Неверный apiKey!');
+            res.status(400).send('Не передан apiKey!');
         }
     })
     .put(async (req, res) => {
@@ -1008,28 +1039,21 @@ app.post('/contact', async (req, res) => {
         another: 'Обратная связь (другое)'
     }
 
-    const email = 'catchyclickstudio@gmail.com';
-
     const toChinalang = new gAPI.messageBuilder(
-        {
-            name: 'Chinalang', 
-            email
-        }, 
-        email, 
+        chinalangMail, 
+        chinalangMail.email, 
         messageType[q.type], 
         `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
         ${q && q.phone ? `<br>Телефон: ${q.phone}` : ''}
         ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}
+        ${utils.messageBottomHTML()}
         `
     ).build();
 
     await gmailClient.sendMessage(toChinalang);
 
     const toUser = new gAPI.messageBuilder(
-        {
-            name: 'Chinalang', 
-            email
-        }, 
+        chinalangMail, 
         q.email, 
         'Ваша заявка принята', 
         `<div>

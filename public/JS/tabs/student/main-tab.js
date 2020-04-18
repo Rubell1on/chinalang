@@ -155,18 +155,19 @@ async function renderMain(user) {
 
 async function renderPage() {
     renderPageLoader();
+    
     const response = await auth.getUserData();
 
-    if (response) {
-        const user = response;
+    if (response.status === 'success') {
+        const user = response.response[0];
         renderHeader(user);
         renderControls(user);
 
         renderMain(user);
 
         $('.main-tab').addClass('strip-button-selected');
-    } else {
-        location.reload();
+    } else if (response.status === 'error') {
+        auth.logOut();
     }
 }
 
