@@ -37,9 +37,7 @@ export class LoginForm extends React.Component {
     return (
       /*#__PURE__*/
       React.createElement("form", {
-        className: `form ${this.props.className}`,
-        action: "",
-        onSubmit: async e => await this.onSubmit(e)
+        className: `form ${this.props.className}`
       },
       /*#__PURE__*/
       React.createElement(CustomInput, {
@@ -60,7 +58,8 @@ export class LoginForm extends React.Component {
       /*#__PURE__*/
       React.createElement("button", {
         type: "submit",
-        className: "button button_justified button_big button_color_red"
+        className: "button button_justified button_big button_color_red",
+        onClick: async e => await this.onSubmit(e)
       }, "\u0412\u043E\u0439\u0442\u0438"))
     );
   }
