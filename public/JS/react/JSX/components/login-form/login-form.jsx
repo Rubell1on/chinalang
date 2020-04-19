@@ -31,7 +31,7 @@ export class LoginForm extends React.Component {
     }
 
     onSubmit(e) {
-        e.preventDefault();
+        // e.preventDefault();
         console.log(this);
         notificationController.success('Получилось!');
         request.get('/login', this.state)
