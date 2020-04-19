@@ -19,8 +19,6 @@ export class LoginForm extends React.Component {
     }
 
     async onSubmit(event) {
-        event.preventDefault();
-
         const res = await request.get('/login', this.state)
             .catch(e => {
                 console.log(e);
@@ -34,6 +32,8 @@ export class LoginForm extends React.Component {
 
             location.href = `${location.origin}/dashboard/${courseRoute}`;
         }
+
+        event.preventDefault();
     }
 
     render() {
