@@ -6,7 +6,7 @@ export function LoginWindow (props) {
     return (
         <Overlay customStyle={{width: "300px"}} onBackgroundClick={props.backgroundClick}>
             <WindowHeader key="header" className="" value="Авторизация"/>
-            <LoginForm inputKey="login-form" className="login-form"/>
+            <LoginForm formId="1" inputKey="login-form" className="login-form"/>
         </Overlay>
     )
 }
