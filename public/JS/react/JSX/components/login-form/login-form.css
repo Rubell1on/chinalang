@@ -1,0 +1,7 @@
+.form > * {
+    margin-bottom: 5px;
+}
+
+form.form > *:last-child {
+    margin-bottom: 0;
+} 

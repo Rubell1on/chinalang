@@ -39,10 +39,12 @@ const chinalangMail = {
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
+//app.enable('trust proxy');
 // app.use('/', httpsRedirect())
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
+app.use('/node_modules', express.static('node_modules'));
 app.use(express.json());
 // app.use((req, res, next) => {
 //     const redirectURLs =['/'];
@@ -55,8 +57,6 @@ app.use(express.json());
 //         }
 //     }
 // })
-
-app.enable('trust proxy');
 
 const PORT = process.env.PORT || 80;
 

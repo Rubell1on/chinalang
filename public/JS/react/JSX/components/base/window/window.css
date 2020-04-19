@@ -1,0 +1,21 @@
+.window {
+    overflow: hidden;
+    box-sizing: border-box;
+    position: relative;
+    max-height: 500px;
+    max-width: 500px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.window_centered {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+}

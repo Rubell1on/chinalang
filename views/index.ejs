@@ -22,32 +22,23 @@
     <link rel="stylesheet" href="/public/CSS/UI/select.css">
     <link rel="stylesheet" href="/public/CSS/UI/text-area.css">
     <link rel="stylesheet" href="/public/CSS/UI/label.css">
+    <!-- react base component stylesheets -->
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/base/window/window.css">
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/base/button/button.css">
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/base/header/header.css">
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/base/input/input.css">
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/base/background/background.css">
+    <!-- --------------------- -->
+    <!-- react component stylesheets -->
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/overlay/overlay.css">
+    <link rel="stylesheet" href="/public/JS/react/JSX/components/login-form/login-form.css">
+    <!-- ---------------- -->
     <title>Chinalang - Главная</title>
     <meta name="description" content="Начните изучать китайский язык вместе с Chinalang уже сейчас. Выбирайте удобное для себя время и записывайтесь на бесплатный вводный урок!">
     <meta name="keywords" content="Китайский онлайн, китайский учить, китайский язык, китайский курсы, китайский скайп, иероглифы онлайн, онлайн школа, китайский с нуля, китайский для начинающих, hsk подготовка, китайский ютуб, экзамен hsk, языковая школа, как выучить китайский, chinalang, china-lang, china lang">
 </head>
 <body>
-    <div class="header">
-        <a href="/">
-            <div class="logo">
-                <img src="../public/IMG/header/chinalang_label.png" alt="" class="logo-label">
-                <img src="../public/IMG/header/triangle_logo.png" alt="" class="logo-img">
-            </div>
-        </a>
-        <div class="header-controls">
-            <div class="lang-selector">
-                <div class="lang-text">Язык</div>
-                <div class="lang-img">
-                    <img src="public/IMG/header/flags/russian_flag.png" alt="" srcset="">
-                </div>
-                <div class="arrow-img">
-                    <img src="public/IMG/header/arrow_down.png" alt="" srcset="">
-                </div>
-            </div>
-            <div class="button-small login">Войти</div>
-            <div class="button-small contacts">Контакты</div>
-        </div>
-    </div>
+    <div class="app-wrapper"></div>
     <div class="wrapper">
         <div class="main-block-background">
             <div class="main-block">
@@ -200,6 +191,7 @@
                 </div>
             </div>
         </div>
+        <div class="root"></div>
     </div>
     <script src="/public/JS/jquery-3.4.1.js"></script>
     <script src="/public/JS/authController.js"></script>
@@ -210,6 +202,11 @@
     <script src="/public/JS/Event.js"></script>
     <script src="/public/JS/request.js"></script>
     <script src="/public/JS/header.js"></script>
+    <!-- react api scripts -->
+    <script src="/public/JS/react/sources/react-dev.js"></script>
+    <script src="/public/JS/react/sources/react-dom-dev.js"></script>
+    <!-- ----------------- -->
     <script src="/public/JS/quick-start.js"></script>
+    <script type="module" src="/public/JS/react/JS/pages/header/header.js"></script>    
 </body>
 </html>
