@@ -59,6 +59,7 @@ export class LoginForm extends React.Component {
       }),
       /*#__PURE__*/
       React.createElement("button", {
+        type: "submit",
         className: "button button_justified button_big button_color_red"
       }, "\u0412\u043E\u0439\u0442\u0438"))
     );
