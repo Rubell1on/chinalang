@@ -60,7 +60,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 80;
 
-app.listen(PORT, () => logger.log('Сервер запущен'));
+app.listen(PORT, '192.168.1.133', () => logger.log('Сервер запущен'));
 
 app.get('/', (req, res) => {
     res.render('index');

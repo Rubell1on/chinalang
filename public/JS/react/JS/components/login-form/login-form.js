@@ -58,10 +58,9 @@ export class LoginForm extends React.Component {
         required: true
       }),
       /*#__PURE__*/
-      React.createElement(CustomButton, {
-        className: "button_justified button_big button_color_red",
-        value: "\u0412\u043E\u0439\u0442\u0438"
-      }))
+      React.createElement("button", {
+        className: "button button_justified button_big button_color_red"
+      }, "\u0412\u043E\u0439\u0442\u0438"))
     );
   }
 

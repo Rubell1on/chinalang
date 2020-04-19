@@ -40,7 +40,7 @@ export class LoginForm extends React.Component {
            <form className={`form ${this.props.className}`} action="" onSubmit={async (e) => await this.onSubmit(e)}>
                 <CustomInput key="email" type="email" label="E-mail" onChange={e => this.onInputChange(e, 'email')} required={true}/>
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-                <CustomButton className="button_justified button_big button_color_red" value="Войти"/>
+                <button className="button button_justified button_big button_color_red">Войти</button>
            </form>
         )
     }

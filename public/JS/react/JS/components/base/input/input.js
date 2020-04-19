@@ -11,6 +11,7 @@ export function CustomInput(props) {
     }, props.label),
     /*#__PURE__*/
     React.createElement("input", {
+      key: props.inputKey,
       className: "input-field",
       type: props.type,
       name: 'input_' + props.label,
