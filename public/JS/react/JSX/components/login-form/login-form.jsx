@@ -19,13 +19,13 @@ export class LoginForm extends React.Component {
     componentDidMount() {
         const node = this.loginForm.current;
         const addEvent = node.addEventListener || node.attachEvent;
-        addEvent("submit", e => this.onSubmit(e), false);
+        addEvent("submit", async e => await this.onSubmit(e), false);
     }
 
     componentWillUnmount() {
         const node = this.loginForm.current;
         const removeEvent = node.removeEventListener || node.detachEvent;
-        removeEvent("submit", e => this.onSubmit(e));
+        removeEvent("submit", async e => await this.onSubmit(e));
     }
 
     onInputChange (event, field) {
