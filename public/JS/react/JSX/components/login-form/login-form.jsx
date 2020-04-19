@@ -31,7 +31,7 @@ export class LoginForm extends React.Component {
     }
 
     onSubmit(e) {
-        // e.preventDefault();
+        e.preventDefault();
         console.log(this);
         notificationController.success('Получилось!');
         request.get('/login', this.state)
@@ -57,11 +57,6 @@ export class LoginForm extends React.Component {
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
                 <CustomButton type="submit" className="button_justified button_big button_color_red" value="Войти" />
            </form>
-        //     <form ref={this.loginForm} className={`form ${this.props.className}`} onSubmit={this.onSubmit}>
-        //         <input key="email" type="email" onChange={e => this.onInputChange(e, 'email')} required={true}/>
-        //         <input key="password" type="password" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-        //         <input type="submit" className="button_justified button_big button_color_red" value="Войти" />
-        //    </form>
         )
     }
 }
