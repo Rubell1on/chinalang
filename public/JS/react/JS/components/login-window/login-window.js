@@ -18,7 +18,6 @@ export function LoginWindow(props) {
     }),
     /*#__PURE__*/
     React.createElement(LoginForm, {
-      formId: "1",
       inputKey: "login-form",
       className: "login-form"
     }))

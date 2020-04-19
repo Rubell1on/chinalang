@@ -31,15 +31,12 @@ export class LoginForm extends React.Component {
       const courseRoute = role === 'student' ? 'main' : 'users';
       location.href = `${location.origin}/dashboard/${courseRoute}`;
     }
-
-    notificationController.success('Тоже!');
   }
 
   render() {
     return (
       /*#__PURE__*/
       React.createElement("form", {
-        id: this.props.formId,
         className: `form ${this.props.className}`,
         onSubmit: e => e.preventDefault()
       },
@@ -60,8 +57,7 @@ export class LoginForm extends React.Component {
         required: true
       }),
       /*#__PURE__*/
-      React.createElement("button", {
-        form: this.props.formId,
+      React.createElement(CustomButton, {
         type: "submit",
         className: "button button_justified button_big button_color_red",
         onClick: async e => await this.onSubmit(e)
