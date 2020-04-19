@@ -9,16 +9,32 @@ export class LoginForm extends React.Component {
             password: ''
         };
 
+        this.loginForm = React.createRef();
+
         this.onInputChange = this.onInputChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
+    }
+
+    componentDidMount() {
+        const node = this.loginForm.current;
+        const addEvent = node.addEventListener || node.attachEvent;
+        addEvent("submit", e => this.onSubmit(e), false);
+    }
+
+    componentWillUnmount() {
+        const node = this.loginForm.current;
+        const removeEvent = node.removeEventListener || node.detachEvent;
+        removeEvent("submit", e => this.onSubmit(e));
     }
 
     onInputChange (event, field) {
         this.setState({[field]: event.target.value});
     }
 
-    async onSubmit() {
+    async onSubmit(e) {
+        e.preventDefault();
+        console.log(this);
         notificationController.success('Получилось!');
         const res = await request.get('/login', this.state)
             .catch(e => {
@@ -36,10 +52,10 @@ export class LoginForm extends React.Component {
 
     render() {
         return (
-           <form className={`form ${this.props.className}`} onSubmit={e => e.preventDefault()}>
+           <form ref={this.loginForm} className={`form ${this.props.className}`} >
                 <CustomInput key="email" type="email" label="E-mail" onChange={e => this.onInputChange(e, 'email')} required={true}/>
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-                <CustomButton type="submit" className="button button_justified button_big button_color_red" onClick={async e => await this.onSubmit(e)}>Войти</CustomButton>
+                <CustomButton type="submit" className="button_justified button_big button_color_red" value="Войти" />
            </form>
         )
     }
