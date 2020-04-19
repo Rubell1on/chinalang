@@ -5,11 +5,6 @@ class Header extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    const data = auth.getData();
-    if (data.role && data.apiKey && location.pathname === '/') location.href = `${location.origin}/dashboard/${data.role === 'student' ? 'main' : 'users'}`;
-  }
-
   render() {
     return /*#__PURE__*/React.createElement("div", {
       className: "header"
