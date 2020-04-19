@@ -36,7 +36,7 @@ export class LoginForm extends React.Component {
     return (
       /*#__PURE__*/
       React.createElement("form", {
-        id: props.formId,
+        id: this.props.formId,
         className: `form ${this.props.className}`,
         onSubmit: e => e.preventDefault()
       },
@@ -58,7 +58,7 @@ export class LoginForm extends React.Component {
       }),
       /*#__PURE__*/
       React.createElement("button", {
-        form: props.formId,
+        form: this.props.formId,
         type: "submit",
         className: "button button_justified button_big button_color_red",
         onClick: async e => await this.onSubmit(e)

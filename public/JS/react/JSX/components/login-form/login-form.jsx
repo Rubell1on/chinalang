@@ -36,10 +36,10 @@ export class LoginForm extends React.Component {
 
     render() {
         return (
-           <form id={props.formId} className={`form ${this.props.className}`} onSubmit={e => e.preventDefault()}>
+           <form id={this.props.formId} className={`form ${this.props.className}`} onSubmit={e => e.preventDefault()}>
                 <CustomInput key="email" type="email" label="E-mail" onChange={e => this.onInputChange(e, 'email')} required={true}/>
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-                <button form={props.formId} type="submit" className="button button_justified button_big button_color_red" onClick={async e => await this.onSubmit(e)}>Войти</button>
+                <button form={this.props.formId} type="submit" className="button button_justified button_big button_color_red" onClick={async e => await this.onSubmit(e)}>Войти</button>
            </form>
         )
     }
