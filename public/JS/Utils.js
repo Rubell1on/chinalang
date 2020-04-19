@@ -11,7 +11,7 @@ String.prototype.decrease = function() {
 }
 
 String.prototype.decreaseForTag = function() {
-    return this.replace(/[ ._,&?*$;#@\(\)]/g, '');
+    return this.replace(/[ ._,`'&?*$;#@\(\)]/g, '');
 }
 
 String.prototype.isCorrect = function() {
