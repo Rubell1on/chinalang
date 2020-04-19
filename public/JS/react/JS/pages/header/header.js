@@ -50,8 +50,8 @@ class CustomPage extends React.Component {
     this.state = {
       children: this.children
     };
-    this.addComponent.bind(this);
-    this.removeComponent.bind(this);
+    this.addComponent = this.addComponent.bind(this);
+    this.removeComponent = this.removeComponent.bind(this);
   }
 
   addComponent(e, component) {

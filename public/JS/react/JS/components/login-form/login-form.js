@@ -7,9 +7,9 @@ export class LoginForm extends React.Component {
       username: '',
       password: ''
     };
-    this.onInputChange.bind(this);
-    this.onSubmit.bind(this);
-    this.onInputChange.bind(this);
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onInputChange = this.onInputChange.bind(this);
   }
 
   onInputChange(event, field) {
