@@ -34,24 +34,35 @@ export class LoginForm extends React.Component {
   }
 
   render() {
-    return /*#__PURE__*/React.createElement("form", {
-      className: `form ${this.props.className}`,
-      action: "",
-      onSubmit: async e => await this.onSubmit(e)
-    }, /*#__PURE__*/React.createElement(CustomInput, {
-      type: "email",
-      label: "E-mail",
-      onChange: e => this.onInputChange(e, 'email'),
-      required: true
-    }), /*#__PURE__*/React.createElement(CustomInput, {
-      type: "password",
-      label: "\u041F\u0430\u0440\u043E\u043B\u044C",
-      onChange: e => this.onInputChange(e, 'password'),
-      required: true
-    }), /*#__PURE__*/React.createElement(CustomButton, {
-      className: "button_justified button_big button_color_red",
-      value: "\u0412\u043E\u0439\u0442\u0438"
-    }));
+    return (
+      /*#__PURE__*/
+      React.createElement("form", {
+        className: `form ${this.props.className}`,
+        action: "",
+        onSubmit: async e => await this.onSubmit(e)
+      },
+      /*#__PURE__*/
+      React.createElement(CustomInput, {
+        key: "email",
+        type: "email",
+        label: "E-mail",
+        onChange: e => this.onInputChange(e, 'email'),
+        required: true
+      }),
+      /*#__PURE__*/
+      React.createElement(CustomInput, {
+        key: "password",
+        type: "password",
+        label: "\u041F\u0430\u0440\u043E\u043B\u044C",
+        onChange: e => this.onInputChange(e, 'password'),
+        required: true
+      }),
+      /*#__PURE__*/
+      React.createElement(CustomButton, {
+        className: "button_justified button_big button_color_red",
+        value: "\u0412\u043E\u0439\u0442\u0438"
+      }))
+    );
   }
 
 }

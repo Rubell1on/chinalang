@@ -30,7 +30,7 @@ function HeaderControls(props) {
 class CustomPage extends React.Component {
     constructor(props) {
         super(props);
-        this.loginWindow = <LoginWindow backgroundClick={e => this.removeComponent(e, this.loginWindow)}/>;
+        this.loginWindow = <LoginWindow key="login-window" backgroundClick={e => this.removeComponent(e, this.loginWindow)}/>;
         this.children = [];
         this.state = {
             children: this.children

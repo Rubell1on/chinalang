@@ -6,15 +6,22 @@ export class Overlay extends React.Component {
   }
 
   render() {
-    return /*#__PURE__*/React.createElement("div", {
-      className: `overlay ${this.props.className}`
-    }, /*#__PURE__*/React.createElement(CustomBackground, {
-      className: "overlay__background",
-      onClick: this.props.onBackgroundClick
-    }), /*#__PURE__*/React.createElement(ReactWindow, {
-      customStyle: this.props.customStyle,
-      className: "overlay__window window_centered"
-    }, this.props.children));
+    return (
+      /*#__PURE__*/
+      React.createElement("div", {
+        className: `overlay ${this.props.className}`
+      },
+      /*#__PURE__*/
+      React.createElement(CustomBackground, {
+        className: "overlay__background",
+        onClick: this.props.onBackgroundClick
+      }),
+      /*#__PURE__*/
+      React.createElement(ReactWindow, {
+        customStyle: this.props.customStyle,
+        className: "overlay__window window_centered"
+      }, this.props.children))
+    );
   }
 
 }

@@ -6,44 +6,67 @@ class Header extends React.Component {
   }
 
   render() {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "header"
-    }, /*#__PURE__*/React.createElement("a", {
-      href: "/"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "logo"
-    }, /*#__PURE__*/React.createElement("img", {
-      className: "logo-label",
-      src: "../public/IMG/header/chinalang_label.png"
-    }), /*#__PURE__*/React.createElement("img", {
-      className: "logo-img",
-      src: "../public/IMG/header/triangle_logo.png"
-    }))), /*#__PURE__*/React.createElement(HeaderControls, {
-      onLogin: this.props.onLogin,
-      onContact: this.props.onContact
-    }));
+    return (
+      /*#__PURE__*/
+      React.createElement("div", {
+        className: "header"
+      },
+      /*#__PURE__*/
+      React.createElement("a", {
+        href: "/"
+      },
+      /*#__PURE__*/
+      React.createElement("div", {
+        className: "logo"
+      },
+      /*#__PURE__*/
+      React.createElement("img", {
+        className: "logo-label",
+        src: "../public/IMG/header/chinalang_label.png"
+      }),
+      /*#__PURE__*/
+      React.createElement("img", {
+        className: "logo-img",
+        src: "../public/IMG/header/triangle_logo.png"
+      }))),
+      /*#__PURE__*/
+      React.createElement(HeaderControls, {
+        onLogin: this.props.onLogin,
+        onContact: this.props.onContact
+      }))
+    );
   }
 
 }
 
 function HeaderControls(props) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "header-controls"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "button-small login",
-    type: "button",
-    onClick: props.onLogin
-  }, "\u0412\u043E\u0439\u0442\u0438"), /*#__PURE__*/React.createElement("div", {
-    className: "button-small contacts",
-    type: "button",
-    onClick: props.onContact
-  }, "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"));
+  return (
+    /*#__PURE__*/
+    React.createElement("div", {
+      className: "header-controls"
+    },
+    /*#__PURE__*/
+    React.createElement("div", {
+      className: "button-small login",
+      type: "button",
+      onClick: props.onLogin
+    }, "\u0412\u043E\u0439\u0442\u0438"),
+    /*#__PURE__*/
+    React.createElement("div", {
+      className: "button-small contacts",
+      type: "button",
+      onClick: props.onContact
+    }, "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"))
+  );
 }
 
 class CustomPage extends React.Component {
   constructor(props) {
     super(props);
-    this.loginWindow = /*#__PURE__*/React.createElement(LoginWindow, {
+    this.loginWindow =
+    /*#__PURE__*/
+    React.createElement(LoginWindow, {
+      key: "login-window",
       backgroundClick: e => this.removeComponent(e, this.loginWindow)
     });
     this.children = [];
@@ -75,14 +98,23 @@ class CustomPage extends React.Component {
 
   render() {
     const temp = this.children;
-    return /*#__PURE__*/React.createElement("div", {
-      className: "wrapper"
-    }, /*#__PURE__*/React.createElement("div", null, this.state.children), /*#__PURE__*/React.createElement(Header, {
-      onLogin: e => this.addComponent(e, this.loginWindow),
-      onContact: async e => await createFeedbackWindow()
-    }));
+    return (
+      /*#__PURE__*/
+      React.createElement("div", {
+        className: "wrapper"
+      },
+      /*#__PURE__*/
+      React.createElement("div", null, this.state.children),
+      /*#__PURE__*/
+      React.createElement(Header, {
+        onLogin: e => this.addComponent(e, this.loginWindow),
+        onContact: async e => await createFeedbackWindow()
+      }))
+    );
   }
 
 }
 
-ReactDOM.render( /*#__PURE__*/React.createElement(CustomPage, null), document.querySelector('.app-wrapper'));
+ReactDOM.render(
+/*#__PURE__*/
+React.createElement(CustomPage, null), document.querySelector('.app-wrapper'));
