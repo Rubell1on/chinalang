@@ -19,6 +19,7 @@ export class LoginForm extends React.Component {
   }
 
   async onSubmit() {
+    notificationController.success('Получилось!');
     const res = await request.get('/login', this.state).catch(e => {
       console.log(e);
       notificationController.error(e.error.responseText);
@@ -30,6 +31,8 @@ export class LoginForm extends React.Component {
       const courseRoute = role === 'student' ? 'main' : 'users';
       location.href = `${location.origin}/dashboard/${courseRoute}`;
     }
+
+    notificationController.success('Тоже!');
   }
 
   render() {
