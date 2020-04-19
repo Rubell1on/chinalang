@@ -9,9 +9,9 @@ export class LoginForm extends React.Component {
             password: ''
         };
 
-        this.onInputChange.bind(this);
-        this.onSubmit.bind(this);
-        this.onInputChange.bind(this);
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onInputChange = this.onInputChange.bind(this);
     }
 
     onInputChange (event, field) {
@@ -19,6 +19,7 @@ export class LoginForm extends React.Component {
     }
 
     async onSubmit(event) {
+        event.preventDefault();
         const res = await request.get('/login', this.state)
             .catch(e => {
                 console.log(e);
@@ -32,8 +33,6 @@ export class LoginForm extends React.Component {
 
             location.href = `${location.origin}/dashboard/${courseRoute}`;
         }
-
-        event.preventDefault();
     }
 
     render() {
