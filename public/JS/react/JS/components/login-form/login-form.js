@@ -18,8 +18,7 @@ export class LoginForm extends React.Component {
     });
   }
 
-  async onSubmit(event) {
-    event.preventDefault();
+  async onSubmit() {
     const res = await request.get('/login', this.state).catch(e => {
       console.log(e);
       notificationController.error(e.error.responseText);
@@ -37,7 +36,8 @@ export class LoginForm extends React.Component {
     return (
       /*#__PURE__*/
       React.createElement("form", {
-        className: `form ${this.props.className}`
+        className: `form ${this.props.className}`,
+        onSubmit: e => e.preventDefault()
       },
       /*#__PURE__*/
       React.createElement(CustomInput, {
