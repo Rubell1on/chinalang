@@ -43,6 +43,7 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
 app.use('/public/IMG', express.static('IMG'));
+app.use('/node_modules', express.static('node_modules'));
 app.use(express.json());
 // app.use((req, res, next) => {
 //     const redirectURLs =['/'];
@@ -58,7 +59,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 80;
 
-app.listen(PORT, '192.168.1.133', () => logger.log('Сервер запущен'));
+app.listen(PORT, () => logger.log('Сервер запущен'));
 
 app.get('/', (req, res) => {
     res.render('index');

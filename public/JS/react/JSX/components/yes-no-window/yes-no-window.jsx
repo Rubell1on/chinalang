@@ -1,4 +1,8 @@
-function YesNoWindow(props) {
+import { Overlay } from '../../../JS/components/overlay/overlay.js';
+import { Header } from '../../../JS/components/base/header/header.js';
+import { CustomButton } from '../../../JS/components/base/button/button.js';
+
+export function YesNoWindow(props) {
     return (
         <Overlay>
             <Header key="header" className="" value={props.header}/>
