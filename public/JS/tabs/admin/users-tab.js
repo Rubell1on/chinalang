@@ -390,9 +390,9 @@ DataTable.prototype.updateData = async function() {
     const res = await request.get(`/api/db/users?apiKey=${apiKey}`, { searchingValue });
     const data = res.response;
     this.children = data.map((row, i) => {
-        const name = row && row.realname ? translate(row.realname.decrease()) : row.username;
+        const name = row && row.realname ? translate(row.realname).decreaseForTag() : row.username;
         const deleteButton = role === roles.admin ? [new Button(['delete-user', 'button-very-big', 'button-allign-vertical-middle', `delete-${name}-${i}`], '-')] : [];
-        return new DataStrip(row && row.realname ? `${translate(row.realname.decrease())}-${i}` : `${row.username.decrease()}-${i}`, row, deleteButton);
+        return new DataStrip(row && row.realname ? `${translate(row.realname).decreaseForTag()}-${i}` : `${row.username.decreaseForTag()}-${i}`, row, deleteButton);
     }, []);
     this.renderChildren(strip => {
         const data = strip.data;

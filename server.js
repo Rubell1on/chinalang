@@ -39,6 +39,7 @@ const chinalangMail = {
 const roles = new Enum('admin', 'teacher', 'native_teacher', 'student');
 
 app.set('view engine', 'ejs');
+//app.enable('trust proxy');
 // app.use('/', httpsRedirect())
 app.use('/public', express.static('public'));
 app.use('/public/JS', express.static('JS'));
@@ -50,7 +51,7 @@ app.use(express.json());
 
 //     if (redirectURLs.includes(req.url)) {
 //         if (req.secure) {
-//             return next();
+//             next();
 //         } else {
 //             res.redirect(`https://${req.host}${req.url}`);
 //         }
@@ -183,6 +184,21 @@ app.post('/free', async (req, res) => {
                     logger.error(e);
                     res.status(500).send('Во время отправки сообщения произошла ошибка!');
                 });
+
+            const toChinalang = new gAPI.messageBuilder(
+                chinalangMail, 
+                chinalangMail.email, 
+                'Регистрация ученика', 
+                `Заявка на бесплатный урок:<br>
+                Имя: ${q.realname};<br>
+                Телефон: ${q.phone};<br>
+                E-mail: ${q.email};<br>
+                ${q.skype ? `Skype: ${q.skype}`: ''}<br>
+                ${utils.messageBottomHTML()}
+                `
+            ).build();
+        
+            await gmailClient.sendMessage(toChinalang);
             res.status(201).send('Пользователь зарегистрирован! Проверьте вашу электронную почту!');
         }
     } else {
@@ -1030,6 +1046,7 @@ app.post('/contact', async (req, res) => {
         `Пользователь ${q.username} с эл. почтой ${q.email} хочет связаться с вами по теме "${messageType[q.type]}".
         ${q && q.phone ? `<br>Телефон: ${q.phone}` : ''}
         ${q.text ? `<br><br>Текст сообщения: ${q.text}` : ''}
+        ${utils.messageBottomHTML()}
         `
     ).build();
 
