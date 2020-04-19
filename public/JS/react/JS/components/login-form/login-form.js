@@ -74,12 +74,7 @@ export class LoginForm extends React.Component {
         type: "submit",
         className: "button_justified button_big button_color_red",
         value: "\u0412\u043E\u0439\u0442\u0438"
-      })) //     <form ref={this.loginForm} className={`form ${this.props.className}`} onSubmit={this.onSubmit}>
-      //         <input key="email" type="email" onChange={e => this.onInputChange(e, 'email')} required={true}/>
-      //         <input key="password" type="password" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-      //         <input type="submit" className="button_justified button_big button_color_red" value="Войти" />
-      //    </form>
-
+      }))
     );
   }
 

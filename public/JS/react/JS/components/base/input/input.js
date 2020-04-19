@@ -1,7 +1,7 @@
 export function CustomInput(props) {
   return (
     /*#__PURE__*/
-    React.createElement(React.Fragment, {
+    React.createElement("div", {
       className: "input-block"
     },
     /*#__PURE__*/
