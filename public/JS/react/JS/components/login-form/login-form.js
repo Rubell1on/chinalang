@@ -49,6 +49,7 @@ export class LoginForm extends React.Component {
       /*#__PURE__*/
       React.createElement("form", {
         ref: this.loginForm,
+        action: "#",
         className: `form ${this.props.className}`,
         onSubmit: this.onSubmit
       },

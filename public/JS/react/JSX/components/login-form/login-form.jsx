@@ -52,7 +52,7 @@ export class LoginForm extends React.Component {
 
     render() {
         return (
-           <form ref={this.loginForm} className={`form ${this.props.className}`} onSubmit={this.onSubmit}>
+           <form ref={this.loginForm} action="#" className={`form ${this.props.className}`} onSubmit={this.onSubmit}>
                 <CustomInput key="email" type="email" label="E-mail" onChange={e => this.onInputChange(e, 'email')} required={true}/>
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
                 <CustomButton type="submit" className="button_justified button_big button_color_red" value="Войти" />
