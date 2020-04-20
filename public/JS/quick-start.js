@@ -53,22 +53,21 @@ function createLoginWindow() {
         }
 
         if (flag) {
-            request.get('/login', userData)
-                .then(res => {
-                    if (res.status === 'success') {
-                        const role = res.response.role;
-                        auth.setData(res.response);
-    
-                        const courseRoute = role === 'student' ? 'main' : 'users';
-    
-                        location.href = `${location.origin}/dashboard/${courseRoute}`;
-                    }
-                })
+            const res = await request.get('/login', userData)
                 .catch(e => {
                     console.log(e);
                     notificationController.error(e.error.responseText);
                 });
-            
+
+            if (res.status === 'success') {
+                const role = res.response.role;
+                auth.setData(res.response);
+
+                const courseRoute = role === 'student' ? 'main' : 'users';
+
+                location.href = `${location.origin}/dashboard/${courseRoute}`;
+            }
+        
         } else {
             notificationController.error('Необходимо заполнить выделенные поля!');
         }

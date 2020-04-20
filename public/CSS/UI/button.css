@@ -29,6 +29,7 @@
     text-align: center;
     flex-shrink: 0;
     border: 0;
+    -webkit-appearance: none;
 }
 
 .button-very-big {
