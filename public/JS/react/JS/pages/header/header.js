@@ -107,7 +107,7 @@ class CustomPage extends React.Component {
       React.createElement("div", null, this.state.children),
       /*#__PURE__*/
       React.createElement(Header, {
-        onLogin: e => this.addComponent(e, this.loginWindow),
+        onLogin: e => createLoginWindow(),
         onContact: async e => await createFeedbackWindow()
       }))
     );

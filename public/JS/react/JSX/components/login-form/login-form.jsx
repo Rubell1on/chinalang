@@ -12,28 +12,16 @@ export class LoginForm extends React.Component {
         this.loginForm = React.createRef();
 
         this.onInputChange = this.onInputChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
     }
-
-    // componentDidMount() {
-    //     const node = this.loginForm.current;
-    //     node.addEventListener("submit", async(e) => await this.onSubmit(e));
-    // }
-
-    // componentWillUnmount() {
-    //     const node = this.loginForm.current;
-    //     node.removeEventListener("submit", async (e) => await this.onSubmit(e));
-    // }
 
     onInputChange (event, field) {
         this.setState({[field]: event.target.value});
     }
 
-    onSubmit(e) {
-        e.preventDefault();
-        console.log(this);
-        notificationController.success('Получилось!');
+    handleSubmit(event) {
+        // event.preventDefault();
         request.get('/login', this.state)
             .then(res => {
                 if (res.status === 'success') {
@@ -52,10 +40,10 @@ export class LoginForm extends React.Component {
 
     render() {
         return (
-           <form ref={this.loginForm} action="#" className={`form ${this.props.className}`} onSubmit={this.onSubmit}>
+           <form ref={this.loginForm} action="" className={`form ${this.props.className}`} onSubmit={e => e.preventDefault()}>
                 <CustomInput key="email" type="email" label="E-mail" onChange={e => this.onInputChange(e, 'email')} required={true}/>
                 <CustomInput key="password" type="password" label="Пароль" onChange={e => this.onInputChange(e, 'password')} required={true}/>
-                <CustomButton type="submit" className="button_justified button_big button_color_red" value="Войти" />
+                <CustomButton type="submit" className="button_justified button_big button_color_red" value="Войти" onClick={this.handleSubmit}/>
            </form>
         )
     }

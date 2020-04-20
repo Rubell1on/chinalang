@@ -9,17 +9,9 @@ export class LoginForm extends React.Component {
     };
     this.loginForm = React.createRef();
     this.onInputChange = this.onInputChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
-  } // componentDidMount() {
-  //     const node = this.loginForm.current;
-  //     node.addEventListener("submit", async(e) => await this.onSubmit(e));
-  // }
-  // componentWillUnmount() {
-  //     const node = this.loginForm.current;
-  //     node.removeEventListener("submit", async (e) => await this.onSubmit(e));
-  // }
-
+  }
 
   onInputChange(event, field) {
     this.setState({
@@ -27,10 +19,8 @@ export class LoginForm extends React.Component {
     });
   }
 
-  onSubmit(e) {
-    e.preventDefault();
-    console.log(this);
-    notificationController.success('Получилось!');
+  handleSubmit(event) {
+    // event.preventDefault();
     request.get('/login', this.state).then(res => {
       if (res.status === 'success') {
         const role = res.response.role;
@@ -49,9 +39,9 @@ export class LoginForm extends React.Component {
       /*#__PURE__*/
       React.createElement("form", {
         ref: this.loginForm,
-        action: "#",
+        action: "",
         className: `form ${this.props.className}`,
-        onSubmit: this.onSubmit
+        onSubmit: e => e.preventDefault()
       },
       /*#__PURE__*/
       React.createElement(CustomInput, {
@@ -73,7 +63,8 @@ export class LoginForm extends React.Component {
       React.createElement(CustomButton, {
         type: "submit",
         className: "button_justified button_big button_color_red",
-        value: "\u0412\u043E\u0439\u0442\u0438"
+        value: "\u0412\u043E\u0439\u0442\u0438",
+        onClick: this.handleSubmit
       }))
     );
   }

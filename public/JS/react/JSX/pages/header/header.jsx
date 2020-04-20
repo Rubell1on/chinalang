@@ -60,7 +60,7 @@ class CustomPage extends React.Component {
         return (
             <div className="wrapper">
                 <div>{this.state.children}</div>
-                <Header onLogin={e => this.addComponent(e, this.loginWindow)} onContact={async e => await createFeedbackWindow()}/>
+                <Header onLogin={e => createLoginWindow()} onContact={async e => await createFeedbackWindow()}/>
             </div>
         )
     }

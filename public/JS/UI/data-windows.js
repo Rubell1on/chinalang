@@ -142,6 +142,33 @@ class DataWindow extends SingleCustomWindow {
     }
 }
 
+class CustomForm extends CustomWindow {
+    constructor(className, children = []) {
+        super(className);
+        this[Symbol.toStringTag] = 'customForm';
+
+        this.children = children;
+        this.onSubmit = new CustomEvent();
+        this.html = 
+            `<form class="${this.spacedClassName}">
+            </form>`;
+    }
+    
+    renderChildren(callback) {
+        if (this.children.length > 0) {
+            this.children.forEach(child => {
+                child.parent = this;
+                child.render(this.object);
+                callback(child);
+            });
+        }
+    }
+
+    render(parent) {
+        super.render(parent);
+    }
+}
+
 class InputField extends CustomWindow {
     constructor(className, id = 'username', label = 'Имя', value = '', required = true, readonly = false, autocomplete = false) {
         super(className);
@@ -150,7 +177,7 @@ class InputField extends CustomWindow {
         this.html = 
             `<div class="text-field ${this.spacedClassName}">` +
                 `<label for="${id}">${label}</label>` +
-                `<input type="text" id="${id}" ${required ? 'required' : ''} ${readonly ? 'readonly' : ''} value="${value}" autocomplete="${autocomplete}">` +
+                `<input type="${id}" id="${id}" ${required ? 'required' : ''} ${readonly ? 'readonly' : ''} value="${value}" autocomplete="${autocomplete}">` +
             '</div>';
     }
 

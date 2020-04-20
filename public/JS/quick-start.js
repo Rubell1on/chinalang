@@ -3,27 +3,34 @@ $('.get-free-lesson').click(() => {
     window.render('');
 });
 
-$('.login').click(() => {
+// $('.login').click(createLoginWindow);
+
+function createLoginWindow() {
     const children = [
-        new Label('login-window-label', 'Авторизация'),
-        new InputField('email-field', 'email', 'Email', undefined, true, false, true),
-        new InputField('password-field', 'password', 'Пароль', undefined, true, false, true),
-        new Button('login-submit', 'Войти')
+        new CustomForm('login-form', [
+            new Label('login-window-label', 'Авторизация'),
+            new InputField('email-field', 'email', 'Email', undefined, true, false, true),
+            new InputField('password-field', 'password', 'Пароль', undefined, true, false, true),
+            new Button('login-submit', 'Войти')
+        ])
     ];
 
     const loginWindow = new DataWindow('login-window', [], children);
     loginWindow.render('');
-    loginWindow.object.keypress(async e => {
-        if (e.which === 13) await login();
-    })
-    loginWindow.renderChildren(c => {
-        if (c.isTypeOf('button')) {
-            c.object.click(async () => await login())
+    loginWindow.renderChildren(child => {
+        if (child.isTypeOf('customForm')) {
+            child.renderChildren(c => {
+                if (c.isTypeOf('button')) {
+                    c.object.click(async () => await login())
+                }
+            })
         }
     });
 
     async function login() {
-        const inputs = loginWindow.children.filter(child => child.isTypeOf('inputField'));
+        const inputs = loginWindow.children
+            .find(child => child.isTypeOf('customForm')).children
+            .filter(child => child.isTypeOf('inputField'));
 
         const userData = {};
         let flag = true;
@@ -66,7 +73,7 @@ $('.login').click(() => {
             notificationController.error('Необходимо заполнить выделенные поля!');
         }
     }
-});
+}
 
 $('.contacts').click(async() => {
     await createFeedbackWindow();
