@@ -11,7 +11,7 @@ function createLoginWindow() {
             new Label('login-window-label', 'Авторизация'),
             new InputField('email-field', 'email', 'Email', undefined, true, false, true),
             new InputField('password-field', 'password', 'Пароль', undefined, true, false, true),
-            new Button('login-submit', 'Войти')
+            new SubmitButton('login-submit', 'Войти')
         ])
     ];
 
@@ -19,18 +19,15 @@ function createLoginWindow() {
     loginWindow.render('');
     loginWindow.renderChildren(child => {
         if (child.isTypeOf('customForm')) {
-            child.renderChildren(c => {
-                if (c.isTypeOf('button')) {
-                    c.object.click(async () => await login())
-                }
-            })
+            child.object.submit(async e => await login(e));
+            child.renderChildren(c => {})
         }
     });
 
-    async function login() {
-        const inputs = loginWindow.children
-            .find(child => child.isTypeOf('customForm')).children
-            .filter(child => child.isTypeOf('inputField'));
+    async function login(e) {
+        e.preventDefault(); 
+        const form = loginWindow.children.find(child => child.isTypeOf('customForm'));            
+        const inputs = form.children.filter(child => child.isTypeOf('inputField'));
 
         const userData = {};
         let flag = true;
@@ -56,19 +53,22 @@ function createLoginWindow() {
         }
 
         if (flag) {
-            const res = await request.get('/login', userData)
+            request.get('/login', userData)
+                .then(res => {
+                    if (res.status === 'success') {
+                        const role = res.response.role;
+                        auth.setData(res.response);
+    
+                        const courseRoute = role === 'student' ? 'main' : 'users';
+    
+                        location.href = `${location.origin}/dashboard/${courseRoute}`;
+                    }
+                })
                 .catch(e => {
                     console.log(e);
                     notificationController.error(e.error.responseText);
                 });
-            if (res.status === 'success') {
-                const role = res.response.role;
-                auth.setData(res.response);
-
-                const courseRoute = role === 'student' ? 'main' : 'users';
-
-                location.href = `${location.origin}/dashboard/${courseRoute}`;
-            }
+            
         } else {
             notificationController.error('Необходимо заполнить выделенные поля!');
         }

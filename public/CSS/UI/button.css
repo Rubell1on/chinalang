@@ -28,6 +28,7 @@
     font-size: 22px;
     text-align: center;
     flex-shrink: 0;
+    border: 0;
 }
 
 .button-very-big {

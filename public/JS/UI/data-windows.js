@@ -246,6 +246,15 @@ class Button extends CustomWindow {
     }
 }
 
+class SubmitButton extends CustomWindow {
+    constructor(className, value = '') {
+        super(className);
+        this[Symbol.toStringTag] = 'submitButton';
+
+        this.html = `<input type="submit" class="button-big ${this.spacedClassName}" value="${value}">`;
+    }
+}
+
 class CheckboxButton extends SingleCustomWindow {
     constructor(className, enabled = false) {
         super(className);
