@@ -3,7 +3,7 @@ $('.get-free-lesson').click(() => {
     window.render('');
 });
 
-// $('.login').click(createLoginWindow);
+$('.login').click(createLoginWindow);
 
 function createLoginWindow() {
     const children = [
